@@ -1,0 +1,47 @@
+/*===================
+  RACINE APPLICATION
+===================*/
+
+.app {
+  display: grid;
+  grid-template-areas: "header" "main" "footer";
+  grid-template-rows: 100px 1fr auto;
+  min-height: 100dvh;
+  .header {
+    grid-area: header;
+  }
+  .main {
+    grid-area: main;
+  }
+  .footer {
+    grid-area: footer;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .app {
+    height: 100vh;
+    grid-template-rows: 100px 1fr auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .app {
+    height: 100vh;
+    grid-template-rows: 90px 1fr auto;
+  }
+}
+
+/*===================
+  PANEL ADMIN : SUPPRESSION HEADER ET FOOTER
+===================*/
+
+.no-header-footer {
+  display: grid;
+  grid-template-areas: "main";
+  grid-template-rows: 1fr;
+  min-height: 100dvh;
+  .main {
+    grid-area: main;
+  }
+}

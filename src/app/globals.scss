@@ -1,0 +1,124 @@
+:root {
+  /* ---- Typo ---- */
+  --font-main: "Inter", sans-serif;
+
+  /* ---- Couleurs principales ---- */
+  --color-primary: #7e3ff2; /* Violet principal (boutons, accents) */
+  --color-primary-dark: #6c32d6;
+  --color-secondary: #ff66d7; /* Rose accent secondaire */
+
+  /* ---- Fond + surfaces ---- */
+  --bg-main: #faf8ff; /* Fond très pâle, légèrement violet */
+  --bg-card: #ffffff; /* Cartes, sections */
+  --bg-soft: #f3eefc; /* Fond dégradé léger */
+
+  /* ---- Texte ---- */
+  --text-main: #1d1b24; /* Titre */
+  --text-soft: #6b6777; /* Sous-titres */
+  --text-muted: #a19bb0; /* Textes faibles */
+
+  /* ---- Bordures ---- */
+  --border-soft: rgba(0, 0, 0, .08);
+  --border-strong: rgba(0, 0, 0, .15);
+
+  /* ---- Ombres ---- */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.12);
+
+  /* ---- Radius ---- */
+  --radius: 18px;
+
+  /* ---- Field error----*/
+  --error-field: #E25555;
+  --header-height: 0px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img {
+  width: 100%;
+  object-fit: cover;
+}
+
+h1, h2, h3, h4,
+.title,
+.hero-title,
+.brand {
+  font-family: var(--font-heading);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+img {
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--text-main);
+}
+
+html,
+body {
+  min-height: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.icon-footer {
+  color: white;
+}
+
+/*===============
+  ERROR FIELD
+===============*/
+
+.error-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-field {
+  font-size: 11px;
+  padding-left: 5px;
+  color: var(--error-field);
+  margin-top: 6px;
+  @media (max-width: 677.98px) {
+    font-size: 9px;
+  }
+  @media (max-width: 991.98px) {
+    margin-top: 5px;
+    font-size: 10px;
+  }
+  @media (max-width: 677.98px) {
+
+    font-size: 9px;
+  }
+}

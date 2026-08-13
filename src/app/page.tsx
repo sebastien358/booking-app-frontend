@@ -13,6 +13,7 @@ import accompagnement from '@/assets/images/accompagnement.jpg'
 import stress from '@/assets/images/stress.jpg'
 import developpement from '@/assets/images/person.jpg'
 import Image from "next/image";
+import {useScrollTop} from "@/shared/scroll-top/scrollTop";
 
 export default function HomePage() {
   const [isOpen] = useState(true); // pour tester
@@ -30,6 +31,8 @@ export default function HomePage() {
       { id: 3, rating: 5, message: "Je me sens apaisée.", author: "Sophie M.", job: "Designer", picture: user3 },
     ]
   };
+
+  const {show, scrollTop} = useScrollTop()
 
   return (
       <main className={styles['main']}>
@@ -192,7 +195,10 @@ export default function HomePage() {
         </section>
 
         {/* SCROLL TO TOP */}
-        <button className={`${styles['scroll-top']} ${showScrollTop? styles['is-visible'] : ''}`} onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+        <button
+            className={`${styles['scroll-top']} ${show ? styles['scroll-top__visible'] : ''}`}
+            onClick={() => scrollTop()}
+        >
           ↑
         </button>
       </main>

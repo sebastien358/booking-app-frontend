@@ -5,20 +5,20 @@ import { usePathname } from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './Header.module.scss'
-import path from "node:path";
+import NavLink from "@/app/nav-link/NavLink";
+import {faUser} from "@fortawesome/free-solid-svg-icons";
+import {useAuthStore} from "@/store/auth.store";
 
 export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
+
+    const { token, logout } = useAuthStore()
+
     const [isVisible, setIsVisible] = useState(false);
-    const headerRef = useRef<HTMLElement>(null);
     const serviceMenu = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
 
     const toggleMenu = () => setIsVisible(!isVisible);
     const closeMenu = () => setIsVisible(false);
-
-    // 1. Au clic on met à jour le hash actif
-    // 2. Au load on check si y'a déjà un # dans l'url
-
 
     const [activeSection, setActiveSection] = useState<string>('')
 
@@ -26,7 +26,7 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
         const sections = ['about', 'services', 'testimonials']
 
         const handleScroll = () => {
-            const scrollPos = window.scrollY + 200
+            const scrollPos = window.scrollY + 120
 
             let current = ''
             sections.forEach((id) => {
@@ -43,7 +43,6 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
 
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
-
 
     const isActive = (path: string) => {
         if (path === '/') return pathname === '/' && !activeSection
@@ -76,31 +75,35 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                     <Link href="/#about" className={isActive('/#about') ? styles['active'] : ''}>
                         À propos
                     </Link>
-                    <Link href="/#services" className={styles['']}>
+                    <Link href="/#services" className={isActive('/#services') ? styles['active'] : ''}>
                         Services
                     </Link>
-                    <Link href="/#testimonials" className={styles['']}>
+                    <Link href="/#testimonials" className={isActive('/#testimonials') ? styles['active'] : ''}>
                         Témoignages
                     </Link>
-                    <Link href="/contact/form" className={isActive('/contact/form') ? styles['active'] : ''}>
-                        Contact
-                    </Link>
+                    <NavLink href="/contact" dropdown>Contact</NavLink>
 
                     <div className={styles['header__actions']}>
-                        <FontAwesomeIcon
-                            icon="fa-solid fa-user"
-                            onClick={toggleMenu}
-                            style={{cursor: 'pointer'}}
-                        />
+                        <FontAwesomeIcon icon={faUser} onClick={() => setIsVisible(!isVisible)} />
                         {isVisible && (
-                            <div className={styles['header__actions__menu']} ref={serviceMenu}>
-                                <Link href="/login" className={isActive('/login') ? styles['active'] : ''}>
-                                    Connexion
-                                </Link>
-                                <Link href="/register" className={isActive('/register') ? styles['active'] : ''}>
-                                    Inscription
-                                </Link>
-                            </div>
+                            <>
+                                {!token ? (
+                                    <div className={styles['header__actions__menu']} ref={serviceMenu}>
+                                        <Link href="/login" className={isActive('/login') ? styles['active'] : ''}>
+                                            Connexion
+                                        </Link>
+                                        <Link href="/register" className={isActive('/register') ? styles['active'] : ''}>
+                                            Inscription
+                                        </Link>
+                                    </div>
+                                ) : (
+                                    <div className={styles['header__actions__menu']} ref={serviceMenu}>
+                                        <Link onClick={logout} href="/login">
+                                            Déconnexion
+                                        </Link>
+                                    </div>
+                                )}
+                           </>
                         )}
                     </div>
                 </nav>

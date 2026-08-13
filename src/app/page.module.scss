@@ -3,28 +3,47 @@
 ==========================*/
 
 .scroll-top {
+  opacity: 0;
   position: fixed;
   right: 24px;
   bottom: 24px;
-  width: 44px;
-  height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #a259ff, #ff4dd4);
   color: white;
   border: none;
   cursor: pointer;
-  box-shadow: 0 8px 20px rgba(162, 89, 255, 0.35);
-  opacity: 0;
   pointer-events: none;
-  transform: translateY(10px);
   transition: all 0.3s ease;
   z-index: 100;
-}
-
-.scroll-top.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+  width: 60px;
+  height: 60px;
+  font-size: 19px;
+  background: linear-gradient(135deg, #a259ff, #ff4dd4);
+  box-shadow: 0 8px 20px rgba(162, 89, 255, 0.35);
+  @media (max-width: 1600px) {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+    right: 20px;
+    bottom: 24px;
+  }
+  @media (max-width: 991.98px) {
+    width: 54px;
+    height: 54px;
+    font-size: 17px;
+    right: 15px;
+    bottom: 20px;
+  }
+  @media (max-width: 767.98px) {
+    width: 49px;
+    height: 49px;
+    font-size: 16px;
+    right: 15px;
+    bottom: 20px;
+  }
+  &__visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 /*==========================

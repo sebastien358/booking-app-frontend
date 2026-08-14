@@ -14,6 +14,7 @@ import stress from '@/assets/images/stress.jpg'
 import developpement from '@/assets/images/person.jpg'
 import Image from "next/image";
 import {useScrollTop} from "@/shared/scroll-top/scrollTop";
+import BookingView from "@/features/welfare/components/booking/BookingView";
 
 export default function HomePage() {
   const [isOpen] = useState(true); // pour tester
@@ -34,8 +35,14 @@ export default function HomePage() {
 
   const {show, scrollTop} = useScrollTop()
 
+
+
+
   return (
       <main className={styles['main']}>
+        {/* BOOKING VIEW */}
+        <BookingView />
+
         {/* HERO */}
         <section id="hero" className={styles['hero-section']}>
           <div className={styles['hero']}>

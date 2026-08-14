@@ -8,6 +8,7 @@ import styles from './Header.module.scss'
 import NavLink from "@/app/nav-link/NavLink";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import {useAuthStore} from "@/store/auth.store";
+import {useBookingModalStore} from "@/store/bookingModal.store";
 
 export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
 
@@ -50,6 +51,10 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
         return hash === activeSection
     }
 
+    {/* STORE MODAL BOOKING */}
+
+    const { openModalBooking } = useBookingModalStore()
+
     return (
         <header className={styles['header']}>
             <div className={styles['header__container']}>
@@ -81,30 +86,37 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                     <Link href="/#testimonials" className={isActive('/#testimonials') ? styles['active'] : ''}>
                         Témoignages
                     </Link>
-                    <NavLink href="/contact" dropdown>Contact</NavLink>
+                    <NavLink href="/contact" dropdown>
+                        Contact
+                    </NavLink>
 
                     <div className={styles['header__actions']}>
-                        <FontAwesomeIcon icon={faUser} onClick={() => setIsVisible(!isVisible)} />
+                        <FontAwesomeIcon onClick={() => setIsVisible(!isVisible)} icon={faUser} className={token ? styles['active-login'] : ''} />
                         {isVisible && (
                             <>
                                 {!token ? (
                                     <div className={styles['header__actions__menu']} ref={serviceMenu}>
-                                        <Link href="/login" className={isActive('/login') ? styles['active'] : ''}>
+                                        <NavLink href="/login" dropdown>
                                             Connexion
-                                        </Link>
-                                        <Link href="/register" className={isActive('/register') ? styles['active'] : ''}>
+                                        </NavLink>
+                                        <NavLink href="/register" dropdown>
                                             Inscription
-                                        </Link>
+                                        </NavLink>
                                     </div>
-                                ) : isAdmin() ? (
+                                ) : token && isAdmin() ? (
                                     <div className={styles['header__actions__menu']} ref={serviceMenu}>
                                         <p>Admin</p>
                                         <Link onClick={logout} href="/login">
                                             Déconnexion
                                         </Link>
                                     </div>
-                                ) : isUser() && !isAdmin() && (
-                                    <p>User</p>
+                                ) : token && isUser() && !isAdmin() && (
+                                    <div className={styles['header__actions__menu']} ref={serviceMenu}>
+                                        <p>User</p>
+                                        <Link onClick={logout} href="/login">
+                                            Déconnexion
+                                        </Link>
+                                    </div>
                                 )}
                            </>
                         )}
@@ -113,7 +125,7 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
 
                 {/* CTA */}
                 <div>
-                    <button onClick={bookingOpen} className={styles['header__cta']}>
+                    <button onClick={() => openModalBooking()} className={styles['header__cta']}>
                         Prendre RDV
                     </button>
                 </div>

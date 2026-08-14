@@ -1,11 +1,15 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {axiosInfoMe, axiosLogin} from "@/shared/services/auth.service";
+import {axiosInfoMe, axiosLogin, axiosRegister} from "@/shared/services/auth.service";
+import route from "@img/colour";
+import apple = route.apple;
 
 export interface AuthState { // renommé ProductInterface -> AuthState
     token: string | null
     user: null
     errorMessage: string | null
+
+    registerUser: (data: any) => Promise<void>
     login: (data: {email: string, password: string}) => Promise<void>
     infoMe: () => void
     logout: () => void
@@ -20,6 +24,20 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             user: null,
             errorMessage: null,
+
+            registerUser: async (data) => {
+                try {
+                    await axiosRegister(data)
+                } catch(err) {
+                    const apiError = err?.response?.data
+                    if (apiError?.type === 'EMAIL_ALREADY_EXISTS') {
+                        set({ errorMessage: apiError?.message })
+                    } else {
+                        set({ errorMessage: 'L\'inscription a échouée' })
+                    }
+                    throw err
+                }
+            },
 
             login: async (data) => {
                 try {
@@ -36,7 +54,6 @@ export const useAuthStore = create<AuthState>()(
             infoMe: async () => {
                 try {
                     const data = await axiosInfoMe()
-                    console.log(data)
                     set({ user: data })
                 } catch(err) {
                     console.error(err)

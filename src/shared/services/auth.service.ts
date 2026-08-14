@@ -5,7 +5,6 @@ const api = axios.create({
     baseURL: 'http://127.0.0.1:8000',
 })
 
-// INTERCEPTOR OK AVEC getState()
 api.interceptors.request.use((config) => {
     const token = useAuthStore.getState().token
     if (token) {
@@ -13,6 +12,19 @@ api.interceptors.request.use((config) => {
     }
     return config
 }, (error) => Promise.reject(error))
+
+export async function axiosRegister(data: {email: string, password: string}) {
+    try {
+        const response = await api.post('/api/user/register', data)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de l'inscription' : ${response.status}`)
+    } catch(err: any) {
+        console.error(err)
+        throw err
+    }
+}
 
 export async function axiosLogin(data: {email: string, password: string}) {
     try {

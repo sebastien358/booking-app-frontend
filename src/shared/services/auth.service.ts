@@ -20,7 +20,23 @@ export async function axiosLogin(data: {email: string, password: string}) {
             username: data.email,
             password: data.password
         })
-        return response.data
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de la connexion : ${response.status}`)
+    } catch(err: any) {
+        console.error(err)
+        throw err
+    }
+}
+
+export async function axiosInfoMe() {
+    try {
+        const response = await api.get('/api/user/me')
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de la récupération des infoq de l'utilisateur connecté : ${response.status}`)
     } catch(err: any) {
         console.error(err)
         throw err

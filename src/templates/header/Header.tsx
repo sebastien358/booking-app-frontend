@@ -11,7 +11,7 @@ import {useAuthStore} from "@/store/auth.store";
 
 export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
 
-    const { token, logout } = useAuthStore()
+    const { token, isAdmin, isUser, logout } = useAuthStore()
 
     const [isVisible, setIsVisible] = useState(false);
     const serviceMenu = useRef<HTMLDivElement>(null);
@@ -96,12 +96,15 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                                             Inscription
                                         </Link>
                                     </div>
-                                ) : (
+                                ) : isAdmin() ? (
                                     <div className={styles['header__actions__menu']} ref={serviceMenu}>
+                                        <p>Admin</p>
                                         <Link onClick={logout} href="/login">
                                             Déconnexion
                                         </Link>
                                     </div>
+                                ) : isUser() && !isAdmin() && (
+                                    <p>User</p>
                                 )}
                            </>
                         )}

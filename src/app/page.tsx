@@ -3,7 +3,6 @@
 
 import styles from './page.module.scss';
 import Link from 'next/link';
-import { useState } from 'react';
 import user1 from '@/assets/images/user-1.jpg'
 import user2 from '@/assets/images/user-2.jpg'
 import user3 from '@/assets/images/user-3.jpg'
@@ -15,12 +14,12 @@ import developpement from '@/assets/images/person.jpg'
 import Image from "next/image";
 import {useScrollTop} from "@/shared/scroll-top/scrollTop";
 import BookingView from "@/features/welfare/components/booking/BookingView";
+import {useState} from "react";
 
 export default function HomePage() {
   const [isOpen] = useState(true); // pour tester
   const closingHour = "18h";
   const nextOpening = "Lundi 9h";
-  const showScrollTop = false;
 
   const bookingOpen = () => alert("Modal de réservation");
 
@@ -35,12 +34,10 @@ export default function HomePage() {
 
   const {show, scrollTop} = useScrollTop()
 
-
-
-
   return (
       <main className={styles['main']}>
         {/* BOOKING VIEW */}
+
         <BookingView />
 
         {/* HERO */}

@@ -1,11 +1,9 @@
 import axios from "axios";
 import {useAuthStore} from "@/store/auth.store";
 
-const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000',
-})
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 
-api.interceptors.request.use((config) => {
+axios.interceptors.request.use((config) => {
     const token = useAuthStore.getState().token
     if (token) {
         config.headers.Authorization = `Bearer ${token}`
@@ -15,7 +13,7 @@ api.interceptors.request.use((config) => {
 
 export async function axiosRegister(data: {email: string, password: string}) {
     try {
-        const response = await api.post('/api/user/register', data)
+        const response = await axios.post(`${BASE_URL}/api/user/register`, data)
         if (response.status >= 200 && response.status < 300) {
             return response.data
         }
@@ -28,7 +26,7 @@ export async function axiosRegister(data: {email: string, password: string}) {
 
 export async function axiosLogin(data: {email: string, password: string}) {
     try {
-        const response = await api.post('/api/login', {
+        const response = await axios.post(`${BASE_URL}/api/login`, {
             username: data.email,
             password: data.password
         })
@@ -44,7 +42,7 @@ export async function axiosLogin(data: {email: string, password: string}) {
 
 export async function axiosInfoMe() {
     try {
-        const response = await api.get('/api/user/me')
+        const response = await axios.get(`${BASE_URL}/api/user/me`)
         if (response.status >= 200 && response.status < 300) {
             return response.data
         }

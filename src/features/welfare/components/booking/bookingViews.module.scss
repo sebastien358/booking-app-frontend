@@ -16,7 +16,7 @@
       white-space: nowrap;
     }
   }
-  &__summary .fa-xmark {
+  &__summary svg {
     cursor: pointer;
     width: 16px;
     height: 16px;
@@ -38,7 +38,7 @@
       font-size: 11px;
     }
   }
-  &__description .fa-xmark {
+  &__description svg {
     cursor: pointer;
     width: 16px;
     height: 16px;
@@ -86,7 +86,7 @@
       white-space: nowrap;
     }
   }
-  &__summary .fa-xmark {
+  &__summary svg {
     cursor: pointer;
     width: 16px;
     height: 16px;
@@ -108,7 +108,7 @@
       font-size: 11px;
     }
   }
-  &__description .fa-xmark {
+  &__description svg {
     cursor: pointer;
     width: 16px;
     height: 16px;
@@ -240,7 +240,7 @@
     letter-spacing: 0.2px;
     color: #2F2F2F;
   }
-  &__description .fa-xmark {
+  &__description svg {
     cursor: pointer;
     width: 16px;
     height: 16px;
@@ -323,6 +323,7 @@
     padding: 15px 20px;
     font-size: 18px;
     white-space: nowrap;
+    border: none;
   }
   .btn-category:hover {
     background: #08d8ea;
@@ -391,7 +392,7 @@
     color: white;
     background: #08d8ea;
   }
-  .service-label .service-icon .fa-angle-down {
+  .service-label .service-icon svg {
     width: 12.5px;
     height: auto;
   }
@@ -422,7 +423,7 @@
       }
     }
     .service-items.active-service {
-      background: var(--blue-reservation);
+      background: #08d8ea;
     }
   }
 }

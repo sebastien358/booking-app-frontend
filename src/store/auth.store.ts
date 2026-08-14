@@ -1,8 +1,6 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {axiosInfoMe, axiosLogin, axiosRegister} from "@/shared/services/auth.service";
-import route from "@img/colour";
-import apple = route.apple;
 
 export interface AuthState { // renommé ProductInterface -> AuthState
     token: string | null

@@ -4,7 +4,9 @@ import styles from './bookingViews.module.scss'
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDown, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {useBookingModalStore} from "@/store/bookingModal.store";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {useCategoryStore} from "@/store/category.store";
+import {useServiceStore} from "@/store/service.store";
 
 export default function BookingView() {
 
@@ -12,9 +14,55 @@ export default function BookingView() {
 
     const { bookingBoolean, closeModalBooking } = useBookingModalStore()
 
+    {/* CATEGORY STORE */}
+
+    const { categoriesList, categories } = useCategoryStore()
+
+    useEffect(() => {
+        categoriesList()
+    }, []);
+
+    {/* SELECTED CATEGORY */}
+
+    type Category = { id: number; name: string, slug: string };
+
+    const [categoryId, setCategoryId] = useState<number | null>(null);
+    const [categoryName, setCategoryName] = useState<string ,| null>(null)
+
+    useEffect(() => {
+        if (categories && categories.length > 0 && categoryId === null) {
+            setCategoryId(categories[0].id);
+            setCategoryName(categories[0].slug)
+        }
+    }, [categories, categoryId])
+
+    const onClickCategory = (categorie: Category) => {
+        setCategoryId(categorie.id)
+        setCategoryName(categorie.slug)
+    }
+
+    const isActiveCategory = (categorie: Category) => {
+        return categorie.id === categoryId
+    }
+
     {/* SERVICES */}
 
+    const { servicesList, services } = useServiceStore()
+
+    useEffect(() => {
+        servicesList()
+    }, []);
+
     const [serviceMenu, setServiceMenu] = useState<boolean>(false)
+    const [serviceId, setServiceId] = useState<number | null>(null)
+
+    const onClickService = (service) => {
+        setServiceId(service.id)
+    }
+
+    const isActiveService = (service) => {
+        return service.id === serviceId
+    }
 
     if (bookingBoolean) {
         return (
@@ -38,18 +86,31 @@ export default function BookingView() {
 
                         {/* Barre de progression */}
 
-                        {/* booking context ready */}
-                        <div className={styles['loading-overlay']}>
+                        {/* booking context ready
+
+                          <div className={styles['loading-overlay']}>
                             <div className={styles['loading-overlay__loader']}></div>
                         </div>
 
+                        */}
+
+
                         <div>
                             {/* Booking category */}
-                            <section className={styles['booking-category']}>
-                                <button className={`${styles['btn']} ${styles['btn-category']}`}>
-                                    sdvs
-                                </button>
-                            </section>
+
+                            {categories && categories.length > 0 && (
+                                <section className={styles['booking-category']}>
+                                    {categories.map((categorie) => (
+                                        <button
+                                            key={categorie.id}
+                                            className={`${styles['btn']} ${styles['btn-category']} ${isActiveCategory(categorie) ? styles['active'] : ''}`}
+                                            onClick={() => onClickCategory(categorie)}
+                                        >
+                                            {categorie.name}
+                                        </button>
+                                    ))}
+                                </section>
+                            )}
 
                             {/* Booking services */}
                             <section className={styles['booking-service']}>
@@ -67,11 +128,13 @@ export default function BookingView() {
                                     </div>
                                     {serviceMenu && (
                                         <div className={styles['service-menu']}>
-                                            <div className={styles['service-items']}>
-                                                <span className={styles['name']}>{/* nom service */}</span>
-                                                <span>{/* durée */} min</span>
-                                                <span>{/* prix */}€</span>
-                                            </div>
+                                            {services?.map((service) => (
+                                                <div key={service.id} className={`${styles['service-items']} ${isActiveService(service) ? styles['active-service'] : ''}`} onClick={() => onClickService(service)}>
+                                                    <span className={styles['name']}>{service.name}</span>
+                                                    <span>{service.duration} min</span>
+                                                    <span>{service.price}€</span>
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
                                 </div>

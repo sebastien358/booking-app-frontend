@@ -1,0 +1,34 @@
+.booking-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 25px 0 0 0;
+  width: 100%;
+  .separator-progress-left,
+  .separator-progress-right {
+    width: 20px;
+    height: 2px;
+    background: #dfe4ea;
+  }
+  .separator-progress-left.active {
+    background: #08d8ea;
+  }
+  .separator-progress {
+    width: 40px;
+    height: 2px;
+    background: #dfe4ea;
+  }
+  .separator-progress.active {
+    background: #08d8ea;
+  }
+  svg {
+    background: #dfe4ea;
+    padding: 5px;
+    border-radius: 50%;
+    height: 32px;
+    width: 32px;
+  }
+  svg.active {
+    background: #08d8ea;
+  }
+}

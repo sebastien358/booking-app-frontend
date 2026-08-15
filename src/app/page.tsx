@@ -13,7 +13,7 @@ import stress from '@/assets/images/stress.jpg'
 import developpement from '@/assets/images/person.jpg'
 import Image from "next/image";
 import {useScrollTop} from "@/shared/scroll-top/scrollTop";
-import BookingView from "@/features/welfare/components/booking/BookingView";
+import BookingView from "@/features/well-being/components/booking/BookingView";
 import {useState} from "react";
 
 export default function HomePage() {

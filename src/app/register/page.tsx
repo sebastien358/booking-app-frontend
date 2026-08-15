@@ -1,4 +1,4 @@
-import Register from "@/features/welfare/components/register/Register";
+import Register from "@/features/well-being/components/register/Register";
 
 export default function Page() {
     return <Register />

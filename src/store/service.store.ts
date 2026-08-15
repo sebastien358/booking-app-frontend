@@ -4,6 +4,7 @@ import {axiosServicesList} from "@/shared/services/services.service";
 
 interface ServiceState {
     services: any[]
+    isLoadingService: boolean
 
     servicesList: () => Promise<void>
 }
@@ -11,13 +12,15 @@ interface ServiceState {
 export const useServiceStore = create<ServiceState>()(
     persist((set, get) => ({
             services: [],
+            isLoadingService: false,
 
             servicesList: async () => {
+                set({ isLoadingService: true })
                 try {
                     const data = await axiosServicesList()
-                    set({ services: data })
+                    set({ services: data, isLoadingService: false })
                 } catch (err) {
-                    console.error(err)
+                    set({ isLoadingService: false })
                     throw err
                 }
             }

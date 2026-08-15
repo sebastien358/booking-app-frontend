@@ -10,6 +10,7 @@ import {useServiceStore} from "@/store/service.store";
 import {useStaffStore} from "@/store/staff.store";
 import noUser from '@/assets/images/no-user.png'
 import Image from "next/image";
+import ProgressBooking from "@/templates/progress-booking/ProgressBooking";
 
 
 export default function BookingView() {
@@ -20,7 +21,7 @@ export default function BookingView() {
 
     {/* CATEGORY STORE */}
 
-    const { categoriesList, categories } = useCategoryStore()
+    const { categoriesList, categories, isLoadingCategory } = useCategoryStore()
 
     useEffect(() => {
         categoriesList()
@@ -56,7 +57,7 @@ export default function BookingView() {
         name: string
     }
 
-    const { servicesList, services } = useServiceStore()
+    const { servicesList, services, isLoadingService } = useServiceStore()
 
     useEffect(() => {
         servicesList()
@@ -86,7 +87,7 @@ export default function BookingView() {
 
     {/* STAFFS */}
 
-    const { staffList, staffs } = useStaffStore()
+    const { staffList, staffs, isLoadingStaff } = useStaffStore()
 
     useEffect(() => {
         staffList()
@@ -102,47 +103,62 @@ export default function BookingView() {
         setStaffId(staff.id)
     }
 
+    {/* Loading : Catégory, Service, Staff */}
+
+    const isLoadingPageStep1 = () => {
+        return (isLoadingCategory || isLoadingService || isLoadingStaff)
+    }
+
     {/* Information completed */}
 
     const informationCompleted = (): boolean => {
         return !! (categoryId && serviceId && staffId)
     }
 
+    const [progressStep, setProgressStep] = useState<number>(1)
+
+    useEffect(() => {
+        if (categoryId && serviceId && staffId) {
+            setProgressStep(2)
+        } else {
+            setProgressStep(1)
+        }
+    }, [categoryId, serviceId, staffId])
+
+
     if (bookingBoolean) {
-        return (
-            <>
-                {!informationCompleted() ? (
-                    <main className={styles['page-wrapper']}>
-                        <div className={styles['container']}>
-                            <section className={styles['booking']}>
-                                <div className={styles['booking__description']}>
-                                    <p>Préparez votre rendez-vous<strong></strong></p>
-                                    <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
+        if (!informationCompleted()) {
+            return (
+                <main className={styles['page-wrapper']}>
+                    <div className={styles['container']}>
+                        <section className={styles['booking']}>
+                            <div className={styles['booking__description']}>
+                                <p>Préparez votre rendez-vous<strong></strong></p>
+                                <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
+                            </div>
+
+                            {/* Separator */}
+                            <div className={styles['separator-top']}></div>
+
+                            {/* Svg */}
+                            <div className={styles['booking__title']}>
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                    <path d="M6 13c2-2 4-2 6 0s4 2 6 0" stroke="currentColor" strokeWidth="2" fill="none" />
+                                </svg>
+                            </div>
+
+                            {/* Barre de progression */}
+                            <ProgressBooking progressStep={progressStep} />
+
+                            {/* loading */}
+                            {isLoadingPageStep1() ? (
+                                <div className={styles['loading-overlay']}>
+                                    <div className={styles['loading-overlay__loader']}></div>
                                 </div>
-
-                                {/* Separator */}
-                                <div className={styles['separator-top']}></div>
-
-                                <div className={styles['booking__title']}>
-                                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-                                        <path d="M6 13c2-2 4-2 6 0s4 2 6 0" stroke="currentColor" strokeWidth="2" fill="none" />
-                                    </svg>
-                                </div>
-
-                                {/* Barre de progression */}
-
-                                {/* booking context ready
-
-                                      <div className={styles['loading-overlay']}>
-                                        <div className={styles['loading-overlay__loader']}></div>
-                                    </div>
-
-                                    */}
-
-                                <div>
+                            ) : (
+                                <>
                                     {/* Booking category */}
-
                                     {categories && categories.length > 0 && (
                                         <section className={styles['booking-category']}>
                                             {categories.map((categorie) => (
@@ -168,8 +184,8 @@ export default function BookingView() {
                                             <div className={styles['service-label']} onClick={() => setServiceMenu(prev => !prev)}>
                                                 {serviceName || 'Choisissez votre prestation'}
                                                 <span className={styles['service-icon']}>
-                                                        <FontAwesomeIcon icon={faAngleDown} />
-                                                    </span>
+                                                <FontAwesomeIcon icon={faAngleDown} />
+                                            </span>
                                             </div>
                                             {serviceMenu && (
                                                 <div className={styles['service-menu']}>
@@ -212,30 +228,42 @@ export default function BookingView() {
                                             </div>
                                         </div>
                                     </section>
-
                                     <div className={styles['booking__placeholder']}>
                                         <p>👤 Veuillez sélectionner un avocat pour afficher les disponibilités</p>
                                     </div>
-                                </div>
-                            </section>
-                        </div>
-                    </main>
-                ) : (
-                    <main className={styles['page-wrapper']}>
-                        <div className={styles['container']}>
-                            <section className={styles['booking']}>
-                                <div className={styles['booking__description']}>
-                                    <p>Préparez votre rendez-vous<strong></strong></p>
-                                    <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
-                                </div>
+                                </>
+                            )}
+                        </section>
+                    </div>
+                </main>
+            )
+        } else {
+            return (
+                <main className={styles['page-wrapper']}>
+                    <div className={styles['container']}>
+                        <section className={styles['booking']}>
+                            <div className={styles['booking__description']}>
+                                <p>Préparez votre rendez-vous<strong></strong></p>
+                                <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
+                            </div>
 
-                                {/* Separator */}
-                                <div className={styles['separator-top']}></div>
-                            </section>
-                        </div>
-                    </main>
-                )}
-            </>
-        )
+                            {/* Separator */}
+                            <div className={styles['separator-top']}></div>
+
+                            {/* Svg */}
+                            <div className={styles['booking__title']}>
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                    <path d="M6 13c2-2 4-2 6 0s4 2 6 0" stroke="currentColor" strokeWidth="2" fill="none" />
+                                </svg>
+                            </div>
+
+                            {/* Barre de progression */}
+                            <ProgressBooking progressStep={progressStep} />
+                        </section>
+                    </div>
+                </main>
+            )
+        }
     }
 }

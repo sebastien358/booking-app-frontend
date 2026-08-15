@@ -126,8 +126,9 @@ export default function BookingView() {
 
     {/* Integration Days */}
 
+    /*=============== DAYS ===============*/
     const availableDays = useMemo(() => {
-        const days: { value: string; label: string }[] = [];
+        const days = [];
         const now = new Date();
         const isAfter18 = now.getHours() >= 18;
         const currentDay = isAfter18? 1 : 0;
@@ -135,23 +136,42 @@ export default function BookingView() {
         for (let i = currentDay; i < currentDay + 11; i++) {
             const d = new Date(now);
             d.setDate(d.getDate() + i);
-
-            // on skip les dimanches
-            if (d.getDay() === 0) continue;
+            if (d.getDay() === 0) continue; // skip dimanche
 
             days.push({
                 label: d.toLocaleDateString('fr-FR', {
                     weekday: 'short',
                     day: 'numeric',
                     month: 'short'
-                }).replace(/\./g, ''), // enlève les points "lun."
-                value: d.toLocaleDateString('fr-CA'), // format YYYY-MM-DD
+                }).replace(/\./g, ''),
+                value: d.toLocaleDateString('fr-CA'), // YYYY-MM-DD
             });
 
-            if (days.length === 3) break;
+            if (days.length === 11) break;
         }
         return days;
-    }, [])
+    }, []);
+
+    const [pageSize] = useState(3);
+    const [carouselIndex, setCarouselIndex] = useState(0);
+    const [selectedDay, setSelectedDay] = useState(availableDays[0]?.value);
+
+    const maxIndex = useMemo(() => {
+        return Math.max(0, Math.ceil(availableDays.length / pageSize) - 1);
+    }, [availableDays.length, pageSize]);
+
+    const visibleDays = useMemo(() => {
+        const start = carouselIndex * pageSize;
+        return availableDays.slice(start, start + pageSize);
+    }, [carouselIndex, pageSize, availableDays]);
+
+    const prevDays = () => {
+        if (carouselIndex > 0) setCarouselIndex(carouselIndex - 1);
+    };
+
+    const nextDays = () => {
+        if (carouselIndex < maxIndex) setCarouselIndex(carouselIndex + 1);
+    };
 
     if (bookingBoolean) {
         if (!informationCompleted()) {
@@ -295,17 +315,17 @@ export default function BookingView() {
 
                                 {/* JOURS TOUJOURS VISIBLES */}
                                 <div className={styles['booking__pagination']}>
-                                    <button className={styles['prev-day']}>‹</button>
+                                    <button onClick={() => prevDays()}  className={styles['prev-day']}>‹</button>
 
                                     <div className={styles['days-list']}>
-                                        {availableDays.map((day) => (
+                                        {visibleDays.map((day) => (
                                             <div key={day.value}>
                                                 <button className={styles['day-item']}>{day.label}</button>
                                             </div>
                                         ))}
                                     </div>
 
-                                    <button className={styles['next-day']}>›</button>
+                                    <button onClick={() => nextDays()} className={styles['next-day']}>›</button>
                                 </div>
 
                                 {/* LOADER */}

@@ -12,7 +12,6 @@ import noUser from '@/assets/images/no-user.png'
 import Image from "next/image";
 import ProgressBooking from "@/templates/progress-booking/ProgressBooking";
 
-
 export default function BookingView() {
 
     {/* STORE MODAL BOOKING */}
@@ -125,6 +124,34 @@ export default function BookingView() {
         }
     }, [categoryId, serviceId, staffId])
 
+    {/* Integration Days */}
+
+    const availableDays = useMemo(() => {
+        const days: { value: string; label: string }[] = [];
+        const now = new Date();
+        const isAfter18 = now.getHours() >= 18;
+        const currentDay = isAfter18? 1 : 0;
+
+        for (let i = currentDay; i < currentDay + 11; i++) {
+            const d = new Date(now);
+            d.setDate(d.getDate() + i);
+
+            // on skip les dimanches
+            if (d.getDay() === 0) continue;
+
+            days.push({
+                label: d.toLocaleDateString('fr-FR', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short'
+                }).replace(/\./g, ''), // enlève les points "lun."
+                value: d.toLocaleDateString('fr-CA'), // format YYYY-MM-DD
+            });
+
+            if (days.length === 3) break;
+        }
+        return days;
+    }, [])
 
     if (bookingBoolean) {
         if (!informationCompleted()) {
@@ -260,6 +287,44 @@ export default function BookingView() {
 
                             {/* Barre de progression */}
                             <ProgressBooking progressStep={progressStep} />
+
+                            {/* CRÉNEAUX HORAIRES */}
+                            <h3 className={styles['booking-reservation-title']}>Choisissez votre créneau 📅</h3>
+
+                            <div className={styles['booking__items']}>
+
+                                {/* JOURS TOUJOURS VISIBLES */}
+                                <div className={styles['booking__pagination']}>
+                                    <button className={styles['prev-day']}>‹</button>
+
+                                    <div className={styles['days-list']}>
+                                        {availableDays.map((day) => (
+                                            <div key={day.value}>
+                                                <button className={styles['day-item']}>{day.label}</button>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <button className={styles['next-day']}>›</button>
+                                </div>
+
+                                {/* LOADER */}
+                                <div className={styles['loading']}>
+                                    <span className={styles['loading__loader']}></span>
+                                </div>
+
+                                {/* CRÉNEAUX */}
+                                <div className={styles['booking__slots']}>
+                                    <button className={`${styles['btn']} ${styles['btn-reservation']}`}>09:00</button>
+                                    <button className={`${styles['btn']} ${styles['btn-reservation']} ${styles['active']}`}>10:30</button>
+                                    <button className={`${styles['btn']} ${styles['btn-reservation']}`}>14:00</button>
+                                </div>
+
+                                {/* AUCUN CRÉNEAU */}
+                                <div className={styles['booking__no__reservation']}>
+                                    <p>Aucun créneau disponible.</p>
+                                </div>
+                            </div>
                         </section>
                     </div>
                 </main>

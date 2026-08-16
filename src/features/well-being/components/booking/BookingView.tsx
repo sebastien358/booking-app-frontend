@@ -11,6 +11,7 @@ import {useStaffStore} from "@/store/staff.store";
 import noUser from '@/assets/images/no-user.png'
 import Image from "next/image";
 import ProgressBooking from "@/templates/progress-booking/ProgressBooking";
+import {useBookingStore} from "@/store/booking.store";
 
 export default function BookingView() {
 
@@ -131,7 +132,7 @@ export default function BookingView() {
         const days = [];
         const now = new Date();
         const isAfter18 = now.getHours() >= 18;
-        const currentDay = isAfter18? 1 : 0;
+        const currentDay = isAfter18 ? 1 : 0;
 
         for (let i = currentDay; i < currentDay + 11; i++) {
             const d = new Date(now);
@@ -172,6 +173,41 @@ export default function BookingView() {
     const nextDays = () => {
         if (carouselIndex < maxIndex) setCarouselIndex(carouselIndex + 1);
     };
+
+    {/* On Click Day and active day */}
+
+    const [dayState, setDayState] = useState<string | null>(visibleDays[0].value ?? null)
+
+    const onClickDay = (day: any) => {
+        setDayState(day.value)
+    }
+
+    const activeDay = (day: any): boolean => {
+        return (day.value === dayState)
+    }
+
+    {/* Slots */}
+
+    const { setBookingDraft, axiosSlots, loadingSlots, slots} = useBookingStore()
+
+// QUAND LES 4 VALEURS LOCALES CHANGENT -> ON MET A JOUR LE STORE -> ON CHARGE LES SLOTS
+
+    useEffect(() => {
+        if (!categoryId || !serviceId || !staffId || !dayState) return
+
+        setBookingDraft({
+            bookingCategoryId: categoryId,
+            bookingServiceId: serviceId,
+            bookingStaffId: staffId,
+            bookingDate: dayState
+        })
+
+        axiosSlots()
+
+    }, [categoryId, serviceId, staffId, dayState])
+
+    console.log(slots)
+
 
     if (bookingBoolean) {
         if (!informationCompleted()) {
@@ -315,12 +351,12 @@ export default function BookingView() {
 
                                 {/* JOURS TOUJOURS VISIBLES */}
                                 <div className={styles['booking__pagination']}>
-                                    <button onClick={() => prevDays()}  className={styles['prev-day']}>‹</button>
+                                    <button onClick={() => prevDays()} className={styles['prev-day']}>‹</button>
 
                                     <div className={styles['days-list']}>
                                         {visibleDays.map((day) => (
                                             <div key={day.value}>
-                                                <button className={styles['day-item']}>{day.label}</button>
+                                                <button onClick={() => onClickDay(day)} className={`${styles['day-item']} ${activeDay(day) ? styles['active'] : ''}`}>{day.label}</button>
                                             </div>
                                         ))}
                                     </div>
@@ -328,22 +364,22 @@ export default function BookingView() {
                                     <button onClick={() => nextDays()} className={styles['next-day']}>›</button>
                                 </div>
 
-                                {/* LOADER */}
-                                <div className={styles['loading']}>
-                                    <span className={styles['loading__loader']}></span>
-                                </div>
-
-                                {/* CRÉNEAUX */}
-                                <div className={styles['booking__slots']}>
-                                    <button className={`${styles['btn']} ${styles['btn-reservation']}`}>09:00</button>
-                                    <button className={`${styles['btn']} ${styles['btn-reservation']} ${styles['active']}`}>10:30</button>
-                                    <button className={`${styles['btn']} ${styles['btn-reservation']}`}>14:00</button>
-                                </div>
-
-                                {/* AUCUN CRÉNEAU */}
-                                <div className={styles['booking__no__reservation']}>
-                                    <p>Aucun créneau disponible.</p>
-                                </div>
+                                {/* LOADER - SLOTS - NO SLOTS */}
+                                {loadingSlots ? (
+                                    <div className={styles['loading']}>
+                                        <span className={styles['loading__loader']}></span>
+                                    </div>
+                                ) : slots.length > 0 ? (
+                                    <div className={styles['booking__slots']}>
+                                        {slots.map((slot) => (
+                                            <button key={slot.label} className={`${styles['btn']} ${styles['btn-reservation']}`}>{slot.label}</button>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles['booking__no__reservation']}>
+                                        <p>Aucun créneau disponible.</p>
+                                    </div>
+                                )}
                             </div>
                         </section>
                     </div>

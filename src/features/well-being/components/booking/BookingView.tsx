@@ -13,7 +13,32 @@ import Image from "next/image";
 import ProgressBooking from "@/templates/progress-booking/ProgressBooking";
 import {useBookingStore} from "@/store/booking.store";
 
+
 export default function BookingView() {
+
+    const {
+        setBookingDraft,
+        axiosSlots,
+        setCategoryName,
+        categoryName,
+        setServiceName,
+        serviceName,
+        setStaffName,
+        staffName,
+        setServiceDuration,
+        serviceDuration,
+        setSelectedDay,
+        selectedDay,
+        setSlotLabel,
+        slotLabel,
+        setProgressStep,
+        progressStep,
+        informationCompletedOne,
+        informationCompletedTwo,
+        loadingSlots,
+        slots,
+        createBooking
+    } = useBookingStore()
 
     {/* STORE MODAL BOOKING */}
 
@@ -32,11 +57,10 @@ export default function BookingView() {
     type Category = { id: number; name: string, slug: string };
 
     const [categoryId, setCategoryId] = useState<number | null>(null);
-    const [categoryName, setCategoryName] = useState<string | null>(null)
 
     useEffect(() => {
         if (categories && categories.length > 0 && categoryId === null) {
-            setCategoryId(categories[0].id);
+            setCategoryId(categories[0].id)
             setCategoryName(categories[0].slug)
         }
     }, [categories, categoryId])
@@ -55,6 +79,7 @@ export default function BookingView() {
     type Service = {
         id: number
         name: string
+        duration: number
     }
 
     const { servicesList, services, isLoadingService } = useServiceStore()
@@ -73,11 +98,11 @@ export default function BookingView() {
 
     const [serviceMenu, setServiceMenu] = useState<boolean>(false)
     const [serviceId, setServiceId] = useState<number | null>(null)
-    const [serviceName, setServiceName] = useState<string | null>(null)
 
     const onClickService = (service: Service) => {
         setServiceId(service.id)
         setServiceName(service.name)
+        setServiceDuration(service.duration)
         setServiceMenu(false)
     }
 
@@ -95,12 +120,115 @@ export default function BookingView() {
 
     type Staff = {
         id: number
+        firstname: string
     }
 
     const [staffId, setStaffId] = useState<number | null>(null)
 
     const onClickStaff = (staff: Staff) => {
         setStaffId(staff.id)
+        setStaffName(staff.firstname)
+    }
+
+    {/* Integration Days */}
+
+    const [now, setNow] = useState(() => new  Date())
+
+    useEffect(() => {
+        const id = setInterval(() => setNow(new Date()), 60 * 1000)
+        return () => clearInterval(id)
+    }, []);
+
+    const availableDays = useMemo(() => {
+        const days: {label: string, value: string}[] = []
+
+        const isAfter18 = now.getHours() >= 18
+        const startOffset = isAfter18? 1 : 0
+
+        for (let i = startOffset; days.length < 10; i++) {
+            const d = new Date(now);
+            d.setDate(d.getDate() + i)
+
+            if (d.getDay() === 0) continue
+
+            days.push({
+                label: d.toLocaleDateString('fr-FR', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short'
+                }).replace(/\./g, ''),
+                value: d.toLocaleDateString('fr-CA')
+            })
+        }
+        return days;
+    }, [now])
+
+    {/* Carousel */}
+
+    const [pageSize] = useState(3);
+    const [carouselIndex, setCarouselIndex] = useState(0);
+
+    const maxIndex = useMemo(() => {
+        return Math.max(0, Math.ceil(availableDays.length / pageSize) - 1)
+    }, [availableDays.length, pageSize])
+
+    const visibleDays = useMemo(() => {
+        const start = carouselIndex * pageSize
+        return availableDays.slice(start, start + pageSize)
+    }, [carouselIndex, pageSize, availableDays])
+
+    const prevDays = () => {
+        if (carouselIndex > 0) setCarouselIndex(carouselIndex - 1)
+    }
+
+    const nextDays = () => {
+        if (carouselIndex < maxIndex) setCarouselIndex(carouselIndex + 1)
+    }
+
+    {/* On Click Day and active day */}
+
+    const [dateState, setDateState] = useState<string | null>(visibleDays[0].value ?? null)
+    const [datetimeState, setDatetimeState] = useState<string | null>(null)
+
+    const onClickDay = (day: any) => {
+        setDateState(day.value)
+        setDatetimeState(day.label)
+        setSelectedDay(day.label)
+    }
+
+    const activeDay = (day: any): boolean => {
+        return (day.value === dateState)
+    }
+
+    {/* Slots */}
+
+
+// QUAND LES 4 VALEURS LOCALES CHANGENT -> ON MET A JOUR LE STORE -> ON CHARGE LES SLOTS
+
+    useEffect(() => {
+        if (!categoryId || !serviceId || !staffId || !dateState) return
+
+        setBookingDraft({
+            bookingCategoryId: categoryId,
+            bookingServiceId: serviceId,
+            bookingStaffId: staffId,
+            bookingDate: dateState,
+            bookingDatetime: datetimeState
+        })
+
+        axiosSlots()
+
+    }, [categoryId, serviceId, staffId, dateState])
+
+    {/* Click Slot */}
+
+    const onClickSelectedSlot = async (slot: any) => {
+        await createBooking(slot)
+        setSlotLabel(slot.label)
+    }
+
+    const activeSlot = (slot: any): boolean => {
+        return (slot.label === slotLabel)
     }
 
     {/* Loading : Catégory, Service, Staff */}
@@ -109,108 +237,20 @@ export default function BookingView() {
         return (isLoadingCategory || isLoadingService || isLoadingStaff)
     }
 
-    {/* Information completed */}
-
-    const informationCompleted = (): boolean => {
-        return !! (categoryId && serviceId && staffId)
-    }
-
-    const [progressStep, setProgressStep] = useState<number>(1)
+    {/* Progress Step */}
 
     useEffect(() => {
-        if (categoryId && serviceId && staffId) {
+        if (categoryId && serviceId && staffId && slotLabel) {
+            setProgressStep(3)
+        } else if(categoryId && serviceId && staffId) {
             setProgressStep(2)
         } else {
             setProgressStep(1)
         }
-    }, [categoryId, serviceId, staffId])
-
-    {/* Integration Days */}
-
-    /*=============== DAYS ===============*/
-    const availableDays = useMemo(() => {
-        const days = [];
-        const now = new Date();
-        const isAfter18 = now.getHours() >= 18;
-        const currentDay = isAfter18 ? 1 : 0;
-
-        for (let i = currentDay; i < currentDay + 11; i++) {
-            const d = new Date(now);
-            d.setDate(d.getDate() + i);
-            if (d.getDay() === 0) continue; // skip dimanche
-
-            days.push({
-                label: d.toLocaleDateString('fr-FR', {
-                    weekday: 'short',
-                    day: 'numeric',
-                    month: 'short'
-                }).replace(/\./g, ''),
-                value: d.toLocaleDateString('fr-CA'), // YYYY-MM-DD
-            });
-
-            if (days.length === 11) break;
-        }
-        return days;
-    }, []);
-
-    const [pageSize] = useState(3);
-    const [carouselIndex, setCarouselIndex] = useState(0);
-    const [selectedDay, setSelectedDay] = useState(availableDays[0]?.value);
-
-    const maxIndex = useMemo(() => {
-        return Math.max(0, Math.ceil(availableDays.length / pageSize) - 1);
-    }, [availableDays.length, pageSize]);
-
-    const visibleDays = useMemo(() => {
-        const start = carouselIndex * pageSize;
-        return availableDays.slice(start, start + pageSize);
-    }, [carouselIndex, pageSize, availableDays]);
-
-    const prevDays = () => {
-        if (carouselIndex > 0) setCarouselIndex(carouselIndex - 1);
-    };
-
-    const nextDays = () => {
-        if (carouselIndex < maxIndex) setCarouselIndex(carouselIndex + 1);
-    };
-
-    {/* On Click Day and active day */}
-
-    const [dayState, setDayState] = useState<string | null>(visibleDays[0].value ?? null)
-
-    const onClickDay = (day: any) => {
-        setDayState(day.value)
-    }
-
-    const activeDay = (day: any): boolean => {
-        return (day.value === dayState)
-    }
-
-    {/* Slots */}
-
-    const { setBookingDraft, axiosSlots, loadingSlots, slots} = useBookingStore()
-
-// QUAND LES 4 VALEURS LOCALES CHANGENT -> ON MET A JOUR LE STORE -> ON CHARGE LES SLOTS
-
-    useEffect(() => {
-        if (!categoryId || !serviceId || !staffId || !dayState) return
-
-        setBookingDraft({
-            bookingCategoryId: categoryId,
-            bookingServiceId: serviceId,
-            bookingStaffId: staffId,
-            bookingDate: dayState
-        })
-
-        axiosSlots()
-
-    }, [categoryId, serviceId, staffId, dayState])
-
-    console.log(slots)
-
+    }, [categoryId, serviceId, staffId, slotLabel])
 
     if (bookingBoolean) {
-        if (!informationCompleted()) {
+        if (!informationCompletedOne()) {
             return (
                 <main className={styles['page-wrapper']}>
                     <div className={styles['container']}>
@@ -320,13 +360,18 @@ export default function BookingView() {
                     </div>
                 </main>
             )
-        } else {
+        } else if (!informationCompletedTwo()) {
             return (
                 <main className={styles['page-wrapper']}>
                     <div className={styles['container']}>
                         <section className={styles['booking']}>
                             <div className={styles['booking__description']}>
-                                <p>Préparez votre rendez-vous<strong></strong></p>
+                                <div className={styles['booking__description__text']}>
+                                    <p>{serviceName}</p>
+                                    <p>• Accompagnante {staffName}</p>
+                                    <p>• {serviceDuration} min</p>
+                                </div>
+
                                 <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
                             </div>
 
@@ -369,10 +414,10 @@ export default function BookingView() {
                                     <div className={styles['loading']}>
                                         <span className={styles['loading__loader']}></span>
                                     </div>
-                                ) : slots.length > 0 ? (
+                                ) : slots?.length > 0 ? (
                                     <div className={styles['booking__slots']}>
                                         {slots.map((slot) => (
-                                            <button key={slot.label} className={`${styles['btn']} ${styles['btn-reservation']}`}>{slot.label}</button>
+                                            <button key={slot.label} onClick={() => onClickSelectedSlot(slot)} className={`${styles['btn']} ${styles['btn-reservation']} ${activeSlot(slot)? styles['active'] : ''}`}>{slot.label}</button>
                                         ))}
                                     </div>
                                 ) : (
@@ -380,6 +425,53 @@ export default function BookingView() {
                                         <p>Aucun créneau disponible.</p>
                                     </div>
                                 )}
+                            </div>
+                        </section>
+                    </div>
+                </main>
+            )
+        } else {
+            return (
+                <main className={styles['page-wrapper']}>
+                    <div className={styles['container']}>
+                        <section className={styles['booking']}>
+                            <div className={styles['booking__description']}>
+                                <div className={styles['booking__description__text']}>
+                                    <p>{serviceName}</p>
+                                    <p>• Accompagnante {staffName}</p>
+                                    <p>• {selectedDay} {slotLabel} </p>
+                                    <p>• {serviceDuration} min</p>
+                                </div>
+                                <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
+                            </div>
+
+                            {/* Separator */}
+                            <div className={styles['separator-top']}></div>
+
+                            {/* Svg */}
+                            <div className={styles['booking__title']}>
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                    <path d="M6 13c2-2 4-2 6 0s4 2 6 0" stroke="currentColor" strokeWidth="2" fill="none" />
+                                </svg>
+                            </div>
+
+                            {/* Barre de progression */}
+                            <ProgressBooking progressStep={progressStep} />
+
+                            <div className={styles['booking-form']}>
+                                <div className={styles['booking-form__description']}>
+                                    <p>Numéro de carte bancaire</p>
+                                    <p>Carte Visa, Mastercard acceptées</p>
+                                </div>
+
+                                <form>
+                                    <div className={styles['form-group']}>
+                                        <input type={"text"} />
+                                    </div>
+
+                                    <button type={"submit"} className={styles['btn-payment']}>Payer</button>
+                                </form>
                             </div>
                         </section>
                     </div>

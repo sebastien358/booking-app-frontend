@@ -34,10 +34,12 @@
     font-weight: 600;
     letter-spacing: 0.2px;
     color: #2F2F2F;
+
     @media (max-width: 767.98px) {
       font-size: 11px;
     }
   }
+
   &__description svg {
     cursor: pointer;
     width: 16px;
@@ -233,12 +235,18 @@
     align-items: center;
     justify-content: space-between;
   }
-  &__description p {
+
+  &__description__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  &__description__text p {
     font-family: "Playfair Display", serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.2px;
-    color: #2F2F2F;
+    color: #75757D
   }
   &__description svg {
     cursor: pointer;
@@ -276,8 +284,8 @@
 @media (max-width: 991.98px) {
   .booking {
     padding: 20px 0 20px 0;
-    &__description p {
-      font-size: 14px;
+    &__description__text p {
+      font-size: 13px;
     }
     &__subtitle {
       font-size: 13px;
@@ -288,8 +296,8 @@
 @media (max-width: 767.98px) {
   .booking {
     padding: 15px 0 0 0;
-    &__description p {
-      font-size: 12px;
+    &__description__text p {
+      font-size: 11px;
     }
     &__subtitle {
       font-size: 12px;
@@ -669,9 +677,6 @@
 
 .booking {
   padding: 10px 0 30px 0;
-
-
-
   .booking-reservation-title {
     margin-top: 30px;
     margin-bottom: 20px;
@@ -763,10 +768,12 @@
         color: #1F2937;
       }
     }
-    .btn-reservation.active {
-      background: #D7EAF2;
-      border: 1px solid #BFD6E2;
-      color: #1F2937;
+    .btn-reservation {
+     &.active {
+       background: #D7EAF2;
+       border: 1px solid #BFD6E2;
+       color: #1F2937;
+     }
     }
     .btn-reservation:disabled {
       opacity: 0.4;
@@ -897,5 +904,92 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/*=================
+  FORM BOOKING PAYMENT
+=================*/
+
+.booking-form {
+  width: 450px;
+
+  &__description {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0 30px 0;
+    gap: 2px;
+
+    p {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.5;
+      color: #6B7280;
+      text-align: center;
+      margin: 0;
+
+      &:first-child {
+        color: #2F2F2F;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group input {
+    width: 100%;
+    border: 1px solid #E6E0F3;
+    border-radius: 10px;
+    padding: 14px 12px;
+    background: #FFFFFF;
+    transition: all 120ms ease;
+
+    &:hover {
+      border-color: #D4C8EF;
+    }
+
+    &:focus {
+      border-color: #08d8ea;
+      box-shadow: 0 0 0 3px rgba(8, 216, 234, 0.15);
+      outline: none;
+    }
+  }
+
+  .btn-payment {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+    background: #08d8ea;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: all 120ms ease;
+
+    &:hover {
+      background: #08d8ea;
+      box-shadow: 0 4px 12px rgba(8, 216, 234, 0.18);
+      transform: translateY(-1px);
+
+    }
+
+    &:active {
+      background: #06a0ad;
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background: #E0E0E0;
+      color: #9CA3AF;
+      cursor: not-allowed;
+    }
   }
 }

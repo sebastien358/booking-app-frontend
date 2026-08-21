@@ -1,5 +1,6 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
+import {useBookingStore} from "@/store/booking.store";
 
 interface BookingModalState {
     bookingBoolean: boolean
@@ -8,19 +9,13 @@ interface BookingModalState {
     closeModalBooking: () => void
 }
 
-export const useBookingModalStore = create<BookingModalState>()(
-    persist((set, get) => ({
-            bookingBoolean: true,
+export const useBookingModalStore = create<BookingModalState>()((set) => ({
+    bookingBoolean: false,
 
-        openModalBooking: () => {
-            set({ bookingBoolean: true })
-        },
+    openModalBooking: () => set({ bookingBoolean: true }),
 
-        closeModalBooking: () => {
-            set({ bookingBoolean: false })
-        }
-
-    }),
-        {name: 'booking-modal-state'}
-    )
-)
+    closeModalBooking: () => {
+        useBookingStore.getState().resetBookingDraft()
+        set({ bookingBoolean: false })
+    }
+}))

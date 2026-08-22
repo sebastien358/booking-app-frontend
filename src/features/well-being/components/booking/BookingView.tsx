@@ -18,6 +18,7 @@ export default function BookingView() {
 
     const {
         setBookingDraft,
+        bookingDraft,
         axiosSlots,
         setCategoryName,
         categoryName,
@@ -29,8 +30,6 @@ export default function BookingView() {
         serviceDuration,
         setSelectedDay,
         selectedDay,
-        setSlotLabel,
-        slotLabel,
         setProgressStep,
         progressStep,
         informationCompletedOne,
@@ -123,10 +122,8 @@ export default function BookingView() {
         firstname: string
     }
 
-    const [staffId, setStaffId] = useState<number | null>(null)
-
     const onClickStaff = (staff: Staff) => {
-        setStaffId(staff.id)
+        setBookingDraft({ bookingStaffId: staff.id })
         setStaffName(staff.firstname)
     }
 
@@ -187,7 +184,7 @@ export default function BookingView() {
 
     {/* On Click Day and active day */}
 
-    const [dateState, setDateState] = useState<string | null>(visibleDays[0].value ?? null)
+    const [dateState, setDateState] = useState<string | null>(availableDays[0].value ?? null)
     const [datetimeState, setDatetimeState] = useState<string | null>(null)
 
     const onClickDay = (day: any) => {
@@ -206,29 +203,22 @@ export default function BookingView() {
 // QUAND LES 4 VALEURS LOCALES CHANGENT -> ON MET A JOUR LE STORE -> ON CHARGE LES SLOTS
 
     useEffect(() => {
-        if (!categoryId || !serviceId || !staffId || !dateState) return
+        if (!categoryId || !serviceId || !dateState) return
 
         setBookingDraft({
             bookingCategoryId: categoryId,
             bookingServiceId: serviceId,
-            bookingStaffId: staffId,
-            bookingDate: dateState,
-            bookingDatetime: datetimeState
+            bookingDate: dateState
         })
 
         axiosSlots()
 
-    }, [categoryId, serviceId, staffId, dateState])
+    }, [categoryId, serviceId, dateState])
 
     {/* Click Slot */}
 
     const onClickSelectedSlot = async (slot: any) => {
-        await createBooking(slot)
-        setSlotLabel(slot.label)
-    }
-
-    const activeSlot = (slot: any): boolean => {
-        return (slot.label === slotLabel)
+        setBookingDraft({ bookingDatetime: slot.label })
     }
 
     {/* Loading : Catégory, Service, Staff */}
@@ -240,14 +230,14 @@ export default function BookingView() {
     {/* Progress Step */}
 
     useEffect(() => {
-        if (categoryId && serviceId && staffId && slotLabel) {
+        if (categoryId && serviceId && bookingDraft.bookingStaffId && bookingDraft.bookingDatetime) {
             setProgressStep(3)
-        } else if(categoryId && serviceId && staffId) {
+        } else if(categoryId && serviceId && bookingDraft.bookingStaffId) {
             setProgressStep(2)
         } else {
             setProgressStep(1)
         }
-    }, [categoryId, serviceId, staffId, slotLabel])
+    }, [categoryId, serviceId, bookingDraft.bookingStaffId, bookingDraft.bookingDatetime])
 
     if (bookingBoolean) {
         if (!informationCompletedOne()) {
@@ -417,7 +407,7 @@ export default function BookingView() {
                                 ) : slots?.length > 0 ? (
                                     <div className={styles['booking__slots']}>
                                         {slots.map((slot) => (
-                                            <button key={slot.label} onClick={() => onClickSelectedSlot(slot)} className={`${styles['btn']} ${styles['btn-reservation']} ${activeSlot(slot)? styles['active'] : ''}`}>{slot.label}</button>
+                                            <button key={slot.label} onClick={() => onClickSelectedSlot(slot)} className={`${styles['btn']} ${styles['btn-reservation']}`}>{slot.label}</button>
                                         ))}
                                     </div>
                                 ) : (
@@ -439,7 +429,7 @@ export default function BookingView() {
                                 <div className={styles['booking__description__text']}>
                                     <p>{serviceName}</p>
                                     <p>• Accompagnante {staffName}</p>
-                                    <p>• {selectedDay} {slotLabel} </p>
+                                    <p>• {selectedDay} {bookingDraft.bookingDatetime}  </p>
                                     <p>• {serviceDuration} min</p>
                                 </div>
                                 <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />

@@ -28,7 +28,6 @@ interface BookingState {
     staffName: string | null
     serviceDuration: number | null,
     selectedDay: string | null,
-    slotLabel: string | null,
     progressStep: number
 
     setBookingDraft: (payload: Partial<BookingDraft>) => void
@@ -39,7 +38,6 @@ interface BookingState {
     setStaffName: (staffName: string) => string
     setServiceDuration: (serviceDuration: number) => number
     setSelectedDay: (selectedDay: string) => string
-    setSlotLabel: (slotLabel: string) => string
 
     axiosSlots: () => Promise<void>
     createBooking: (dataBooking: any) => Promise<any>
@@ -92,7 +90,6 @@ export const useBookingStore = create<BookingState>()(
                     staffName: null,
                     serviceDuration: null,
                     selectedDay: null,
-                    slotLabel: null,
                     progressStep: 1,
                 })
 
@@ -110,8 +107,6 @@ export const useBookingStore = create<BookingState>()(
 
             setSelectedDay: (selectedDay: string) => set({ selectedDay }),
 
-            setSlotLabel: (slotLabel: string) => set({ slotLabel }),
-
             axiosSlots: async () => {
                 const { bookingCategoryId, bookingServiceId, bookingStaffId, bookingDate } = get().bookingDraft
                 if (!bookingCategoryId || !bookingServiceId || !bookingStaffId || !bookingDate) {
@@ -121,10 +116,11 @@ export const useBookingStore = create<BookingState>()(
 
                 set({ loadingSlots: true })
                 try {
-                    const slots = await axiosBookingSlots(bookingCategoryId, bookingServiceId, bookingStaffId, bookingDate)
+                    const data = await axiosBookingSlots(bookingCategoryId, bookingServiceId, bookingStaffId, bookingDate)
+
                     setTimeout(() => {
-                        set({ slots, loadingSlots: false })
-                    }, 300)
+                        set({ slots: data, loadingSlots: false })
+                    }, 400)
                 } catch(e) {
                     console.error(e)
                     set({ loadingSlots: false })
@@ -148,13 +144,13 @@ export const useBookingStore = create<BookingState>()(
 
             // getters
             informationCompletedOne: () => {
-                const { bookingCategoryId, bookingServiceId, bookingStaffId } = get().bookingDraft
-                return !!(bookingCategoryId && bookingServiceId && bookingStaffId)
+                const { bookingCategoryId, bookingServiceId, bookingStaffId, bookingDate } = get().bookingDraft
+                return !!(bookingCategoryId && bookingServiceId && bookingStaffId && bookingDate)
             },
+
             informationCompletedTwo: () => {
-                const { bookingCategoryId, bookingServiceId, bookingStaffId, bookingDatetime } = get().bookingDraft
-                const { slotLabel } = get()
-                return !!(bookingCategoryId && bookingServiceId && bookingStaffId && bookingDatetime && slotLabel)
+                const { bookingCategoryId, bookingServiceId, bookingStaffId, bookingDate, bookingDatetime } = get().bookingDraft
+                return !!(bookingCategoryId && bookingServiceId && bookingStaffId && bookingDate && bookingDatetime)
             },
         }),
         {

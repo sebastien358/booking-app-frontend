@@ -20,12 +20,12 @@ export default function BookingView() {
         setBookingDraft,
         bookingDraft,
         axiosSlots,
-        setCategoryName,
-        categoryName,
         setServiceName,
         serviceName,
         setStaffName,
         staffName,
+        setServicePrice,
+        servicePrice,
         setServiceDuration,
         serviceDuration,
         setSelectedDay,
@@ -53,24 +53,26 @@ export default function BookingView() {
 
     {/* SELECTED CATEGORY */}
 
-    type Category = { id: number; name: string, slug: string };
-
-    const [categoryId, setCategoryId] = useState<number | null>(null);
-
-    useEffect(() => {
-        if (categories && categories.length > 0 && categoryId === null) {
-            setCategoryId(categories[0].id)
-            setCategoryName(categories[0].slug)
-        }
-    }, [categories, categoryId])
-
-    const onClickCategory = (categorie: Category) => {
-        setCategoryId(categorie.id)
-        setCategoryName(categorie.slug)
+    type Category = {
+        id: number
+        slug: string
     }
 
+    // 1. INIT avec le store
+    useEffect(() => {
+        if (categories && categories.length > 0 && !bookingDraft.bookingCategoryId) {
+            setBookingDraft({ bookingCategoryId: categories[0].id })
+        }
+    }, [categories, bookingDraft.bookingCategoryId])
+
+// 2. CLICK
+    const onClickCategory = (categorie: Category) => {
+        setBookingDraft({ bookingCategoryId: categorie.id })
+    }
+
+// 3. ACTIF: on check le store
     const isActiveCategory = (categorie: Category) => {
-        return categorie.id === categoryId
+        return categorie.id === bookingDraft.bookingCategoryId // <- ICI le fix
     }
 
     {/* SERVICES */}
@@ -79,6 +81,7 @@ export default function BookingView() {
         id: number
         name: string
         duration: number
+        price: number
     }
 
     const { servicesList, services, isLoadingService } = useServiceStore()
@@ -88,25 +91,25 @@ export default function BookingView() {
     }, []);
 
     const filteredServices = useMemo(() => {
-        if (!services || !categoryId) return [];
+        if (!services || !bookingDraft.bookingCategoryId) return [];
 
         return services.filter((service) => {
-            return service.category.id === categoryId;
-        });
-    }, [services, categoryId]);
+            return service.category.id === bookingDraft.bookingCategoryId
+        })
+    }, [services, bookingDraft.bookingCategoryId])
 
     const [serviceMenu, setServiceMenu] = useState<boolean>(false)
-    const [serviceId, setServiceId] = useState<number | null>(null)
 
     const onClickService = (service: Service) => {
-        setServiceId(service.id)
+        setBookingDraft({ bookingServiceId: service.id })
         setServiceName(service.name)
         setServiceDuration(service.duration)
+        setServicePrice(service.price)
         setServiceMenu(false)
     }
 
     const isActiveService = (service: Service) => {
-        return service.id === serviceId
+        return service.id === bookingDraft.bookingServiceId
     }
 
     {/* STAFFS */}
@@ -184,36 +187,41 @@ export default function BookingView() {
 
     {/* On Click Day and active day */}
 
-    const [dateState, setDateState] = useState<string | null>(availableDays[0].value ?? null)
-    const [datetimeState, setDatetimeState] = useState<string | null>(null)
-
     const onClickDay = (day: any) => {
-        setDateState(day.value)
-        setDatetimeState(day.label)
+        setBookingDraft({ bookingDate: day.value })
         setSelectedDay(day.label)
     }
 
     const activeDay = (day: any): boolean => {
-        return (day.value === dateState)
+        return (day.value === bookingDraft.bookingDate)
     }
 
     {/* Slots */}
 
-
 // QUAND LES 4 VALEURS LOCALES CHANGENT -> ON MET A JOUR LE STORE -> ON CHARGE LES SLOTS
 
     useEffect(() => {
-        if (!categoryId || !serviceId || !dateState) return
+        if (visibleDays.length > 0 && !bookingDraft.bookingDate && !selectedDay) {
+            setBookingDraft({ bookingDate: visibleDays[0].value })
+        }
+
+        setSelectedDay(visibleDays[0].label)
+
+    }, [visibleDays, bookingDraft.bookingDate, selectedDay])
+
+    useEffect(() => {
+        if (!bookingDraft.bookingCategoryId || !bookingDraft.bookingServiceId || !bookingDraft.bookingStaffId || !bookingDraft.bookingDate) return
 
         setBookingDraft({
-            bookingCategoryId: categoryId,
-            bookingServiceId: serviceId,
-            bookingDate: dateState
+            bookingCategoryId: bookingDraft.bookingCategoryId,
+            bookingServiceId: bookingDraft.bookingServiceId,
+            bookingStaffId: bookingDraft.bookingStaffId,
+            bookingDate: bookingDraft.bookingDate
         })
 
         axiosSlots()
 
-    }, [categoryId, serviceId, dateState])
+    }, [bookingDraft.bookingCategoryId, bookingDraft.bookingServiceId, bookingDraft.bookingStaffId, bookingDraft.bookingDate])
 
     {/* Click Slot */}
 
@@ -230,14 +238,14 @@ export default function BookingView() {
     {/* Progress Step */}
 
     useEffect(() => {
-        if (categoryId && serviceId && bookingDraft.bookingStaffId && bookingDraft.bookingDatetime) {
+        if (bookingDraft.bookingCategoryId && bookingDraft.bookingServiceId && bookingDraft.bookingStaffId && bookingDraft.bookingDatetime) {
             setProgressStep(3)
-        } else if(categoryId && serviceId && bookingDraft.bookingStaffId) {
+        } else if(bookingDraft.bookingCategoryId && bookingDraft.bookingServiceId && bookingDraft.bookingStaffId) {
             setProgressStep(2)
         } else {
             setProgressStep(1)
         }
-    }, [categoryId, serviceId, bookingDraft.bookingStaffId, bookingDraft.bookingDatetime])
+    }, [bookingDraft.bookingCategoryId, bookingDraft.bookingServiceId, bookingDraft.bookingStaffId, bookingDraft.bookingDatetime])
 
     if (bookingBoolean) {
         if (!informationCompletedOne()) {
@@ -358,8 +366,8 @@ export default function BookingView() {
                             <div className={styles['booking__description']}>
                                 <div className={styles['booking__description__text']}>
                                     <p>{serviceName}</p>
-                                    <p>• Accompagnante {staffName}</p>
-                                    <p>• {serviceDuration} min</p>
+                                    <p>• Accompagnante : {staffName}</p>
+                                    <p>• Durée : {serviceDuration} min</p>
                                 </div>
 
                                 <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
@@ -428,9 +436,9 @@ export default function BookingView() {
                             <div className={styles['booking__description']}>
                                 <div className={styles['booking__description__text']}>
                                     <p>{serviceName}</p>
-                                    <p>• Accompagnante {staffName}</p>
-                                    <p>• {selectedDay} {bookingDraft.bookingDatetime}  </p>
-                                    <p>• {serviceDuration} min</p>
+                                    <p>• Accompagnante : {staffName}</p>
+                                    <p>• {selectedDay} - <strong>{bookingDraft.bookingDatetime}</strong></p>
+                                    <p>• durée : {serviceDuration} min - <strong>{servicePrice}€</strong></p>
                                 </div>
                                 <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
                             </div>

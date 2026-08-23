@@ -23,22 +23,21 @@ interface BookingState {
     success: boolean
     error: string | null
     loadingSlots: boolean
-    categoryName: string | null
     serviceName: string | null
+    servicePrice: number | null
     staffName: string | null
-    serviceDuration: number | null,
-    selectedDay: string | null,
+    serviceDuration: number | null
+    selectedDay: string | null
+    slotLabel: string | null
     progressStep: number
 
     setBookingDraft: (payload: Partial<BookingDraft>) => void
     resetBookingDraft: () => void
-
-    setCategoryName: (categoryName: string) => string
     setServiceName: (serviceName: string) => string
+    setServicePrice: (servicePrice: number) => number
     setStaffName: (staffName: string) => string
     setServiceDuration: (serviceDuration: number) => number
     setSelectedDay: (selectedDay: string) => string
-
     axiosSlots: () => Promise<void>
     createBooking: (dataBooking: any) => Promise<any>
     setProgressStep: (progressStep: number) => number
@@ -61,8 +60,8 @@ export const useBookingStore = create<BookingState>()(
             success: false,
             error: null,
             loadingSlots: false,
-            categoryName: null,
             serviceName: null,
+            servicePrice: null,
             staffName: null,
             serviceDuration: null,
             selectedDay: null,
@@ -72,7 +71,6 @@ export const useBookingStore = create<BookingState>()(
             // actions
             setBookingDraft: (payload) => {
                 set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
-                console.log(get().bookingDraft)
             },
             resetBookingDraft: () => {
                 set({
@@ -85,21 +83,21 @@ export const useBookingStore = create<BookingState>()(
                     },
                     slots: [],
                     success: false,
-                    categoryName: null,
+                    error: null,
+                    loadingSlots: false,
                     serviceName: null,
+                    servicePrice: null,
                     staffName: null,
                     serviceDuration: null,
                     selectedDay: null,
+                    slotLabel: null,
                     progressStep: 1,
                 })
-
-
-                console.log(get().bookingDraft)
             },
 
-            setCategoryName: (categoryName: string) => set({ categoryName }),
-
             setServiceName: (serviceName: string) => set({ serviceName }),
+
+            setServicePrice: (servicePrice: number) => set({ servicePrice }),
 
             setStaffName: (staffName: string) => set({ staffName }),
 

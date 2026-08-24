@@ -10,8 +10,11 @@ interface BookingModalState {
 
 export const useBookingModalStore = create<BookingModalState>()((set) => ({
     bookingBoolean: false,
+    isUserBooking: false,
 
-    openModalBooking: () => set({ bookingBoolean: true }),
+    openModalBooking: () => {
+        set({ bookingBoolean: true })
+    },
 
     closeModalBooking: () => {
         useBookingStore.getState().resetBookingDraft()

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import {axiosBookingSlots} from "@/shared/services/booking.service";
+import {axiosBookingSlots, axiosCreateBooking} from "@/shared/services/booking.service";
 //import { axiosBookingSlots, axiosCreateBooking } from '../shared/services/booking.service.ts'
 
 export interface BookingDraft {
@@ -38,6 +38,7 @@ interface BookingState {
     setStaffName: (staffName: string) => string
     setServiceDuration: (serviceDuration: number) => number
     setSelectedDay: (selectedDay: string) => string
+    setSlotLabel: (slotLabel: string) => string
     axiosSlots: () => Promise<void>
     createBooking: (dataBooking: any) => Promise<any>
     setProgressStep: (progressStep: number) => number
@@ -70,7 +71,7 @@ export const useBookingStore = create<BookingState>()(
 
             // actions
             setBookingDraft: (payload) => {
-                set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
+                set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }) )
             },
             resetBookingDraft: () => {
                 set({
@@ -105,6 +106,8 @@ export const useBookingStore = create<BookingState>()(
 
             setSelectedDay: (selectedDay: string) => set({ selectedDay }),
 
+            setSlotLabel: (slotLabel: string) => set({ slotLabel}),
+
             axiosSlots: async () => {
                 const { bookingCategoryId, bookingServiceId, bookingStaffId, bookingDate } = get().bookingDraft
                 if (!bookingCategoryId || !bookingServiceId || !bookingStaffId || !bookingDate) {
@@ -127,11 +130,8 @@ export const useBookingStore = create<BookingState>()(
 
             createBooking: async (dataBooking) => {
                 try {
-                    console.log(dataBooking)
-
-                    //const res = await axiosCreateBooking(dataBooking)
-                    //set({ success: true, error: null })
-                    //return res
+                    await axiosCreateBooking(dataBooking)
+                    set({ success: true, error: null })
                 } catch (e: any) {
                     set({ error: e?.message || 'Erreur réservation', success: false })
                     throw e

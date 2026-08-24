@@ -8,6 +8,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useAuthStore} from "@/store/auth.store";
 import {useRouter} from "next/navigation";
+import {useBookingModalStore} from "@/store/bookingModal.store";
 
 const schema = z.object({
     email: z
@@ -22,7 +23,9 @@ const schema = z.object({
 
 export default function Login() {
 
-    const { login, errorMessage, clearError } = useAuthStore()
+    const { login, errorMessage, clearError, setShowLoginModal, showLoginModal } = useAuthStore()
+
+    const { openModalBooking } = useBookingModalStore()
 
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null)
 
@@ -36,9 +39,17 @@ export default function Login() {
         clearError()
         setSuccessMessage('Vous êtes connecté')
         setTimeout(() => {
-            router.push('/')
             setSuccessMessage(null)
             reset()
+
+            // Si le login vient du booking, on rouvre le booking
+            if (showLoginModal) {
+                openModalBooking()
+                setShowLoginModal(false)
+            }
+
+            // Sinon login normal -> on va à l'accueil
+            router.push('/')
         }, 2000)
     }
 

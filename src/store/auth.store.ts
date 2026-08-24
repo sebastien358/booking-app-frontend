@@ -6,6 +6,7 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     token: string | null
     user: null
     errorMessage: string | null
+    showLoginModal: boolean
 
     registerUser: (data: any) => Promise<void>
     login: (data: {email: string, password: string}) => Promise<void>
@@ -14,6 +15,8 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     isAdmin: () => boolean
     isUser: () => boolean
     clearError: () => void
+
+    setShowLoginModal: (showLoginModal: boolean) => boolean,
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -22,6 +25,7 @@ export const useAuthStore = create<AuthState>()(
             token: null,
             user: null,
             errorMessage: null,
+            showLoginModal: false,
 
             registerUser: async (data) => {
                 try {
@@ -75,6 +79,9 @@ export const useAuthStore = create<AuthState>()(
             },
 
             clearError: () => set({ errorMessage: null }),
+
+            setShowLoginModal: (showLoginModal: boolean) => set({ showLoginModal }),
+
         }),
         {name: 'auth-storage'} // renomme pour pas confondre avec product
     )

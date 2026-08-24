@@ -12,6 +12,9 @@ import noUser from '@/assets/images/no-user.png'
 import Image from "next/image";
 import ProgressBooking from "@/templates/progress-booking/ProgressBooking";
 import {useBookingStore} from "@/store/booking.store";
+import StripePaymentForm from "@/features/well-being/components/payment/StripePaymentForm";
+import {useAuthStore} from "@/store/auth.store";
+import {useRouter} from "next/navigation";
 
 
 export default function BookingView() {
@@ -30,13 +33,14 @@ export default function BookingView() {
         serviceDuration,
         setSelectedDay,
         selectedDay,
+        setSlotLabel,
+        slotLabel,
         setProgressStep,
         progressStep,
         informationCompletedOne,
         informationCompletedTwo,
         loadingSlots,
-        slots,
-        createBooking
+        slots
     } = useBookingStore()
 
     {/* STORE MODAL BOOKING */}
@@ -192,7 +196,7 @@ export default function BookingView() {
         setSelectedDay(day.label)
     }
 
-    const activeDay = (day: any): boolean => {
+    const isActiveDay = (day: any): boolean => {
         return (day.value === bookingDraft.bookingDate)
     }
 
@@ -225,8 +229,26 @@ export default function BookingView() {
 
     {/* Click Slot */}
 
+    const { token, isUser, setShowLoginModal } = useAuthStore()
+
+    const router = useRouter()
+
     const onClickSelectedSlot = async (slot: any) => {
-        setBookingDraft({ bookingDatetime: slot.label })
+        setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })
+        setSlotLabel(slot.label)
+
+        if (!token && !isUser()) {
+            setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })
+            setShowLoginModal(true)
+            setSlotLabel(slot.label)
+            //closeModalBooking()
+            router.push('/login')
+            return
+        }
+    }
+
+    const isActiveSlot = (slot: any) => {
+        return slot.start === bookingDraft.bookingDatetime
     }
 
     {/* Loading : Catégory, Service, Staff */}
@@ -399,7 +421,7 @@ export default function BookingView() {
                                     <div className={styles['days-list']}>
                                         {visibleDays.map((day) => (
                                             <div key={day.value}>
-                                                <button onClick={() => onClickDay(day)} className={`${styles['day-item']} ${activeDay(day) ? styles['active'] : ''}`}>{day.label}</button>
+                                                <button onClick={() => onClickDay(day)} className={`${styles['day-item']} ${isActiveDay(day) ? styles['active'] : ''}`}>{day.label}</button>
                                             </div>
                                         ))}
                                     </div>
@@ -415,7 +437,7 @@ export default function BookingView() {
                                 ) : slots?.length > 0 ? (
                                     <div className={styles['booking__slots']}>
                                         {slots.map((slot) => (
-                                            <button key={slot.label} onClick={() => onClickSelectedSlot(slot)} className={`${styles['btn']} ${styles['btn-reservation']}`}>{slot.label}</button>
+                                            <button key={slot.label} onClick={() => onClickSelectedSlot(slot)} className={`${styles['btn']} ${styles['btn-reservation']} ${isActiveSlot(slot) ? styles['active'] : ''}   `}>{slot.label}</button>
                                         ))}
                                     </div>
                                 ) : (
@@ -437,7 +459,7 @@ export default function BookingView() {
                                 <div className={styles['booking__description__text']}>
                                     <p>{serviceName}</p>
                                     <p>• Accompagnante : {staffName}</p>
-                                    <p>• {selectedDay} - <strong>{bookingDraft.bookingDatetime}</strong></p>
+                                    <p>• {selectedDay} - <strong>{slotLabel}</strong></p>
                                     <p>• durée : {serviceDuration} min - <strong>{servicePrice}€</strong></p>
                                 </div>
                                 <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
@@ -457,20 +479,8 @@ export default function BookingView() {
                             {/* Barre de progression */}
                             <ProgressBooking progressStep={progressStep} />
 
-                            <div className={styles['booking-form']}>
-                                <div className={styles['booking-form__description']}>
-                                    <p>Numéro de carte bancaire</p>
-                                    <p>Carte Visa, Mastercard acceptées</p>
-                                </div>
-
-                                <form>
-                                    <div className={styles['form-group']}>
-                                        <input type={"text"} />
-                                    </div>
-
-                                    <button type={"submit"} className={styles['btn-payment']}>Payer</button>
-                                </form>
-                            </div>
+                            {/* Form de payment */}
+                            <StripePaymentForm />
                         </section>
                     </div>
                 </main>

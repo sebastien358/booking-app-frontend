@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import {axiosBookingSlots, axiosCreateBooking} from "@/shared/services/booking.service";
+import {isAxiosError} from "axios";
 
 export interface BookingDraft {
     bookingCategoryId: number | null
@@ -19,8 +20,8 @@ export interface Slot {
 interface BookingState {
     bookingDraft: BookingDraft
     slots: Slot[]
-    success: boolean
-    error: string | null
+    successBooking: boolean
+    errorBooking: string | null
     loadingSlots: boolean
     serviceName: string | null
     servicePrice: number | null
@@ -57,8 +58,8 @@ export const useBookingStore = create<BookingState>()(
                 bookingDatetime: null,
             },
             slots: [],
-            success: false,
-            error: null,
+            successBooking: false,
+            errorBooking: null,
             loadingSlots: false,
             serviceName: null,
             servicePrice: null,
@@ -82,8 +83,8 @@ export const useBookingStore = create<BookingState>()(
                         bookingDatetime: null,
                     },
                     slots: [],
-                    success: false,
-                    error: null,
+                    successBooking: false,
+                    errorBooking: null,
                     loadingSlots: false,
                     serviceName: null,
                     servicePrice: null,
@@ -130,10 +131,19 @@ export const useBookingStore = create<BookingState>()(
             createBooking: async (dataBooking) => {
                 try {
                     await axiosCreateBooking(dataBooking)
-                    set({ success: true, error: null })
-                } catch (e: any) {
-                    set({ error: e?.message || 'Erreur réservation', success: false })
-                    throw e
+                    set({ successBooking: true, errorBooking: null })
+                } catch (err: unknown) {
+                    if (isAxiosError(err)) {
+                        const apiError = err.response?.data as { type?: string; message?: string } | undefined
+                        if (apiError?.type === 'DATETIME_ALREADY_TAKEN') {
+                            set({ errorBooking: apiError.message, successBooking: false })
+                        } else {
+                            set({ errorBooking: apiError?.message || 'Erreur lors de la réservation', successBooking: false })
+                        }
+                    } else {
+                        set({ errorBooking: 'Erreur réservation', successBooking: false })
+                    }
+                    throw err
                 }
             },
 

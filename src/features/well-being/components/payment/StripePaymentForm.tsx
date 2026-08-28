@@ -1,12 +1,10 @@
 'use client'
 
 import styles from './StripePaymentForm.module.scss'
-
 import type { Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { loadStripe } from '@stripe/stripe-js'
 import {useBookingStore} from "@/store/booking.store";
 import React, {useEffect, useRef, useState} from "react";
-import axios, {isAxiosError} from "axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 const KEY_STRIPE = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
@@ -15,7 +13,7 @@ export default function StripePaymentForm() {
 
     {/* BOOKING */}
 
-    const { bookingDraft, createBooking } = useBookingStore()
+    const { bookingDraft, createBooking, errorBooking } = useBookingStore()
 
     const date = new Date(bookingDraft.bookingDatetime as string)
 
@@ -30,11 +28,7 @@ export default function StripePaymentForm() {
 
             await createBooking(dataBooking)
         } catch (err: unknown) {
-            if (isAxiosError(err)) {
-                const apiError = err.response?.data
-                displayError('La prise de rendez-vous a échoué')
-            }
-            throw err
+            console.error(err)
         }
     }
 
@@ -55,7 +49,10 @@ export default function StripePaymentForm() {
 
         stripeElementsRef.current = stripeRef.current!.elements()
         stripeCardElementRef.current = stripeElementsRef.current.create('card', {
-            base: { styles: {'fontSize': '14px'}
+            base: {
+                styles: {
+                    'fontSize': '14px'
+                }
             }
         })
 
@@ -80,16 +77,17 @@ export default function StripePaymentForm() {
             }
 
             const payload = buildPayload(token.id)
-
-            await confirmBooking()
             console.log(payload)
 
-            displaySuccess('Le paiment a réussi ✨')
+            // 1. On affiche le message de succès d'abord
+            displaySuccess('Le paiement a réussi ✨')
+
+            // 2. On laisse le message visible un instant, PUIS on déclenche successBooking
+            setTimeout(async () => {
+                await confirmBooking()
+            }, 1500)
         } catch (err: unknown) {
-            if (isAxiosError(err)) {
-                const apiError = err.response?.data
-            }
-            throw err
+            console.log(err)
         }
     }
 
@@ -123,7 +121,18 @@ export default function StripePaymentForm() {
                 <div className={styles['form-group']}>
                     <div className={styles['card-element-stripe']} ref={cardElementRef}></div>
                 </div>
-                {errorMessage && <p className={styles['error-message']}>{errorMessage}</p>}
+
+                {/* Erreur Stripe / carte */}
+                {errorMessage && (
+                    <p className={styles['error-message']}>{errorMessage}</p>
+                )}
+
+                {/* Erreur Réservation / créneau */}
+                {errorBooking && (
+                    <p className={styles['error-message']}>{errorBooking}</p>
+                )}
+
+                {/* Success Message */}
                 {successMessage && <p className={styles['success-message']}>{successMessage}</p>}
                 <button
                     type={"button"}

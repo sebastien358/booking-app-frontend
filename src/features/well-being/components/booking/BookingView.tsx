@@ -15,6 +15,7 @@ import {useBookingStore} from "@/store/booking.store";
 import StripePaymentForm from "@/features/well-being/components/payment/StripePaymentForm";
 import {useAuthStore} from "@/store/auth.store";
 import {useRouter} from "next/navigation";
+import BookingConfirm from "@/features/well-being/components/booking/BookingConfirm";
 
 export default function BookingView() {
 
@@ -39,7 +40,8 @@ export default function BookingView() {
         informationCompletedOne,
         informationCompletedTwo,
         loadingSlots,
-        slots
+        slots,
+        successBooking
     } = useBookingStore()
 
     {/* STORE MODAL BOOKING */}
@@ -75,7 +77,7 @@ export default function BookingView() {
 
 // 3. ACTIF: on check le store
     const isActiveCategory = (categorie: Category) => {
-        return categorie.id === bookingDraft.bookingCategoryId // <- ICI le fix
+        return categorie.id === bookingDraft.bookingCategoryId
     }
 
     {/* SERVICES */}
@@ -240,7 +242,6 @@ export default function BookingView() {
             setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })
             setShowLoginModal(true)
             setSlotLabel(slot.label)
-            //closeModalBooking()
             router.push('/login')
             return
         }
@@ -259,7 +260,9 @@ export default function BookingView() {
     {/* Progress Step */}
 
     useEffect(() => {
-        if (bookingDraft.bookingCategoryId && bookingDraft.bookingServiceId && bookingDraft.bookingStaffId && bookingDraft.bookingDatetime) {
+        if (bookingDraft.bookingCategoryId && bookingDraft.bookingServiceId && bookingDraft.bookingStaffId && bookingDraft.bookingDatetime && successBooking) {
+            setProgressStep(4)
+        } else if (bookingDraft.bookingCategoryId && bookingDraft.bookingServiceId && bookingDraft.bookingStaffId && bookingDraft.bookingDatetime) {
             setProgressStep(3)
         } else if(bookingDraft.bookingCategoryId && bookingDraft.bookingServiceId && bookingDraft.bookingStaffId) {
             setProgressStep(2)
@@ -267,6 +270,13 @@ export default function BookingView() {
             setProgressStep(1)
         }
     }, [bookingDraft.bookingCategoryId, bookingDraft.bookingServiceId, bookingDraft.bookingStaffId, bookingDraft.bookingDatetime])
+
+    const confirm = () => {
+
+        setTimeout(() =>  {
+
+        }, 2000)
+    }
 
     if (bookingBoolean) {
         if (!informationCompletedOne()) {
@@ -449,7 +459,7 @@ export default function BookingView() {
                     </div>
                 </main>
             )
-        } else {
+        } else if (!successBooking) {
             return (
                 <main className={styles['page-wrapper']}>
                     <div className={styles['container']}>
@@ -459,7 +469,7 @@ export default function BookingView() {
                                     <p>{serviceName}</p>
                                     <p>• Accompagnante : {staffName}</p>
                                     <p>• {selectedDay} - <strong>{slotLabel}</strong></p>
-                                    <p>• durée : {serviceDuration} min - <strong>{servicePrice}€</strong></p>
+                                    <p>• Durée : {serviceDuration} min - <strong>{servicePrice}€</strong></p>
                                 </div>
                                 <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
                             </div>
@@ -480,6 +490,36 @@ export default function BookingView() {
 
                             {/* Form de payment */}
                             <StripePaymentForm />
+                        </section>
+                    </div>
+                </main>
+            )
+        } else {
+            return (
+                <main className={styles['page-wrapper']}>
+                    <div className={styles['container']}>
+                        <section className={styles['booking']}>
+                            <div className={styles['booking__description']}>
+                                <div className={styles['booking__description__text']}>
+                                    <p>{serviceName}</p>
+                                    <p>• Accompagnante : {staffName}</p>
+                                    <p>• Durée : {serviceDuration} min</p>
+                                </div>
+                                <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
+                            </div>
+
+                            {/* Separator */}
+                            <div className={styles['separator-top']}></div>
+
+                            {/* Svg */}
+                            <div className={styles['booking__title']}>
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                                    <path d="M6 13c2-2 4-2 6 0s4 2 6 0" stroke="currentColor" strokeWidth="2" fill="none" />
+                                </svg>
+                            </div>
+
+                            <BookingConfirm selectedDay={selectedDay} slotLabel={slotLabel} />
                         </section>
                     </div>
                 </main>

@@ -16,7 +16,6 @@ import StripePaymentForm from "@/features/well-being/components/payment/StripePa
 import {useAuthStore} from "@/store/auth.store";
 import {useRouter} from "next/navigation";
 
-
 export default function BookingView() {
 
     const {

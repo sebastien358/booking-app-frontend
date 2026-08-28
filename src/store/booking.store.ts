@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import {axiosBookingSlots, axiosCreateBooking} from "@/shared/services/booking.service";
-//import { axiosBookingSlots, axiosCreateBooking } from '../shared/services/booking.service.ts'
 
 export interface BookingDraft {
     bookingCategoryId: number | null

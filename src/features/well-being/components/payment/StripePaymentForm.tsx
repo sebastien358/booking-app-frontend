@@ -5,6 +5,7 @@ import type { Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-j
 import { loadStripe } from '@stripe/stripe-js'
 import {useBookingStore} from "@/store/booking.store";
 import React, {useEffect, useRef, useState} from "react";
+import axios, {isAxiosError} from "axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 const KEY_STRIPE = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
@@ -63,6 +64,54 @@ export default function StripePaymentForm() {
         return {token, service_id: bookingDraft.bookingServiceId}
     }
 
+    type PaymentStatus =
+        | { type: 'SUCCESS_PAYMENT'; message: string }
+        | { type: 'ALREADY_PROCESSED'; message: string }
+        | { type: 'ERROR_PAYMENT'; message: string }
+        | { type: 'REQUIRES_ACTION'; clientSecret: string; message?: string }
+        | { type: 'PRICE_MISMATCH'; message: string };
+
+    const handleStatusPayment = async (apiError: PaymentStatus) => {
+        switch (apiError.type) {
+            case 'SUCCESS_PAYMENT':
+                displaySuccess(apiError.message)
+                setTimeout(async () => {
+                    await confirmBooking()
+                }, 1000)
+                break
+
+            case 'PRICE_MISMATCH':
+            case 'ALREADY_PROCESSED':
+            case 'ERROR_PAYMENT':
+                displayError(apiError.message)
+                break
+
+            case 'REQUIRES_ACTION': {
+                if (!stripeRef.current) {
+                    displayError('Stripe pas chargé')
+                    break
+                }
+                const { error, paymentIntent } = await stripeRef.current.confirmCardPayment(apiError.clientSecret)
+
+                if (error) {
+                    displayError(error.message ?? '3DS échouée')
+                } else if (paymentIntent?.status === 'succeeded') {
+                    displaySuccess('Paiement validé')
+                    setTimeout(async () => {
+                        await confirmBooking()
+                    }, 1000)
+                } else {
+                    displayError('Paiement en attente')
+                }
+                break
+            }
+
+            default:
+                displayError('Réponse serveur inconnue')
+                break
+        }
+    }
+
     const confirmPayment = async () => {
         try {
             if (!stripeRef || !stripeCardElementRef) {
@@ -77,17 +126,14 @@ export default function StripePaymentForm() {
             }
 
             const payload = buildPayload(token.id)
-            console.log(payload)
 
-            // 1. On affiche le message de succès d'abord
-            displaySuccess('Le paiement a réussi ✨')
-
-            // 2. On laisse le message visible un instant, PUIS on déclenche successBooking
-            setTimeout(async () => {
-                await confirmBooking()
-            }, 1500)
+            const { data } = await axios.post(`http://127.0.0.1:8000/api/user/payment`, payload)
+            await handleStatusPayment(data)
         } catch (err: unknown) {
-            console.log(err)
+            if (isAxiosError(err)) {
+                const apiError = err?.response?.data
+                await handleStatusPayment(apiError)
+            }
         }
     }
 

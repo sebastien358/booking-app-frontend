@@ -24,7 +24,7 @@ export const axiosBookingSlots = async (categoryId: number, serviceId: number, s
 
 export const axiosCreateBooking = async (dataBooking: any) => {
     try {
-        const response = await axios.post(`${BASE_URL}/api/appointment/create`, dataBooking)
+        const response = await axios.post(`${BASE_URL}/api/appointment/crate`, dataBooking)
         if (response.status >= 200 && response.status < 300) {
             return response.data
         }

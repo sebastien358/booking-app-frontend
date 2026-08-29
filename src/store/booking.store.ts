@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import {axiosBookingSlots, axiosCreateBooking} from "@/shared/services/booking.service";
-import {isAxiosError} from "axios";
+import axios, {isAxiosError} from "axios";
 
 export interface BookingDraft {
     bookingCategoryId: number | null
@@ -40,7 +40,7 @@ interface BookingState {
     setSelectedDay: (selectedDay: string) => string
     setSlotLabel: (slotLabel: string) => string
     axiosSlots: () => Promise<void>
-    createBooking: (dataBooking: any) => Promise<any>
+    createBooking: (dataBooking: any, paymentIntentId: string) => Promise<any>
     setProgressStep: (progressStep: number) => number
     informationCompletedOne: () => boolean
     informationCompletedTwo: () => boolean
@@ -128,20 +128,24 @@ export const useBookingStore = create<BookingState>()(
                 }
             },
 
-            createBooking: async (dataBooking) => {
+            createBooking: async (dataBooking: any, paymentIntentId: string) => {
                 try {
                     await axiosCreateBooking(dataBooking)
                     set({ successBooking: true, errorBooking: null })
                 } catch (err: unknown) {
-                    if (isAxiosError(err)) {
-                        const apiError = err.response?.data as { type?: string; message?: string } | undefined
-                        if (apiError?.type === 'DATETIME_ALREADY_TAKEN') {
-                            set({ errorBooking: apiError.message, successBooking: false })
+                    try {
+                        const refundResponse = await axios.post('http://127.0.0.1:8000/api/user/payment/refund', {
+                            payment_intent_id: paymentIntentId
+                        })
+
+                        set({ errorBooking: refundResponse.data?.message ?? null, successBooking: false })
+                    } catch (refundErr: unknown) {
+                        if (isAxiosError(refundErr)) {
+                            const refundApiError = refundErr.response?.data as { message?: string } | undefined
+                            set({ errorBooking: refundApiError?.message, successBooking: false })
                         } else {
-                            set({ errorBooking: apiError?.message || 'Erreur lors de la réservation', successBooking: false })
+                            set({ errorBooking: 'Le remboursement a échoué', successBooking: false })
                         }
-                    } else {
-                        set({ errorBooking: 'Erreur réservation', successBooking: false })
                     }
                     throw err
                 }

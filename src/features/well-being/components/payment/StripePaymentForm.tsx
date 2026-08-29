@@ -7,7 +7,6 @@ import {useBookingStore} from "@/store/booking.store";
 import React, {useEffect, useRef, useState} from "react";
 import axios, {isAxiosError} from "axios";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 const KEY_STRIPE = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 
 export default function StripePaymentForm() {
@@ -18,7 +17,7 @@ export default function StripePaymentForm() {
 
     const date = new Date(bookingDraft.bookingDatetime as string)
 
-    const confirmBooking = async () => {
+    const confirmBooking = async (paymentIntentId: string) => {
         try {
             const dataBooking = {
                 datetime: date.toISOString(),
@@ -26,10 +25,10 @@ export default function StripePaymentForm() {
                 service_id: bookingDraft.bookingServiceId,
                 staff_id: bookingDraft.bookingStaffId
             }
-
-            await createBooking(dataBooking)
+            await createBooking(dataBooking, paymentIntentId)
         } catch (err: unknown) {
             console.error(err)
+            throw err
         }
     }
 
@@ -65,7 +64,7 @@ export default function StripePaymentForm() {
     }
 
     type PaymentStatus =
-        | { type: 'SUCCESS_PAYMENT'; message: string }
+        | { type: 'SUCCESS_PAYMENT'; message: string; payment_intent_id: string }
         | { type: 'ALREADY_PROCESSED'; message: string }
         | { type: 'ERROR_PAYMENT'; message: string }
         | { type: 'REQUIRES_ACTION'; clientSecret: string; message?: string }
@@ -75,8 +74,9 @@ export default function StripePaymentForm() {
         switch (apiError.type) {
             case 'SUCCESS_PAYMENT':
                 displaySuccess(apiError.message)
+
                 setTimeout(async () => {
-                    await confirmBooking()
+                    await confirmBooking(apiError.payment_intent_id)
                 }, 1000)
                 break
 
@@ -97,8 +97,9 @@ export default function StripePaymentForm() {
                     displayError(error.message ?? '3DS échouée')
                 } else if (paymentIntent?.status === 'succeeded') {
                     displaySuccess('Paiement validé')
+
                     setTimeout(async () => {
-                        await confirmBooking()
+                        await confirmBooking(paymentIntent.id)
                     }, 1000)
                 } else {
                     displayError('Paiement en attente')

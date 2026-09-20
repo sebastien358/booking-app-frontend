@@ -105,15 +105,17 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                                     </div>
                                 ) : token && isAdmin() ? (
                                     <div className={styles['header__actions__menu']} ref={serviceMenu}>
-                                        <p>Admin</p>
-                                        <Link onClick={logout} href="/login">
+                                        <NavLink href="/admin/bookings" dropdown>
+                                            Espace admin
+                                        </NavLink>
+                                        <Link onClick={() => logout()} href="/login">
                                             Déconnexion
                                         </Link>
                                     </div>
                                 ) : token && isUser() && !isAdmin() && (
                                     <div className={styles['header__actions__menu']} ref={serviceMenu}>
                                         <p>User</p>
-                                        <Link onClick={logout} href="/login">
+                                        <Link onClick={() => logout()} href="/login">
                                             Déconnexion
                                         </Link>
                                     </div>

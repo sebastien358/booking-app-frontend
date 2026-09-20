@@ -39,6 +39,7 @@ export default function BookingView() {
         progressStep,
         informationCompletedOne,
         informationCompletedTwo,
+        informationCompletedThree,
         loadingSlots,
         slots,
         successBooking
@@ -63,22 +64,20 @@ export default function BookingView() {
         slug: string
     }
 
-    // 1. INIT avec le store
     useEffect(() => {
-        if (categories && categories.length > 0 && !bookingDraft.bookingCategoryId) {
+        if (categories.length > 0 && bookingDraft.bookingCategoryId === null) {
             setBookingDraft({ bookingCategoryId: categories[0].id })
         }
-    }, [categories, bookingDraft.bookingCategoryId])
+    }, [categories, bookingDraft.bookingCategoryId]);
 
-// 2. CLICK
-    const onClickCategory = (categorie: Category) => {
-        setBookingDraft({ bookingCategoryId: categorie.id })
+    const onClickCategory = (category: Category) => {
+        setBookingDraft({ bookingCategoryId: category.id })
     }
 
-// 3. ACTIF: on check le store
-    const isActiveCategory = (categorie: Category) => {
-        return categorie.id === bookingDraft.bookingCategoryId
+    const isActiveCategory = (category: Category) => {
+        return category.id === bookingDraft.bookingCategoryId
     }
+
 
     {/* SERVICES */}
 
@@ -140,18 +139,18 @@ export default function BookingView() {
     const [now, setNow] = useState(() => new  Date())
 
     useEffect(() => {
-        const id = setInterval(() => setNow(new Date()), 60 * 1000)
-        return () => clearInterval(id)
+        const clear = setInterval(() => setNow(new Date()), 60 * 1000)
+        return () => clearInterval(clear)
     }, []);
 
     const availableDays = useMemo(() => {
         const days: {label: string, value: string}[] = []
 
         const isAfter18 = now.getHours() >= 18
-        const startOffset = isAfter18? 1 : 0
+        const startOffset = isAfter18 ? 1 : 0
 
         for (let i = startOffset; days.length < 10; i++) {
-            const d = new Date(now);
+            const d = new Date(now)
             d.setDate(d.getDate() + i)
 
             if (d.getDay() === 0) continue
@@ -165,17 +164,16 @@ export default function BookingView() {
                 value: d.toLocaleDateString('fr-CA')
             })
         }
-        return days;
-    }, [now])
 
-    {/* Carousel */}
+        return days
+    }, [now]);
 
     const [pageSize] = useState(3);
     const [carouselIndex, setCarouselIndex] = useState(0);
 
     const maxIndex = useMemo(() => {
         return Math.max(0, Math.ceil(availableDays.length / pageSize) - 1)
-    }, [availableDays.length, pageSize])
+    }, [availableDays, pageSize])
 
     const visibleDays = useMemo(() => {
         const start = carouselIndex * pageSize
@@ -192,12 +190,17 @@ export default function BookingView() {
 
     {/* On Click Day and active day */}
 
-    const onClickDay = (day: any) => {
+    type Day = {
+        label: string
+        value: string
+    }
+
+    const onClickDay = (day: Day) => {
         setBookingDraft({ bookingDate: day.value })
         setSelectedDay(day.label)
     }
 
-    const isActiveDay = (day: any): boolean => {
+    const isActiveDay = (day: Day): boolean => {
         return (day.value === bookingDraft.bookingDate)
     }
 
@@ -211,7 +214,6 @@ export default function BookingView() {
         }
 
         setSelectedDay(visibleDays[0].label)
-
     }, [visibleDays, bookingDraft.bookingDate, selectedDay])
 
     useEffect(() => {
@@ -225,7 +227,6 @@ export default function BookingView() {
         })
 
         axiosSlots()
-
     }, [bookingDraft.bookingCategoryId, bookingDraft.bookingServiceId, bookingDraft.bookingStaffId, bookingDraft.bookingDate])
 
     {/* Click Slot */}
@@ -234,7 +235,12 @@ export default function BookingView() {
 
     const router = useRouter()
 
-    const onClickSelectedSlot = async (slot: any) => {
+    type Slot = {
+        start: string
+        label: string
+    }
+
+    const onClickSelectedSlot = async (slot: Slot) => {
         setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })
         setSlotLabel(slot.label)
 
@@ -247,7 +253,7 @@ export default function BookingView() {
         }
     }
 
-    const isActiveSlot = (slot: any) => {
+    const isActiveSlot = (slot: Slot) => {
         return slot.start === bookingDraft.bookingDatetime
     }
 
@@ -270,13 +276,6 @@ export default function BookingView() {
             setProgressStep(1)
         }
     }, [bookingDraft.bookingCategoryId, bookingDraft.bookingServiceId, bookingDraft.bookingStaffId, bookingDraft.bookingDatetime])
-
-    const confirm = () => {
-
-        setTimeout(() =>  {
-
-        }, 2000)
-    }
 
     if (bookingBoolean) {
         if (!informationCompletedOne()) {
@@ -313,13 +312,13 @@ export default function BookingView() {
                                     {/* Booking category */}
                                     {categories && categories.length > 0 && (
                                         <section className={styles['booking-category']}>
-                                            {categories.map((categorie) => (
+                                            {categories.map((category) => (
                                                 <button
-                                                    key={categorie.id}
-                                                    className={`${styles['btn']} ${styles['btn-category']} ${isActiveCategory(categorie) ? styles['active'] : ''}`}
-                                                    onClick={() => onClickCategory(categorie)}
+                                                    key={category.id}
+                                                    className={`${styles['btn']} ${styles['btn-category']} ${isActiveCategory(category) ? styles['active'] : ''}`}
+                                                    onClick={() => onClickCategory(category)}
                                                 >
-                                                    {categorie.name}
+                                                    {category.name}
                                                 </button>
                                             ))}
                                         </section>
@@ -459,7 +458,7 @@ export default function BookingView() {
                     </div>
                 </main>
             )
-        } else if (!successBooking) {
+        } else if (!informationCompletedThree()) {
             return (
                 <main className={styles['page-wrapper']}>
                     <div className={styles['container']}>

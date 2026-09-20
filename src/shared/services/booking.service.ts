@@ -2,14 +2,14 @@ import axios from "axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 
-export const axiosBookingSlots = async (categoryId: number, serviceId: number, staffId: number, date: string) => {
+export const axiosBookingSlots = async (bookingCategoryId: number, bookingServiceId: number, bookingStaffId: number, bookingDate: string) => {
     try {
         const response = await axios.get(`${BASE_URL}/api/appointment/slots`, {
             params: {
-                categoryId,
-                serviceId,
-                staffId,
-                date,
+                categoryId: bookingCategoryId,
+                serviceId: bookingServiceId,
+                staffId: bookingStaffId,
+                date: bookingDate
             }
         })
         if (response.status >= 200 && response.status < 300) {
@@ -24,7 +24,7 @@ export const axiosBookingSlots = async (categoryId: number, serviceId: number, s
 
 export const axiosCreateBooking = async (dataBooking: any) => {
     try {
-        const response = await axios.post(`${BASE_URL}/api/appointment/crate`, dataBooking)
+        const response = await axios.post(`${BASE_URL}/api/appointment/create`, dataBooking)
         if (response.status >= 200 && response.status < 300) {
             return response.data
         }

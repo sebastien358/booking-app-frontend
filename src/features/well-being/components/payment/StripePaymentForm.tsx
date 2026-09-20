@@ -59,6 +59,31 @@ export default function StripePaymentForm() {
         stripeCardElementRef.current.mount(cardElementRef.current!)
     }
 
+    const confirmPayment = async () => {
+        try {
+            if (!stripeRef || !stripeCardElementRef) {
+                displayError('Stripe n\'est pas configuré correctement')
+                return
+            }
+
+            const {token, error} = await stripeRef.current!.createToken(stripeCardElementRef.current!)
+            if (error || !token) {
+                displayError('Stripe n\'est pas configuré correctement')
+                return
+            }
+
+            const payload = buildPayload(token.id)
+
+            const { data } = await axios.post<PaymentStatus>(`http://127.0.0.1:8000/api/user/payment`, payload)
+            await handleStatusPayment(data)
+        } catch (err: unknown) {
+            if (isAxiosError(err)) {
+                const apiError = err?.response?.data
+                await handleStatusPayment(apiError)
+            }
+        }
+    }
+
     const buildPayload = (token: string) => {
         return {token, service_id: bookingDraft.bookingServiceId}
     }
@@ -83,6 +108,7 @@ export default function StripePaymentForm() {
             case 'PRICE_MISMATCH':
             case 'ALREADY_PROCESSED':
             case 'ERROR_PAYMENT':
+
                 displayError(apiError.message)
                 break
 
@@ -104,6 +130,7 @@ export default function StripePaymentForm() {
                 } else {
                     displayError('Paiement en attente')
                 }
+
                 break
             }
 
@@ -113,44 +140,21 @@ export default function StripePaymentForm() {
         }
     }
 
-    const confirmPayment = async () => {
-        try {
-            if (!stripeRef || !stripeCardElementRef) {
-                displayError('Stripe n\'est pas configuré correctement')
-                return
-            }
-
-            const {token, error} = await stripeRef.current!.createToken(stripeCardElementRef.current!)
-            if (error || !token) {
-                displayError('Stripe n\'est pas configuré correctement')
-                return
-            }
-
-            const payload = buildPayload(token.id)
-
-            const { data } = await axios.post(`http://127.0.0.1:8000/api/user/payment`, payload)
-            await handleStatusPayment(data)
-        } catch (err: unknown) {
-            if (isAxiosError(err)) {
-                const apiError = err?.response?.data
-                await handleStatusPayment(apiError)
-            }
-        }
-    }
+    const [DELAY_TIMEOUT] = useState<number>(2000)
 
     const displaySuccess = (msg: string) => {
         setErrorMessage(null)
         setSuccessMessage(msg)
         setTimeout(() => {
             setSuccessMessage(null)
-        }, 2000)
+        }, DELAY_TIMEOUT)
     }
 
     const displayError = (msg: string) => {
         setErrorMessage(msg)
         setTimeout(() => {
             setErrorMessage(null)
-        }, 2000)
+        }, DELAY_TIMEOUT)
     }
 
     useEffect(() => {

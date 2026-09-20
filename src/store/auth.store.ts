@@ -7,9 +7,10 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     user: null
     errorMessage: string | null
     showLoginModal: boolean
+    hasHydrated: boolean
 
     registerUser: (data: any) => Promise<void>
-    login: (data: {email: string, password: string}) => Promise<void>
+    login: (data: { email: string, password: string }) => Promise<void>
     infoMe: () => void
     logout: () => void
     isAdmin: () => boolean
@@ -17,6 +18,7 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     clearError: () => void
 
     setShowLoginModal: (showLoginModal: boolean) => boolean,
+    setHasHydrated: (hasHydrated: boolean) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -26,6 +28,7 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             errorMessage: null,
             showLoginModal: false,
+            hasHydrated: false,
 
             registerUser: async (data) => {
                 try {
@@ -68,7 +71,6 @@ export const useAuthStore = create<AuthState>()(
                 return user?.roles.includes('ROLE_ADMIN') ?? false
             },
 
-
             isUser: () => {
                 const { user } = get()
                 return user?.roles.includes('ROLE_USER') ?? false
@@ -82,7 +84,14 @@ export const useAuthStore = create<AuthState>()(
 
             setShowLoginModal: (showLoginModal: boolean) => set({ showLoginModal }),
 
+            setHasHydrated: (state) => set({ hasHydrated: state })
         }),
-        {name: 'auth-storage'} // renomme pour pas confondre avec product
+        {
+            name: 'auth-storage',
+            onRehydrateStorage: () => (state) => {
+                state?.setHasHydrated(true)
+            }
+
+        } // renomme pour pas confondre avec product
     )
 )

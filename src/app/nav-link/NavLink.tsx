@@ -1,15 +1,16 @@
 import Link from "next/link";
+import styleSidebar from "@/features/admin/components/Sidebar.module.scss"
 import styles from '@/templates/header/Header.module.scss'
 import {usePathname} from "next/navigation";
-import {ReactNode} from "react";
 
 type NavLinkProps = {
     href: string
-    children: ReactNode
+    children: string
     dropdown?: boolean
+    dropdownSidebar?: boolean
 }
 
-export default function NavLink({href, children, dropdown = false}: NavLinkProps) {
+export default function NavLink({href, children, dropdown = false, dropdownSidebar= false}: NavLinkProps) {
     const pathName = usePathname()
     const isActive = pathName === href
 
@@ -17,6 +18,8 @@ export default function NavLink({href, children, dropdown = false}: NavLinkProps
 
     if (dropdown) {
         activeClass = styles['active']
+    } else if (dropdownSidebar) {
+        activeClass = styleSidebar['active']
     }
 
     return (

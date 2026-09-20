@@ -1,9 +1,19 @@
 "use client"
+
 import styles from './Contact.module.scss'
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import { z } from 'zod'
 import {useState} from "react";
-import { z } from "zod";
+
+const DELAY_TIMEOUT = 2000
+
+type ContactData = {
+    firstname: string
+    lastname: string
+    email: string
+    message: string
+}
 
 const schema = z.object({
     firstname: z.string().trim().min(1, 'Veuillez renseigner votre prénom.').max(70, 'Le prénom ne peut pas dépasser 70 caractères.'),
@@ -15,22 +25,36 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function Contact() {
+
     const { register, handleSubmit, reset, formState: {isSubmitting, errors} } = useForm<FormData>({
         resolver: zodResolver(schema)
     })
 
     const [success, setSuccess] = useState<string | null>(null)
-    const [error, setError] = useState<string | null>(null) // <- corrigé ici
+    const [error, setError] = useState<string | null>(null)
 
-    const onSubmit = async (data: FormData) => {
-        setError(null)
-        setSuccess(null)
+    const onSubmit = (data: ContactData) => {
         try {
-            setSuccess('Merci ! On vous répond sous 24h.')
-
-        } catch {
-            setError('Une erreur est survenue. Réessayez.')
+            console.log(data)
+            displaySuccessMsg('Le message a été envoyé')
+        } catch(err: any) {
+            displayErrorMsg('Le message n\'a pas pu etre envoyé')
         }
+    }
+
+    const displaySuccessMsg = (msg: string) => {
+        setSuccess(msg)
+        setTimeout(() => {
+            setSuccess(null)
+            reset()
+        }, DELAY_TIMEOUT)
+    }
+
+    const displayErrorMsg = (msg: string) => {
+        setError(msg)
+        setTimeout(() => {
+            setError(null)
+        }, DELAY_TIMEOUT)
     }
 
     return (

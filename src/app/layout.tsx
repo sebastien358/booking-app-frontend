@@ -1,19 +1,25 @@
+'use client'
+
 import styles from './layout.module.scss'
 import "./globals.scss";
 import React from "react";
-import Header from "@/templates/header/Header";
-import Footer from "@/templates/footer/Footer";
+import ConditionalFooter from "@/templates/conditional-footer/ConditionalFooter";
+import ConditionalHeader from "@/templates/conditional-header/ConditionaHeader";
+import {usePathname} from "next/navigation";
 
 export default function RootLayout({ children }: {children: React.ReactNode}) {
-  return (
-    <html lang="fr">
-      <body className={styles['app']}>
-        <Header className={styles['header']} />
-        <main className={styles['main']}>
-          {children}
-        </main>
-       <Footer className={styles['footer']} />
-      </body>
-    </html>
-  );
+    const pathname = usePathname()
+    const isAdmin = pathname.startsWith('/admin')
+
+    return (
+        <html lang="fr">
+          <body className={`${styles['app']} ${isAdmin ? styles['active-administration'] : ''}`}>
+          <ConditionalHeader className={styles['header']} />
+            <main className={styles['main']}>
+              {children}
+            </main>
+            <ConditionalFooter className={styles['footer']} />
+          </body>
+        </html>
+    );
 }

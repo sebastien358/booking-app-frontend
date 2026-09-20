@@ -17,6 +17,13 @@ export interface Slot {
     label: string
 }
 
+export interface DataBookingState {
+    datetime: string,
+    category_id: number,
+    service_id: number,
+    staff_id: number
+}
+
 interface BookingState {
     bookingDraft: BookingDraft
     slots: Slot[]
@@ -40,10 +47,11 @@ interface BookingState {
     setSelectedDay: (selectedDay: string) => string
     setSlotLabel: (slotLabel: string) => string
     axiosSlots: () => Promise<void>
-    createBooking: (dataBooking: any, paymentIntentId: string) => Promise<any>
+    createBooking: (dataBooking: DataBookingState, paymentIntentId: string) => Promise<any>
     setProgressStep: (progressStep: number) => number
     informationCompletedOne: () => boolean
     informationCompletedTwo: () => boolean
+    informationCompletedThree: () => boolean
     isStep2Complete: () => boolean
 }
 
@@ -69,10 +77,7 @@ export const useBookingStore = create<BookingState>()(
             slotLabel: null,
             progressStep: 1,
 
-            // actions
-            setBookingDraft: (payload) => {
-                set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }) )
-            },
+            // Actions
             resetBookingDraft: () => {
                 set({
                     bookingDraft: {
@@ -94,6 +99,10 @@ export const useBookingStore = create<BookingState>()(
                     slotLabel: null,
                     progressStep: 1,
                 })
+            },
+
+            setBookingDraft: (payload) => {
+                set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
             },
 
             setServiceName: (serviceName: string) => set({ serviceName }),
@@ -128,7 +137,7 @@ export const useBookingStore = create<BookingState>()(
                 }
             },
 
-            createBooking: async (dataBooking: any, paymentIntentId: string) => {
+            createBooking: async (dataBooking: DataBookingState, paymentIntentId: string) => {
                 try {
                     await axiosCreateBooking(dataBooking)
                     set({ successBooking: true, errorBooking: null })
@@ -163,6 +172,10 @@ export const useBookingStore = create<BookingState>()(
                 const { bookingCategoryId, bookingServiceId, bookingStaffId, bookingDate, bookingDatetime } = get().bookingDraft
                 return !!(bookingCategoryId && bookingServiceId && bookingStaffId && bookingDate && bookingDatetime)
             },
+
+            informationCompletedThree: () => {
+                return get().successBooking
+            }
         }),
         {
             name: 'booking-storage'

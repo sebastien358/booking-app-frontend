@@ -8,7 +8,7 @@ import {useBookingAdminStore} from "@/store/admin/bookingAdmin.store";
 export default function Page() {
     const {id} = useParams<{id: string}>()
 
-    const { bookingDetails, currentBooking, isLoading } = useBookingAdminStore()
+    const { bookingDetails, currentBooking, bookingDelete, isLoading } = useBookingAdminStore()
 
     useEffect(() => {
         if (id) {
@@ -17,6 +17,10 @@ export default function Page() {
     }, [id]);
 
     return (
-        <BookingDetails id={id} currentBooking={currentBooking} isLoading={isLoading} />
+        <BookingDetails
+            id={id} currentBooking={currentBooking}
+            bookingDelete={bookingDelete}
+            isLoading={isLoading}
+        />
     )
 }

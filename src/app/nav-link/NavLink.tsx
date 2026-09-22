@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styleSidebar from "@/features/admin/components/Sidebar.module.scss"
-import styles from '@/templates/header/Header.module.scss'
+import styles from '@/components/header/Header.module.scss'
 import {usePathname} from "next/navigation";
 
 type NavLinkProps = {

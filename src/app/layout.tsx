@@ -3,8 +3,8 @@
 import styles from './layout.module.scss'
 import "./globals.scss";
 import React from "react";
-import ConditionalFooter from "@/templates/conditional-footer/ConditionalFooter";
-import ConditionalHeader from "@/templates/conditional-header/ConditionaHeader";
+import ConditionalFooter from "@/components/conditional-footer/ConditionalFooter";
+import ConditionalHeader from "@/components/conditional-header/ConditionaHeader";
 import {usePathname} from "next/navigation";
 
 export default function RootLayout({ children }: {children: React.ReactNode}) {

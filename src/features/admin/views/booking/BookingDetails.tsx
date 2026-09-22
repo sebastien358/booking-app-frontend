@@ -2,13 +2,33 @@
 
 import styles from './BookingDetails.module.scss'
 import {BookingDataState} from "@/store/admin/bookingAdmin.store";
+import {useRouter} from "next/navigation";
 
-export default function BookingDetails({ id, isLoading, currentBooking }: {id: string, isLoading: boolean, currentBooking: BookingDataState}) {
+type BookingCurrentState = {
+    id: string,
+    isLoading: boolean,
+    currentBooking: BookingDataState
+    bookingDelete: (id: string) => Promise<void>
+}
+
+export default function BookingDetails({ id, currentBooking, bookingDelete, isLoading}: BookingCurrentState) {
 
     const formatedDate = (date: string) => {
         if (!date) return ""
         const d = new Date()
         return Intl.DateTimeFormat('fr-FR').format(d)
+    }
+
+    const router = useRouter()
+
+    const onClickDelete = async () => {
+        try {
+            await bookingDelete(id)
+            router.push('/admin/bookings')
+        } catch (err) {
+            console.error(err)
+            throw err
+        }
     }
 
     return (
@@ -19,7 +39,7 @@ export default function BookingDetails({ id, isLoading, currentBooking }: {id: s
                         <p>Chargement...</p>
                     </section>
                 </section>
-            ) : currentBooking !== null ? (
+            ) : currentBooking ? (
                 <section className={styles['booking-container']}>
                     <div className={styles['booking-details']}>
                         <h2>Rendez-vous - {currentBooking.staff.firstname} {currentBooking.staff.lastname}</h2>
@@ -52,6 +72,7 @@ export default function BookingDetails({ id, isLoading, currentBooking }: {id: s
                                 Répondre
                             </a>
                             <button
+                                onClick={() => onClickDelete()}
                                 className={styles['btn-delete']}
                             >
                                 Supprimer

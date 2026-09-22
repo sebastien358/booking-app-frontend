@@ -1,6 +1,10 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {axiosAdminBookingDetails, axiosBookingAdminList} from "@/shared/services/admin/bookings/bookingAdmin.service";
+import {
+    axiosAdminBookingDelete,
+    axiosAdminBookingDetails,
+    axiosBookingAdminList, axiosBookingAdminSearch
+} from "@/shared/services/admin/bookings/bookingAdmin.service";
 
 export interface BookingService {
     id: number
@@ -31,9 +35,16 @@ export interface BookingState {
     bookings: BookingDataState[]
     currentBooking: BookingDataState | null
     isLoading: boolean
+    term: string | null
+    offset: number
+    limit: number
+    hasMore: boolean
 
     bookingList: () => void
+    bookingLazyLoad: () => void
+    bookingSearch: (term: string | null) => void
     bookingDetails: (id: string) => void
+    bookingDelete: (id: string) => void
 }
 
 export const useBookingAdminStore = create<BookingState>()(
@@ -41,14 +52,55 @@ export const useBookingAdminStore = create<BookingState>()(
         bookings: [],
         currentBooking: null,
         isLoading: false,
+        term: null,
+        offset: 0,
+        limit: 2,
+        hasMore: true,
 
         bookingList: async () => {
             try {
-                set({ bookings: [], isLoading: true })
-                const data = await axiosBookingAdminList()
+                set({ bookings: [], isLoading: true, offset: 0, hasMore: true })
+                const data = await axiosBookingAdminList(get().offset, get().limit)
                 set({ bookings: data, isLoading: false })
             } catch (err) {
+                set({ bookings: [], isLoading: true, offset: 0 })
                 console.error(err)
+                throw err
+            }
+        },
+
+        bookingLazyLoad: async () => {
+            try {
+                const { bookings, offset, limit } = get()
+                set({ offset: offset + limit, isLoading: true })
+                const data = await axiosBookingAdminList(get().offset, get().limit)
+                set({ bookings: [ ...bookings, ...data ], isLoading: false })
+
+                if (data.length < limit) {
+                    set({ hasMore: false })
+                }
+            } catch(err) {
+                console.error(err)
+                throw err
+            }
+        },
+
+        bookingSearch: async (term: string | null) => {
+            const trimmed = term?.toLowerCase().trim()
+
+            if (!trimmed) {
+                set({ term: null, offset: 0 })
+                get().bookingList()
+                return
+            }
+
+            try {
+                set({ term: trimmed, isLoading: true })
+                const data = await axiosBookingAdminSearch(get().term)
+                set({ bookings: data, isLoading: false, hasMore: false })
+            } catch (err) {
+                console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
@@ -62,8 +114,32 @@ export const useBookingAdminStore = create<BookingState>()(
                 console.error(err)
                 throw err
             }
+        },
+
+        bookingDelete: async (id: string) => {
+            const { bookings } = get()
+            set({ bookings: bookings.filter((b) => b.id !== id) })
+            try {
+                await axiosAdminBookingDelete(id)
+                set({ currentBooking: null })
+            } catch (err) {
+                console.error(err)
+                throw err
+            }
+        },
+
+        resetBooking: () => {
+            try {
+                set({ term: null, offset: 0, hasMore: true })
+                get().bookingList()
+            } catch(err) {
+                console.error(err)
+                throw err
+            }
         }
+
     }), {
-        name: 'booking-admin-storage'
+        name: 'booking-admin-storage',
+        partialize: (state) => ({ bookings: state.bookings })
     })
 )

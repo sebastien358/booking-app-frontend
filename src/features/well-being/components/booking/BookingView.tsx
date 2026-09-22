@@ -10,7 +10,7 @@ import {useServiceStore} from "@/store/service.store";
 import {useStaffStore} from "@/store/staff.store";
 import noUser from '@/assets/images/no-user.png'
 import Image from "next/image";
-import ProgressBooking from "@/templates/progress-booking/ProgressBooking";
+import ProgressBooking from "@/components/progress-booking/ProgressBooking";
 import {useBookingStore} from "@/store/booking.store";
 import StripePaymentForm from "@/features/well-being/components/payment/StripePaymentForm";
 import {useAuthStore} from "@/store/auth.store";

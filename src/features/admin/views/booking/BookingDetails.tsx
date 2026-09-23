@@ -3,6 +3,8 @@
 import styles from './BookingDetails.module.scss'
 import {BookingDataState} from "@/store/admin/bookingAdmin.store";
 import {useRouter} from "next/navigation";
+import ModalConfirm from "@/components/modal-confirmation/ModalConfirm";
+import {useState} from "react";
 
 type BookingCurrentState = {
     id: string,
@@ -13,11 +15,19 @@ type BookingCurrentState = {
 
 export default function BookingDetails({ id, currentBooking, bookingDelete, isLoading}: BookingCurrentState) {
 
-    const formatedDate = (date: string) => {
-        if (!date) return ""
-        const d = new Date()
-        return Intl.DateTimeFormat('fr-FR').format(d)
+    {/* Modal de suppression */}
+
+    const [ activeModal, setActiveModal ] = useState<boolean>(false)
+
+    const openModal = () => {
+        setActiveModal(true)
     }
+
+    const closeModal = () => {
+        setActiveModal(false)
+    }
+
+    {/* Suppression d'un témoignage */}
 
     const router = useRouter()
 
@@ -29,6 +39,14 @@ export default function BookingDetails({ id, currentBooking, bookingDelete, isLo
             console.error(err)
             throw err
         }
+    }
+
+    {/* Affichage de la date */}
+
+    const formatedDate = (date: string) => {
+        if (!date) return ""
+        const d = new Date()
+        return Intl.DateTimeFormat('fr-FR').format(d)
     }
 
     return (
@@ -72,7 +90,7 @@ export default function BookingDetails({ id, currentBooking, bookingDelete, isLo
                                 Répondre
                             </a>
                             <button
-                                onClick={() => onClickDelete()}
+                                onClick={() => openModal()}
                                 className={styles['btn-delete']}
                             >
                                 Supprimer
@@ -80,7 +98,11 @@ export default function BookingDetails({ id, currentBooking, bookingDelete, isLo
                         </div>
                     </div>
 
-
+                    <ModalConfirm
+                        activeModal={activeModal}
+                        closeModal={closeModal}
+                        onClickDelete={onClickDelete}
+                    />
                 </section>
             ) : (
                 <section className={styles['booking-container']}>

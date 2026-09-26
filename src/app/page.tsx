@@ -142,8 +142,8 @@ export default function HomePage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="testimonials" className={styles['testimonials-section']}>
-          <div className={styles['testimonials']}>
+        <section id="testimonials" className={styles['testimonial-section']}>
+          <div className={styles['testimonial']}>
             <div className={styles['testimonials__header']}>
               <h2 className={styles['testimonials__title']}> Nos clients<br /> <span>témoignent</span> </h2>
               <p className={styles['testimonials__subtitle']}> Découvrez les retours de celles et ceux qui nous ont fait confiance pour leur bien-être et leur accompagnement. </p>
@@ -154,16 +154,16 @@ export default function HomePage() {
             )}
 
             {testimonialStore.publishedTestimonials.length > 0 && (
-                <div className={styles['testimonials-card']}>
-                  <div className={styles['testimonials-card__elems']}>
+                <div className={styles['testimonial-card']}>
+                  <div className={styles['testimonial-card__elems']}>
                     {testimonialStore.publishedTestimonials.map((testimonial) => (
-                        <div key={testimonial.id} className={styles['testimonials-card__items']}>
-                          <div className={styles['testimonials-card__content']}>
-                            <div className={styles['testimonials-card__stars']}>
+                        <div key={testimonial.id} className={styles['testimonial-card__items']}>
+                          <div className={styles['testimonial-card__content']}>
+                            <div className={styles['testimonial-card__stars']}>
                               {[...Array(testimonial.rating)].map((_, nbr) => <span key={nbr}>⭐️</span>)}
                             </div>
-                            <p className={styles['testimonials-card__text']}>{testimonial.message}</p>
-                            <div className={styles['testimonials-card__user']}>
+                            <p className={styles['testimonial-card__text']}>{testimonial.message}</p>
+                            <div className={styles['testimonial-card__user']}>
                               <Image src={testimonial.picture} alt="Photos clients" />
                               <div>
                                 <div className={styles['name']}>{testimonial.author}</div>
@@ -177,13 +177,13 @@ export default function HomePage() {
                 </div>
             )}
 
-            <div className={styles['testimonials-redirect__link']}>
+            <div className={styles['testimonial-redirect__link']}>
               <Link href="/testimonials">Voir tous les témoignages →</Link>
             </div>
 
             <div className={styles['testimonials__cta']}>
-              <h3 className={styles['testimonials-title']}>Ils nous ont fait confiance</h3>
-              <p className={styles['testimonials-subtitle']}> Plus de 150 personnes nous ont déjà fait confiance pour leur bien-être et leur accompagnement. </p>
+              <h3 className={styles['testimonial-title']}>Ils nous ont fait confiance</h3>
+              <p className={styles['testimonial-subtitle']}> Plus de 150 personnes nous ont déjà fait confiance pour leur bien-être et leur accompagnement. </p>
               <div className={styles['testimonials__stats']}>
                 <Image src={user1} alt={'user 1'} width={30} height={30} />
                 <Image src={user2} alt={'user 2'} width={30} height={30} />

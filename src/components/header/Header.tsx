@@ -24,7 +24,7 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
     const [activeSection, setActiveSection] = useState<string>('')
 
     useEffect(() => {
-        const sections = ['about', 'services', 'testimonials']
+        const sections = ['about', 'services', 'testimonial']
 
         const handleScroll = () => {
             const scrollPos = window.scrollY + 120
@@ -83,7 +83,7 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                     <Link href="/#services" className={isActive('/#services') ? styles['active'] : ''}>
                         Services
                     </Link>
-                    <Link href="/#testimonials" className={isActive('/#testimonials') ? styles['active'] : ''}>
+                    <Link href="/#testimonials" className={isActive('/#testimonial') ? styles['active'] : ''}>
                         Témoignages
                     </Link>
                     <NavLink href="/contact" dropdown>

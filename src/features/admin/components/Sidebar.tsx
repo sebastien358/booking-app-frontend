@@ -4,7 +4,7 @@ import NavLink from "@/app/nav-link/NavLink";
 const adminLinks = [
     {name: 'Accueil', path: '/'},
     {name: 'Tous les rendez-vous', path: '/admin/bookings'},
-    {name: 'Tous les témoignanges', path: '/admin/testimonials'}
+    {name: 'Tous les témoignanges', path: '/admin/testimonial'}
 ]
 
 export default function Sidebar() {

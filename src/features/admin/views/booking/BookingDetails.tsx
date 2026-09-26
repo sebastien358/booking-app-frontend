@@ -45,7 +45,7 @@ export default function BookingDetails({ id, currentBooking, bookingDelete, isLo
 
     const formatedDate = (date: string) => {
         if (!date) return ""
-        const d = new Date()
+        const d = new Date(date)
         return Intl.DateTimeFormat('fr-FR').format(d)
     }
 

@@ -8,17 +8,20 @@ type InoutSearchProps = {
     term: string | null,
     search: (term: string | null) => void
     placeholder: string
-    activeBookingAdmin: string
+    activeSearch: string
 }
 
-export default function InputSearch({ term, search, placeholder, activeBookingAdmin }: InoutSearchProps) {
+export default function InputSearch({ term, search, placeholder, activeSearch }: InoutSearchProps) {
 
     const pathname = usePathname()
     const isAdmin = pathname.startsWith('/admin')
 
     const searchData = (e: React.ChangeEvent<HTMLInputElement>) => {
-        switch (activeBookingAdmin) {
+        switch (activeSearch) {
             case 'booking-admin':
+                search(e.target.value)
+                break
+            case 'testimonial-admin':
                 search(e.target.value)
                 break
             default:
@@ -32,7 +35,7 @@ export default function InputSearch({ term, search, placeholder, activeBookingAd
                 {/* Filtration search */}
                 <div className={styles['search__input']}>
                     <input
-                        value={term ?? ''}
+                        value={term}
                         onChange={(e) => searchData(e)}
                         placeholder={placeholder}
                         type={"text"}

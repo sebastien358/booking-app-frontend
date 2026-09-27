@@ -4,7 +4,7 @@ import NavLink from "@/app/nav-link/NavLink";
 const adminLinks = [
     {name: 'Accueil', path: '/'},
     {name: 'Tous les rendez-vous', path: '/admin/bookings'},
-    {name: 'Tous les témoignanges', path: '/admin/testimonial'}
+    {name: 'Tous les témoignanges', path: '/admin/testimonials'}
 ]
 
 export default function Sidebar() {
@@ -17,7 +17,6 @@ export default function Sidebar() {
                         <NavLink
                             key={link.path}
                             href={link.path}
-                            className={styles['link']}
                             dropdownSidebar
                         >
                             {link.name}

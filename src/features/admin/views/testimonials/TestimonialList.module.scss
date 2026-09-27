@@ -1,0 +1,129 @@
+// LOADING
+.loading-indicator,
+.empty-state {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 767.98px) {
+    min-height: 100px;
+  }
+  p {
+    font-size: 15px;
+    color: #9ca3af;
+    @media (max-width: 767.98px) {
+      font-size: 14px;
+    }
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  @media (max-width: 991.98px) {
+    width: 100%;
+  }
+  input {
+    max-width: 320px;
+  }
+  .load-contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .btn-load {
+      margin-top: 20px;
+      cursor: pointer;
+      outline: none;
+      padding: 0.5rem 1rem;
+      border: 0;
+      font-size: 11px;
+      background-color: #0077ff;
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: #005fcc;
+      }
+    }
+  }
+}
+
+.testimonial {
+  padding: 20px 10px;
+  @media (max-width: 991.98px) {
+    padding: 15px 10px;
+  }
+  .testimonial__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .testimonial__title h3 {
+    text-transform: uppercase;
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    @media (max-width: 991.98px) {
+      font-size: 14px;
+    }
+    @media (max-width: 767.98px) {
+      font-size: 13px;
+    }
+  }
+  .testimonial__stars {
+    @media (max-width: 991.98px) {
+      font-size: 14px;
+    }
+    @media (max-width: 767.98px) {
+      font-size: 13px;
+    }
+  }
+  .testimonial__stars span {
+    font-size: 12px;
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    @media (max-width: 991.98px) {
+      gap: 1.3rem;
+    }
+    @media (max-width: 767.98px) {
+      gap: 1rem;
+    }
+    .grid-item {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      transition:
+              transform 0.3s ease,
+              box-shadow 0.3s ease;
+      cursor: pointer;
+      overflow: hidden;
+      @media (max-width: 991.98px) {
+        padding: 0.8rem;
+      }
+      @media (max-width: 767.98px) {
+        padding: 0.6rem;
+      }
+      &:hover {
+        transform: scale(1.01);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+      p {
+        font-size: 14px;
+        color: #555;
+        margin-top: 0.5rem;
+        @media (max-width: 991.98px) {
+          font-size: 13px;
+        }
+        @media (max-width: 767.98px) {
+          font-size: 12px;
+          margin-top: 0.4rem;
+        }
+      }
+    }
+  }
+}

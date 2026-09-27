@@ -3,11 +3,12 @@
 import styles from './ModalTestimonial.module.scss'
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
-import z from 'zod'
 import {ChangeEvent, useState} from "react";
 import {TestimonialData, useTestimonialStore} from "@/store/testimonial.store";
+import z from 'zod'
 
 const DELAY_TIMEOUT = 2000
+const DELAY_MODAL_TIMEOUT = 1000
 
 type ModalTestimonialProps = {
     openModal: boolean,
@@ -92,7 +93,8 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
     const closeModalTimeout = () => {
         setTimeout(() => {
             closeModal()
-        }, 1000)
+            reset()
+        }, DELAY_MODAL_TIMEOUT)
     }
 
     const handleSuccessMessage = (msg: string) => {
@@ -100,7 +102,6 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
         setTimeout(() => {
             setSuccessMessage(null)
             setFilename(null)
-            reset()
             closeModalTimeout()
         }, DELAY_TIMEOUT)
     }

@@ -4,7 +4,7 @@ import {
     axiosAdminBookingDelete,
     axiosAdminBookingDetails,
     axiosBookingAdminList, axiosBookingAdminSearch
-} from "@/shared/services/admin/bookings/bookingAdmin.service";
+} from "@/shared/services/admin/bookingAdmin.service";
 
 export interface BookingService {
     id: number

@@ -1,0 +1,201 @@
+/*======================
+  LOADING
+======================*/
+
+.loading-indicator,
+.empty-state {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 767.98px) {
+    min-height: 150px;
+  }
+  p {
+    font-size: 15px;
+    color: #9ca3af;
+    @media (max-width: 767.98px) {
+      font-size: 14px;
+    }
+  }
+}
+
+/*======================
+  BOOKINGS
+======================*/
+
+.contact-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 20px;
+  .contact-details {
+    max-width: 550px;
+    width: 100%;
+    padding: 30px 40px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    font-family: "Inter", sans-serif;
+    .contact-details {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .contact-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+    .title-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px; // un peu plus d’air
+    }
+    .title-left h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .rating {
+      display: flex;
+      gap: 3px;
+      font-size: 14px; // ⬅️ un poil plus petit
+      opacity: 0.85; // ⬅️ moins agressif
+    }
+    .sub {
+      font-size: 12px; // ⬅️ vrai texte secondaire
+      color: #6b7280;
+    }
+    .sep {
+      margin: 0 6px;
+    }
+    .contact-title h2 {
+      font-size: 22px;
+      color: black;
+    }
+    .contact-title .img-testimonial {
+      height: 100px;
+      width: 100px;
+      border-radius: 6px;
+      opacity: 0.95;
+    }
+    .contact-title .img-not-found {
+      height: 45px;
+      width: 45px;
+      border-radius: 6px;
+      opacity: 0.95;
+    }
+    .message-body {
+      margin-top: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.2rem;
+      line-height: 26px;
+      .text {
+        font-size: 14px;
+        font-weight: 400;
+        color: #374151;
+        line-height: 1.6;
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+      }
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      column-gap: 6px;
+      .btn-active {
+        font-size: 11px;
+        margin-top: 10px;
+        padding: 11px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .btn-inactive {
+        font-size: 11px;
+        margin-top: 10px;
+        padding: 11px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+      }
+      .btn-delete {
+        cursor: pointer;
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 11px;
+        background: #ef4444;
+        color: #fff;
+        transition: all 125ms ease;
+        &:hover {
+          background: #dc2626;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 991.98px) {
+  .contact-container {
+    margin: 30px 10px;
+    .contact-details {
+      padding: 30px 20px;
+      .title-left h2 {
+        font-size: 16px;
+      }
+      .message-body {
+        padding: 0.9rem;
+        .text {
+          font-size: 14px;
+        }
+      }
+      .actions {
+        .btn-active {
+          font-size: 10px;
+        }
+        .btn-inactive {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .contact-container {
+    margin: 30px 10px;
+    .contact-details {
+      padding: 20px;
+      .title-left h2 {
+        font-size: 15px;
+      }
+      .message-body {
+        padding: 0.8rem;
+        .text {
+          font-size: 13px;
+        }
+      }
+      .actions {
+        .btn-active {
+          font-size: 10px;
+        }
+        .btn-inactive {
+          font-size: 10px;
+        }
+      }
+    }
+  }
+}

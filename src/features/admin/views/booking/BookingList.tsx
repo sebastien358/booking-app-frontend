@@ -36,9 +36,19 @@ export default function BookingList() {
                     <p>Chargement...</p>
                 </div>
             ) : bookings.length === 0 ? (
-                <div className={styles['empty-state']}>
-                    <p>Aucun rendez-vous pour le moment</p>
-                </div>
+                <>
+                    <InputSearch
+                        term={term}
+                        search={bookingSearch}
+                        placeholder='Rechercher un rendez-vous...'
+                        activeSearch='booking-admin'
+                    />
+
+                    <div className={styles['empty-state']}>
+                        <p>Aucun rendez-vous pour le moment</p>
+                    </div>
+                </>
+
             ) : (
                 <div className={styles['page']}>
 
@@ -48,7 +58,7 @@ export default function BookingList() {
                         term={term}
                         search={bookingSearch}
                         placeholder='Rechercher un rendez-vous...'
-                        activeBookingAdmin='booking-admin'
+                        activeSearch='booking-admin'
                     />
 
                     <div className={styles['booking-admin']}>

@@ -7,14 +7,13 @@ import ModalConfirm from "@/components/modal-confirmation/ModalConfirm";
 import {useState} from "react";
 
 type BookingCurrentState = {
-    id: string,
-    isLoading: boolean,
+    id: string
+    isLoading: boolean
     currentBooking: BookingDataState
     bookingDelete: (id: string) => Promise<void>
 }
 
 export default function BookingDetails({ id, currentBooking, bookingDelete, isLoading}: BookingCurrentState) {
-
     {/* Modal de suppression */}
 
     const [ activeModal, setActiveModal ] = useState<boolean>(false)

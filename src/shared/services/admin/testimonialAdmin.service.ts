@@ -57,3 +57,16 @@ export async function axiosAdminTestimonialToggle(id: string) {
         throw err
     }
 }
+
+export async function axiosAdminTestimonialDelete(id: string) {
+    try {
+        const response = await axios.delete(`${BASE_URL}/api/admin/testimonial/${id}/delete`)
+        if (response.status === 200 || response.status === 204) {
+            return response.data
+        }
+        throw new Error(`Erreur de la suppression d'un témoignage : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}

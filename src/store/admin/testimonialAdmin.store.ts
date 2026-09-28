@@ -1,6 +1,7 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {
+    axiosAdminTestimonialDelete,
     axiosAdminTestimonialDetails,
     axiosAdminTestimonialList,
     axiosAdminTestimonialSearch, axiosAdminTestimonialToggle
@@ -33,6 +34,7 @@ export interface TestimonialState {
     testimonialAdminSearch: (term: string | null) => Promise<void>
     testimonialAdminDetails: (id: string) => Promise<void>
     testimonialAdminToggle: (id: string) => Promise<void>
+    testimonialDelete: (id: string) => Promise<void>
 }
 
 
@@ -108,6 +110,18 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
             try {
                 await axiosAdminTestimonialToggle(id)
                 await get().testimonialAdminDetails(id)
+            } catch (err) {
+                console.error(err)
+                throw err
+            }
+        },
+
+        testimonialDelete: async (id: string) => {
+            const { testimonials  } = get()
+            set({ testimonials: testimonials.filter((t) => t.id !== id) })
+            try {
+                await axiosAdminTestimonialDelete(id)
+                set({ currentTestimonial: null })
             } catch (err) {
                 console.error(err)
                 throw err

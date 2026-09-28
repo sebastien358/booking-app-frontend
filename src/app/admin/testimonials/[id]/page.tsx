@@ -6,7 +6,7 @@ import {useTestimonialAdminStore} from "@/store/admin/testimonialAdmin.store";
 import {useEffect} from "react";
 
 export default function Page() {
-    const { testimonialAdminDetails, testimonialAdminToggle, currentTestimonial, isLoading } = useTestimonialAdminStore()
+    const { testimonialAdminDetails, testimonialAdminToggle, testimonialDelete, currentTestimonial, isLoading } = useTestimonialAdminStore()
 
     const { id } = useParams<{id: string}>()
 
@@ -20,6 +20,7 @@ export default function Page() {
         <TestimonialDetails
             id={id}
             testimonialAdminToggle={testimonialAdminToggle}
+            testimonialDelete={testimonialDelete}
             currentTestimonial={currentTestimonial}
             isLoading={isLoading}
         />

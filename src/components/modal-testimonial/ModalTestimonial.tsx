@@ -45,7 +45,7 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
             .trim()
             .min(30, { message: 'Votre message doit contenir au moins 30 caractères' }),
         image: z
-            .custom<File | null>()
+            .any()
             .nullable()
             .refine((file) => !file || file.size <= MAX_FILE_SIZE, {
                 message: 'L\'image ne doit pas dépasser 5 Mo'
@@ -61,7 +61,7 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
         defaultValues: {
             author: "",
             job: "",
-            rating: "",
+            rating: undefined,
             message: "",
             image: null
         }
@@ -72,8 +72,13 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
     const [ filename, setFilename ] = useState<string | null>(null)
 
     const onChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
+        const file = e.target.files?.[0] || null
+
+        if (!file) {
+            setFilename(null)
+            setValue('image', null, { shouldValidate: true })
+            return
+        }
         setFilename(file.name)
         setValue('image', file, { shouldValidate: true })
     }
@@ -121,14 +126,14 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
                             <button className={`${styles['btn']} ${styles['btn-modal-close']}`} onClick={() => closeModal()}>×</button>
                         </div>
                         <h2 className={styles['testimonials__title']}>Laissez votre avis</h2>
-                        <form onSubmit={handleSubmit(onSubmit )}>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className={styles['form-group']}>
                                 <input {...register('author')} type="text" placeholder="Votre nom" />
                                 {errors.author && <span className={styles['error-field']}>{errors.author?.message}</span>}
                             </div>
                             <div className={styles['form-group']}>
                                 <input {...register('job')} type="text" placeholder="Votre profession" />
-                                {errors.author && <span className={styles['error-field']}>{errors.author?.message}</span>}
+                                {errors.job && <span className={styles['error-field']}>{errors.job?.message}</span>}
                             </div>
                             <div className={styles['form-group']}>
                                 <div className={styles['select-wrapper']}>
@@ -144,7 +149,7 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
                                 {errors.rating && <span className={styles['error-field']}>{errors.rating?.message}</span>}
                             </div>
                             <div className={styles['form-group']}>
-                                <input {...register('image')} type="file" onChange={(e) => onChangeImage(e)} />
+                                <input type="file" onChange={(e) => onChangeImage(e)} />
                                 <small className={styles['img-file']}>{filename}</small>
                                 <div className={styles['file-helper']}>
                                     <small className={styles['file-hint']}>

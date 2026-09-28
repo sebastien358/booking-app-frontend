@@ -66,6 +66,9 @@
     .sub {
       font-size: 12px; // ⬅️ vrai texte secondaire
       color: #6b7280;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
     }
     .sep {
       margin: 0 6px;

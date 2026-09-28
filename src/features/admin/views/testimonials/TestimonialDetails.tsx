@@ -4,25 +4,50 @@ import styles from './TestimonialDetails.module.scss'
 import {TestimonialData} from "@/store/testimonial.store";
 import Image from "next/image";
 import NoUser from '@/assets/images/no-user.png'
+import ModalConfirm from "@/components/modal-confirmation/ModalConfirm";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 
 type TestimonialProps = {
     id: string
     testimonialAdminToggle: (id: string) => Promise<void>
+    testimonialDelete: (id: string) => Promise<void>
     currentTestimonial: TestimonialData | null
     isLoading: boolean
 }
 
-export default function TestimonialDetails({ id, testimonialAdminToggle, currentTestimonial, isLoading }: TestimonialProps) {
+export default function TestimonialDetails({ id, testimonialAdminToggle, testimonialDelete, currentTestimonial, isLoading }: TestimonialProps) {
+
+    {/* Gestion de la modal de confirmation */}
+
+    const [activeModal, setActiveModal] = useState<boolean>(false)
+
+    const closeModal = () => {
+        setActiveModal(false)
+    }
+
+    {/* Affichage de la date d'un témoignage */}
+
+    const formatedDate = (date: Date) => {
+        if (!date) return ""
+        const d = new Date(date)
+        return Intl.DateTimeFormat('fr-FR').format(d)
+    }
+
+    {/* Activer ou désactiver un témoignage */}
 
     const toggleTestimonial = async () => {
         await testimonialAdminToggle(id)
     }
 
-    const deleteTestimonial = () => {
-        console.log(id)
-    }
+    {/* Supprimer un témoignage */}
 
-    console.log(currentTestimonial)
+    const router = useRouter()
+
+    const deleteTestimonial = async () => {
+        await testimonialDelete(id)
+        router.push('/admin/testimonials')
+    }
 
     return (
         <>
@@ -38,12 +63,17 @@ export default function TestimonialDetails({ id, testimonialAdminToggle, current
                                 <div className={styles['title-left']}>
                                     <h2>{currentTestimonial.author}</h2>
                                     <div className={styles['rating']}>
-                                        ferferfre
+                                        {[1, 2, 3, 4, 5].map((n, index) => (
+                                            <span key={index}>{n <= currentTestimonial.rating ? '⭐' : '☆'}</span>
+                                        ))}
                                     </div>
                                     <div className={styles['sub']}>
-                                        <span className={styles['date']}>date</span>
-                                        <span className={styles['sep']}>·bgbg</span>
-                                        <span className={styles['job']}>{currentTestimonial.job}</span>
+                                        <span className={styles['job']}>
+                                            {currentTestimonial.job}
+                                        </span>
+                                        <span className={styles['date']}>
+                                            {formatedDate(currentTestimonial.created_at)}
+                                        </span>
                                     </div>
                                 </div>
                                 {currentTestimonial.picture ? (
@@ -53,7 +83,6 @@ export default function TestimonialDetails({ id, testimonialAdminToggle, current
                                 )}
                             </div>
                             <div className={styles['message-body']}>
-                                <h3 className={styles['date-title']}></h3>
                                 <p className={styles['text']}>{currentTestimonial.message}</p>
                             </div>
                             <div className={styles['actions']}>
@@ -64,7 +93,7 @@ export default function TestimonialDetails({ id, testimonialAdminToggle, current
                                     {currentTestimonial.is_published ? 'Visible' : 'Non-visible'}
                                 </button>
                                 <button
-                                    onClick={() => deleteTestimonial()}
+                                    onClick={() => setActiveModal(true)}
                                     className={`${styles['btn']} ${styles['btn-delete']}`}
                                 >
                                     Supprimer
@@ -72,7 +101,11 @@ export default function TestimonialDetails({ id, testimonialAdminToggle, current
                             </div>
                         </div>
 
-
+                        <ModalConfirm
+                            activeModal={activeModal}
+                            closeModal={closeModal}
+                            onClickDelete={deleteTestimonial}
+                        />
                     </section>
                 ) : (
                     <section className={styles['empty-state']}>

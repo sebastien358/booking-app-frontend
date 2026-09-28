@@ -39,12 +39,14 @@ export interface BookingState {
     offset: number
     limit: number
     hasMore: boolean
+    countBookings: number | null
 
     bookingList: () => void
     bookingLazyLoad: () => void
     bookingSearch: (term: string | null) => void
     bookingDetails: (id: string) => void
     bookingDelete: (id: string) => void
+    resetBooking: () => void
 }
 
 export const useBookingAdminStore = create<BookingState>()(
@@ -56,12 +58,13 @@ export const useBookingAdminStore = create<BookingState>()(
         offset: 0,
         limit: 2,
         hasMore: true,
+        countBookings: null,
 
         bookingList: async () => {
             try {
                 set({ bookings: [], isLoading: true, offset: 0, hasMore: true })
                 const data = await axiosBookingAdminList(get().offset, get().limit)
-                set({ bookings: data, isLoading: false })
+                set({ bookings: data.appointments, isLoading: false, countBookings: data.count })
             } catch (err) {
                 set({ bookings: [], isLoading: true, offset: 0 })
                 console.error(err)

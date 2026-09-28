@@ -28,6 +28,7 @@ export interface TestimonialState {
     limit: number
     hasMore: boolean
     term: string | null
+    countTestimonials: number | null
 
     testimonialAdminList: () => Promise<void>
     testimonialAdminLazyLoad: () => Promise<void>
@@ -35,8 +36,8 @@ export interface TestimonialState {
     testimonialAdminDetails: (id: string) => Promise<void>
     testimonialAdminToggle: (id: string) => Promise<void>
     testimonialDelete: (id: string) => Promise<void>
+    resetTestimonial: () => void
 }
-
 
 export const useTestimonialAdminStore = create<TestimonialState>()(
     persist((set, get) => ({
@@ -48,12 +49,13 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
         limit: 4,
         hasMore: true,
         term: null,
+        countTestimonials: null,
 
         testimonialAdminList: async () => {
             try {
                 set({ testimonials: [], isLoading: true, hasMore: true })
                 const data = await axiosAdminTestimonialList(get().offset, get().limit)
-                set({ testimonials: data, isLoading: false })
+                set({ testimonials: data.testimonials, isLoading: false, countTestimonials: data.count })
             } catch (err) {
                 set({ testimonials: [], isLoading: false })
                 console.error(err)
@@ -126,6 +128,11 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
                 console.error(err)
                 throw err
             }
+        },
+
+        resetTestimonial: async () => {
+            set({ term: null, offset: 0, hasMore: true })
+            await get().testimonialAdminList()
         }
 
     }), {

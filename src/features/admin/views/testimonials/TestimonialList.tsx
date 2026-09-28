@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import styles from './TestimonialList.module.scss'
 import Link from "next/link";
@@ -71,7 +71,9 @@ export default function TestimonialList() {
                                         </div>
                                         <p>{t.message.slice(0, 40)}...</p>
                                         <p>{t.job}</p>
-                                        <p>{t.is_read ? '✅' : '❌'}</p>
+                                        <p className={styles['testimonial__is__read']}>
+                                            {t.is_read ? '✅' : '❌'}
+                                        </p>
                                     </Link>
                                 ))}
                             </div>

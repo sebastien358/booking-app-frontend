@@ -149,9 +149,11 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
                                 {errors.rating && <span className={styles['error-field']}>{errors.rating?.message}</span>}
                             </div>
                             <div className={styles['form-group']}>
-                                <input type="file" onChange={(e) => onChangeImage(e)} />
-                                <small className={styles['img-file']}>{filename}</small>
-                                <div className={styles['file-helper']}>
+                                <div className={styles['input-file']}>
+                                    <label className={styles['input-file__label']}>
+                                        <input className={styles['input-file__input']} type="file" onChange={(e) => onChangeImage(e)} />
+                                        <span className={filename ? styles['filename'] : styles['filename-active']}>{'Choisir une image' || filename}</span>
+                                    </label>
                                     <small className={styles['file-hint']}>
                                         Image facultative
                                     </small>

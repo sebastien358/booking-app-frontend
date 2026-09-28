@@ -17,7 +17,7 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     isUser: () => boolean
     clearError: () => void
 
-    setShowLoginModal: (showLoginModal: boolean) => boolean,
+    setShowLoginModal: (showLoginModal: boolean) => void,
     setHasHydrated: (hasHydrated: boolean) => void
 }
 

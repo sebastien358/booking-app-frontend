@@ -3,22 +3,42 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import styles from './Header.module.scss'
 import NavLink from "@/app/nav-link/NavLink";
-import {faUser} from "@fortawesome/free-solid-svg-icons";
 import {useAuthStore} from "@/store/auth.store";
 import {useBookingModalStore} from "@/store/bookingModal.store";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars, faUser } from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+library.add(fas)
+
 export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
+
+
+
 
     const { token, isAdmin, isUser, logout } = useAuthStore()
 
+    {/* Menu Administration */}
+
     const [isVisible, setIsVisible] = useState(false);
-    const serviceMenu = useRef<HTMLDivElement>(null);
+    const timeoutRef = useRef(null);
+
+    const handleEnter = () => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        setIsVisible(true)
+    }
+
+    const handleLeave = () => {
+        timeoutRef.current = setTimeout(() => {
+            setIsVisible(false)
+        }, 150)
+    }
+
     const pathname = usePathname();
 
-    const toggleMenu = () => setIsVisible(!isVisible);
     const closeMenu = () => setIsVisible(false);
 
     const [activeSection, setActiveSection] = useState<string>('')
@@ -55,6 +75,15 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
 
     const { openModalBooking } = useBookingModalStore()
 
+    {/* Menu Mobile */ }
+
+    const [openMobile, setOpenMobile] = useState<boolean>(false)
+
+    const toggleMobile = () => {
+        setOpenMobile(!openMobile)
+    }
+
+    let byPrefixAndName;
     return (
         <header className={styles['header']}>
             <div className={styles['header__container']}>
@@ -90,38 +119,36 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                         Contact
                     </NavLink>
 
-                    <div className={styles['header__actions']}>
-                        <FontAwesomeIcon onClick={() => setIsVisible(!isVisible)} icon={faUser} className={token ? styles['active-login'] : ''} />
-                        {isVisible && (
-                            <>
-                                {!token ? (
-                                    <div className={styles['header__actions__menu']} ref={serviceMenu}>
-                                        <NavLink href="/login" dropdown>
-                                            Connexion
-                                        </NavLink>
-                                        <NavLink href="/register" dropdown>
-                                            Inscription
-                                        </NavLink>
-                                    </div>
-                                ) : token && isAdmin() ? (
-                                    <div className={styles['header__actions__menu']} ref={serviceMenu}>
-                                        <NavLink href="/admin/bookings" dropdown>
-                                            Espace admin
-                                        </NavLink>
-                                        <Link onClick={() => logout()} href="/login">
-                                            Déconnexion
-                                        </Link>
-                                    </div>
-                                ) : token && isUser() && !isAdmin() && (
-                                    <div className={styles['header__actions__menu']} ref={serviceMenu}>
-                                        <p>User</p>
-                                        <Link onClick={() => logout()} href="/login">
-                                            Déconnexion
-                                        </Link>
-                                    </div>
-                                )}
-                           </>
-                        )}
+                    <div className={styles['header__actions']} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+                        <FontAwesomeIcon icon={faUser} className={token ? styles['active-login'] : ''} />
+                        <>
+                            {!token ? (
+                                <div className={`${styles['header__actions__menu']} ${isVisible ? styles['header__actions__menu__open'] : ''}`}>
+                                    <NavLink href="/login" dropdown>
+                                        Connexion
+                                    </NavLink>
+                                    <NavLink href="/register" dropdown>
+                                        Inscription
+                                    </NavLink>
+                                </div>
+                            ) : token && isAdmin() ? (
+                                <div className={`${styles['header__actions__menu']} ${isVisible ? styles['header__actions__menu__open'] : ''}`}>
+                                    <NavLink href="/admin/bookings" dropdown>
+                                        Espace admin
+                                    </NavLink>
+                                    <Link onClick={() => logout()} href="/login">
+                                        Déconnexion
+                                    </Link>
+                                </div>
+                            ) : token && isUser() && !isAdmin() && (
+                                <div className={`${styles['header__actions__menu']} ${isVisible ? styles['header__actions__menu__open'] : ''}`}>
+                                    <p>User</p>
+                                    <Link onClick={() => logout()} href="/login">
+                                        Déconnexion
+                                    </Link>
+                                </div>
+                            )}
+                       </>
                     </div>
                 </nav>
 
@@ -133,33 +160,32 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                 </div>
 
                 {/* BURGER (mobile) */}
-                <button className={styles['header__burger']} onClick={toggleMenu}>
-                    <span></span><span></span><span></span>
+                <button onClick={() => toggleMobile()} className={styles['header__burger']}>
+                    <FontAwesomeIcon icon={['fas', 'bars']} />
                 </button>
             </div>
 
             {/* MENU MOBILE */}
-            {isVisible && (
-                <div className={styles['mobile-menu']} ref={serviceMenu}>
-                    <Link href="/" onClick={closeMenu} className={isActive('/') ? styles['active'] : ''}>
-                        Accueil
+
+            <div className={`${styles['mobile-menu']} ${openMobile ? styles['mobile-menu__open'] : ''}`}>
+                <Link href="/" onClick={closeMenu} className={isActive('/') ? styles['active'] : ''}>
+                    Accueil
+                </Link>
+                <Link href="/#about" onClick={closeMenu}>À propos</Link>
+                <Link href="/#services" onClick={closeMenu}>Services</Link>
+                <Link href="/#testimonials" onClick={closeMenu}>Témoignages</Link>
+                <Link href="/contact/form" onClick={closeMenu} className={isActive('/contact/form') ? styles['active'] : ''}>
+                    Contact
+                </Link>
+                <div>
+                    <Link href="/login" onClick={closeMenu} className={isActive('/login') ? styles['active'] : ''}>
+                        Connexion
                     </Link>
-                    <Link href="/#about" onClick={closeMenu}>À propos</Link>
-                    <Link href="/#services" onClick={closeMenu}>Services</Link>
-                    <Link href="/#testimonials" onClick={closeMenu}>Témoignages</Link>
-                    <Link href="/contact/form" onClick={closeMenu} className={isActive('/contact/form') ? styles['active'] : ''}>
-                        Contact
-                    </Link>
-                    <div>
-                        <Link href="/login" onClick={closeMenu} className={isActive('/login') ? styles['active'] : ''}>
-                            Connexion
-                        </Link>
-                    </div>
-                    <button onClick={bookingOpen} className={styles['mobile-cta']}>
-                        Prendre RDV
-                    </button>
                 </div>
-            )}
+                <button onClick={bookingOpen} className={styles['mobile-cta']}>
+                    Prendre RDV
+                </button>
+            </div>
         </header>
-    );
+    )
 }

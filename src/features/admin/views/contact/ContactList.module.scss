@@ -1,0 +1,119 @@
+// LOADING
+
+.loading-indicator,
+.empty-state {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 767.98px) {
+    min-height: 100px;
+  }
+  p {
+    font-size: 15px;
+    color: #9ca3af;
+    @media (max-width: 767.98px) {
+      font-size: 14px;
+    }
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  @media (max-width: 991.98px) {
+    width: 100%;
+  }
+  input {
+    max-width: 320px;
+  }
+  .load-contact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .btn {
+      margin-top: 20px;
+    }
+  }
+}
+
+.contact-admin {
+  padding: 20px 10px;
+  @media (max-width: 991.98px) {
+    padding: 15px 10px;
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    @media (max-width: 991.98px) {
+      gap: 1.3rem;
+    }
+    @media (max-width: 767.98px) {
+      gap: 1rem;
+    }
+    .grid-item {
+      line-height: 23px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      transition:
+              transform 0.3s ease,
+              box-shadow 0.3s ease;
+      cursor: pointer;
+      @media (max-width: 991.98px) {
+        padding: 0.8rem;
+      }
+      @media (max-width: 767.98px) {
+        padding: 0.6rem;
+      }
+      &:hover {
+        transform: scale(1.01);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #555;
+        @media (max-width: 991.98px) {
+          font-size: 15px;
+          margin-bottom: 0.3rem;
+        }
+        @media (max-width: 767.98px) {
+          font-size: 14px;
+          margin-bottom: 0.2rem;
+        }
+      }
+      p {
+        font-size: 14px;
+        margin-bottom: 0.5rem;
+        color: #555;
+        @media (max-width: 991.98px) {
+          font-size: 13px;
+          margin-bottom: 0.3rem;
+        }
+        @media (max-width: 767.98px) {
+          margin-bottom: 0.2rem;
+          font-size: 12px;
+        }
+      }
+      small {
+        font-size: 14px;
+        color: #888;
+      }
+      .isRead {
+        font-size: 13px;
+        font-weight: 500;
+        color: #888;
+        @media (max-width: 991.98px) {
+          font-size: 12px;
+        }
+        @media (max-width: 767.98px) {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}

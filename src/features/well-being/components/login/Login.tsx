@@ -42,14 +42,12 @@ export default function Login() {
             setSuccessMessage(null)
             reset()
 
-            // Si le login vient du booking, on rouvre le booking
             if (showLoginModal) {
                 openModalBooking()
                 setShowLoginModal(false)
             }
 
-            // Sinon login normal -> on va à l'accueil
-            router.push('/')
+            router.push('/admin/bookings')
         }, 2000)
     }
 

@@ -4,7 +4,7 @@ import styles from './Testimonial.module.scss'
 import ModalTestimonial from "@/components/modal-testimonial/ModalTestimonial";
 import {useEffect, useState} from "react";
 import {useTestimonialStore} from "@/store/testimonial.store";
-import NoImage from '@/assets/images/téléchargement.svg'
+import NoImage from '@/assets/images/no.svg'
 import Image from "next/image";
 
 export default function Testimonial() {
@@ -27,13 +27,6 @@ export default function Testimonial() {
         setOpenModal(false)
     }
 
-    {/* Affichage de la date */}
-
-    const formatedDate = (date: Date) => {
-        if (!date) return ""
-        const d = new Date(date)
-        return Intl.DateTimeFormat('fr-FR').format(d)
-    }
     return (
         <main id="testimonials-section" className={styles['testimonials-section']}>
             <div className={styles['container']}>

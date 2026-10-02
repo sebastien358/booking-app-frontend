@@ -57,6 +57,7 @@
   textarea {
     padding: 0.8rem 1rem;
     border-radius: 0.9rem;
+    font-size: 0.90rem;
     outline: none;
     transition:
             border-color 0.2s ease,
@@ -64,11 +65,11 @@
     width: 100%;
     border: 1px solid #ddd;
     background: #f9fafb;
-    font-size: 13px;
 
     &:focus {
-      border-color: #e63946;
-      box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.25);
+      border-color: #d3aeff;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(211, 174, 255, 0.35);
     }
 
     &::placeholder {
@@ -100,27 +101,26 @@
     justify-content: center;
     margin-top: 10px;
     .btnSubmit {
-      background: #e63946;
-      color: #fff;
-      padding: 12px 22px;
+      font-size: 11px;
+      background: #f3e8ff;
+      color: #7c3aed;
+      border: 1px solid #e3d0ff;
+      padding: 10px 22px;
       border-radius: 8px;
-      font-size: 10px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border: none;
+      transition: 0.2s ease;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(230, 57, 70, 0.25);
-      transition: all 0.2s ease;
+      width: auto;
     }
     .btnSubmit:hover {
-      background: #d62839;
+      background: #ead6ff;
+      border-color: #d3b6ff;
       transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(230, 57, 70, 0.25);
+      box-shadow: 0 6px 16px rgba(168, 85, 247, 0.25);
     }
     .btnSubmit:active {
       transform: translateY(0);
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 16px rgba(168, 85, 247, 0.25);
     }
   }
 }

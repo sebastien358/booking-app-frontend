@@ -5,15 +5,9 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import { z } from 'zod'
 import {useState} from "react";
+import {ContactData, useContact} from "@/store/contact.store";
 
 const DELAY_TIMEOUT = 2000
-
-type ContactData = {
-    firstname: string
-    lastname: string
-    email: string
-    message: string
-}
 
 const schema = z.object({
     firstname: z.string().trim().min(1, 'Veuillez renseigner votre prénom.').max(70, 'Le prénom ne peut pas dépasser 70 caractères.'),
@@ -26,34 +20,34 @@ type FormData = z.infer<typeof schema>
 
 export default function Contact() {
 
+    const { contactNew, resetContact, errorMessage } = useContact()
+
     const { register, handleSubmit, reset, formState: {isSubmitting, errors} } = useForm<FormData>({
         resolver: zodResolver(schema)
     })
 
-    const [success, setSuccess] = useState<string | null>(null)
-    const [error, setError] = useState<string | null>(null)
+    const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-    const onSubmit = (data: ContactData) => {
+    const onSubmit = async (data: ContactData) => {
         try {
-            console.log(data)
+            await contactNew(data)
             displaySuccessMsg('Le message a été envoyé')
         } catch(err: any) {
-            displayErrorMsg('Le message n\'a pas pu etre envoyé')
+            displayErrorMsg()
         }
     }
 
     const displaySuccessMsg = (msg: string) => {
-        setSuccess(msg)
+        setSuccessMessage(msg)
         setTimeout(() => {
-            setSuccess(null)
+            setSuccessMessage(null)
             reset()
         }, DELAY_TIMEOUT)
     }
 
-    const displayErrorMsg = (msg: string) => {
-        setError(msg)
+    const displayErrorMsg = () => {
         setTimeout(() => {
-            setError(null)
+            resetContact()
         }, DELAY_TIMEOUT)
     }
 
@@ -83,8 +77,8 @@ export default function Contact() {
                             {errors.message && <span className={styles.errorField}>{errors.message.message}</span>}
                         </div>
 
-                        {success && <p className={styles.successMessage}>{success}</p>}
-                        {error && <p className={styles.errorMessage}>{error}</p>}
+                        {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
+                        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
                         <div className={styles.formSubmit}>
                             <button type="submit" className={styles.btnSubmit} disabled={isSubmitting}>

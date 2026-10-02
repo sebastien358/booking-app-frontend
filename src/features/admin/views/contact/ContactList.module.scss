@@ -31,18 +31,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    .btn {
-      margin-top: 20px;
+    .btn-load {
+      margin-top: 10px;
+      cursor: pointer;
+      outline: none;
+      padding: 0.5rem 1rem;
+      border: 0;
+      font-size: 11px;
+      background-color: #0077ff;
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: #005fcc;
+      }
     }
   }
 }
 
 .contact-admin {
-  padding: 20px 10px;
-  @media (max-width: 991.98px) {
-    padding: 15px 10px;
-  }
   .grid-container {
+    margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;

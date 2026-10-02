@@ -1,7 +1,7 @@
-import Contact from "@/features/well-being/components/contact/Contact";
+import ContactForm from "@/features/well-being/components/contact/ContactForm";
 
 export default function Page() {
     return (
-        <Contact />
+        <ContactForm />
     )
 }

@@ -24,6 +24,9 @@ export default function InputSearch({ term, search, placeholder, activeSearch }:
             case 'testimonial-admin':
                 search(e.target.value)
                 break
+            case 'contact-admin':
+                search(e.target.value)
+                break
             default:
                 return ""
         }
@@ -35,7 +38,7 @@ export default function InputSearch({ term, search, placeholder, activeSearch }:
                 {/* Filtration search */}
                 <div className={styles['search__input']}>
                     <input
-                        value={term}
+                        value={term ?? ''}
                         onChange={(e) => searchData(e)}
                         placeholder={placeholder}
                         type={"text"}

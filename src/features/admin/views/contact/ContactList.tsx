@@ -4,10 +4,11 @@ import styles from './ContactList.module.scss'
 import {useContactAdminStore} from "@/store/admin/contactAdmin.store";
 import {useEffect} from "react";
 import InputSearch from "@/components/input-search/InputSearch";
+import Link from "next/link";
 
 export default function ContactList() {
 
-    const { contactList, contacts, isLoading, hasMore } = useContactAdminStore()
+    const { contactList, contactSearch, contactLazyLoad, contacts, isLoading, term, hasMore } = useContactAdminStore()
 
     useEffect(() => {
         contactList()
@@ -25,33 +26,20 @@ export default function ContactList() {
                 <section  className={styles['loading-indicator']}>
                     <p>Chargement...</p>
                 </section>
-            ) : contacts.length === 0 ? (
-                <>
-                    <InputSearch
-                        term={null}
-                        search={null}
-                        placeholder='Rechercher un contact'
-                        activeSearch='admin-contact'
-                    />
-                    <section className={styles['empty-state']}>
-                        <p>Aucun rendez-vous pour le moment</p>
-                    </section>
-                </>
-
-            ) : (
+            ) : !isLoading && contacts.length > 0 ? (
                 <section className={styles['contact-admin']}>
                     <div className={styles['container']}>
                         <InputSearch
-                            term={null}
-                            search={null}
-                            placeholder='Rechercher un contact'
-                            activeSearch='admin-contact'
+                            term={term}
+                            search={contactSearch}
+                            placeholder='Rechercher un contact...'
+                            activeSearch='contact-admin'
                         />
                         <div className={styles['grid-container']}>
-                            {contacts.map((contact) => (
+                            {contacts?.map((contact) => (
                                 <Link
                                     key={contact.id}
-                                    href={`/contact/${contact.id}`}
+                                    href={`/admin/contacts/${contact.id}`}
                                     className={styles['grid-item']}
                                 >
                                     <h3>{contact.firstname} {contact.lastname}</h3>
@@ -68,7 +56,7 @@ export default function ContactList() {
                         <div className={styles['load-contact']}>
                             {hasMore && (
                                 <button
-                                    className={`${styles['btn']} ${styles['btn-load']}`}
+                                    className={styles['btn-load']}
                                 >
                                     Charger plus
                                 </button>
@@ -76,6 +64,18 @@ export default function ContactList() {
                         </div>
                     </div>
                 </section>
+            ) : (
+                <>
+                    <InputSearch
+                        term={term}
+                        search={contactSearch}
+                        placeholder='Rechercher un contact...'
+                        activeSearch='contact-admin'
+                    />
+                    <section className={styles['empty-state']}>
+                        <p>Aucun contact pour le moment</p>
+                    </section>
+                </>
             )}
         </main>
     )

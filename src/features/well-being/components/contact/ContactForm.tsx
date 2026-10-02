@@ -1,6 +1,6 @@
 "use client"
 
-import styles from './Contact.module.scss'
+import styles from './ContactForm.module.scss'
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import { z } from 'zod'
@@ -18,7 +18,7 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export default function Contact() {
+export default function ContactForm() {
 
     const { contactNew, resetContact, errorMessage } = useContact()
 

@@ -100,14 +100,20 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
             const trimmed = term?.toLowerCase().trim()
             try {
                 if (!trimmed) {
-                    set({ term: null, hasMore: true })
+                    set({term: null, hasMore: true})
                     await get().testimonialAdminList()
                     return
                 }
 
                 set({ isLoading: true, hasMore: true })
                 const data = await axiosAdminTestimonialSearch(get().term)
-                set({ testimonials: data, term: trimmed, isLoading: false, hasMore: false })
+
+                set({
+                    testimonials: data,
+                    term: trimmed,
+                    isLoading: false,
+                    hasMore: false
+                })
             } catch (err) {
                 console.error(err)
                 set({ isLoading: false })
@@ -138,7 +144,7 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
         },
 
         testimonialDelete: async (id: string) => {
-            const { testimonials  } = get()
+            const { testimonials } = get()
             set({ testimonials: testimonials.filter((t) => t.id !== id) })
             try {
                 await axiosAdminTestimonialDelete(id)

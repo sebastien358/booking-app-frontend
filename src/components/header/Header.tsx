@@ -7,17 +7,13 @@ import styles from './Header.module.scss'
 import NavLink from "@/app/nav-link/NavLink";
 import {useAuthStore} from "@/store/auth.store";
 import {useBookingModalStore} from "@/store/bookingModal.store";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 library.add(fas)
 
 export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
-
-
-
 
     const { token, isAdmin, isUser, logout } = useAuthStore()
 
@@ -143,7 +139,7 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                             ) : token && isUser() && !isAdmin() && (
                                 <div className={`${styles['header__actions__menu']} ${isVisible ? styles['header__actions__menu__open'] : ''}`}>
                                     <p>User</p>
-                                    <Link onClick={() => logout()} href="/login">
+                                    <Link onClick={() => logout()} className={styles['logout']} href="/login">
                                         Déconnexion
                                     </Link>
                                 </div>

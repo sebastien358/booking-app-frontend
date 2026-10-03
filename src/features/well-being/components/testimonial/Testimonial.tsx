@@ -8,7 +8,6 @@ import NoImage from '@/assets/images/no.svg'
 import Image from "next/image";
 
 export default function Testimonial() {
-
     {/* Store Testimonial */}
 
     const { testimonialList, testimonialLazyLoad, testimonials, isLoading, hasMore } = useTestimonialStore()

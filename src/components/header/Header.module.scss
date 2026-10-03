@@ -68,11 +68,11 @@
       color: #b22ad0;
     }
     a:last-child {
-      opacity: 0.25;
+      color: red;
       font-size: 13px;
     }
     a:last-child:hover {
-      opacity: 1;
+      text-decoration: underline;
     }
   }
   &__actions {
@@ -80,13 +80,6 @@
     display: flex;
     align-items: center;
     gap: 1.8rem;
-    .logout {
-      color: #333;
-      font-weight: 500;
-    }
-    .logout:hover {
-      color: red;
-    }
     svg {
       cursor: pointer;
       font-size: 18px;

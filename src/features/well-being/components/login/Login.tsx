@@ -92,13 +92,12 @@ export default function Login() {
                         </div>
 
                         <div className={styles['reset-password']}>
-                            <Link href="/request-password" className={styles['link-reset-password']}>
+                            <Link href="/forgot-password" className={styles['link-reset-password']}>
                                 Mot de passe oublié?
                             </Link>
                         </div>
 
                         {successMessage && <p className={styles['success-message']}>{successMessage}</p>}
-
                         {errorMessage && <p className={styles['error-message']}>{errorMessage}</p>}
 
                         <div className={styles['login__actions']}>

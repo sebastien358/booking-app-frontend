@@ -37,7 +37,7 @@ export const useTestimonialStore = create<TestimonialState>()(
 
         testimonialList: async () => {
             try {
-                set({ testimonials: [], isLoading: true })
+                set({ testimonials: [], isLoading: true, hasMore: true })
                 const data = await axiosTestimonialList(get().offset, get().limit)
                 set({
                     testimonials: data,

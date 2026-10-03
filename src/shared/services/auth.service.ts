@@ -52,3 +52,16 @@ export async function axiosInfoMe() {
         throw err
     }
 }
+
+export async function axiosRequestPassword(data: string) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/user/request-password`, data)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de l'envois d'un email de réinitialisation : ${response.status}`)
+    } catch(err: any) {
+        console.error(err)
+        throw err
+    }
+}

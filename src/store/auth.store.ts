@@ -1,6 +1,8 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {axiosInfoMe, axiosLogin, axiosRegister} from "@/shared/services/auth.service";
+import {axiosInfoMe, axiosLogin, axiosRegister, axiosRequestPassword} from "@/shared/services/auth.service";
+import {isAxiosError} from "axios";
+import {ApiError} from "next/dist/server/api-utils";
 
 export interface AuthState { // renommé ProductInterface -> AuthState
     token: string | null
@@ -12,6 +14,7 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     registerUser: (data: any) => Promise<void>
     login: (data: { email: string, password: string }) => Promise<void>
     infoMe: () => void
+    requestPassword: (data: string) => Promise<void>
     logout: () => void
     isAdmin: () => boolean
     isUser: () => boolean
@@ -66,6 +69,20 @@ export const useAuthStore = create<AuthState>()(
                 }
             },
 
+            requestPassword: async (data: string) => {
+                try {
+                    await axiosRequestPassword(data)
+                } catch (err: any) {
+                    const apiError = err?.response?.data
+                    if (apiError?.type === 'ERROR_REQUEST_PASSWORD') {
+                        set({ errorMessage: apiError?.message })
+                    } else {
+                        set({ errorMessage: 'Une erreur est survenue' })
+                    }
+                    throw err
+                }
+            },
+
             isAdmin: () => {
                 const { user } = get()
                 return user?.roles.includes('ROLE_ADMIN') ?? false
@@ -92,6 +109,6 @@ export const useAuthStore = create<AuthState>()(
                 state?.setHasHydrated(true)
             }
 
-        } // renomme pour pas confondre avec product
+        }
     )
 )

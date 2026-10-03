@@ -55,9 +55,15 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
             try {
                 set({ testimonials: [], isLoading: true, hasMore: true })
                 const data = await axiosAdminTestimonialList(get().offset, get().limit)
-                set({ testimonials: data.testimonials, isLoading: false, countTestimonials: data.count })
+
+                set({
+                    testimonials: data.testimonials,
+                    isLoading: false,
+                    countTestimonials: data.count,
+                    hasMore: data.testimonials.length >= get().limit
+                })
             } catch (err) {
-                set({ testimonials: [], isLoading: false })
+                set({ isLoading: false })
                 console.error(err)
                 throw err
             }
@@ -65,16 +71,27 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
 
         testimonialAdminLazyLoad: async () => {
             try {
-                const { testimonials, offset, limit } = get()
+                const { testimonials, offset, limit, isLoading, hasMore} = get()
+
+                if (!hasMore || isLoading) return
+
                 set({ offset: offset + limit , isLoading: true })
                 const data = await axiosAdminTestimonialList(get().offset, get().limit)
-                set({ testimonials: [ ...testimonials, ...data ], isLoading: false })
 
-                if (data.length < limit) {
-                    set({ hasMore: false })
+                const newContacts = data.testimonials ?? []
+
+                if (newContacts.length === 0) {
+                    set({ hasMore: false, isLoading: false })
                 }
+
+                set({
+                    testimonials: [ ...testimonials, ...data.testimonials ],
+                    isLoading: false,
+                    hasMore: data.testimonials.length >= get().limit
+                })
             }  catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
@@ -93,6 +110,7 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
                 set({ testimonials: data, term: trimmed, isLoading: false, hasMore: false })
             } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
@@ -104,6 +122,7 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
                 set({ currentTestimonial: data, isLoading: false })
             } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
@@ -137,6 +156,11 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
 
     }), {
         name: 'testimonial-admin-state',
-        partialize: (state) => ({ testimonials: state.testimonials })
+        partialize: (state) => ({
+            testimonials: state.testimonials,
+            offset: state.offset,
+            countTestimonials: state.countTestimonials,
+            term: state.term
+        })
     })
 )

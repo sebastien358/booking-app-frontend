@@ -39,26 +39,37 @@ export const useTestimonialStore = create<TestimonialState>()(
             try {
                 set({ testimonials: [], isLoading: true })
                 const data = await axiosTestimonialList(get().offset, get().limit)
-                set({ testimonials: data, isLoading: false })
+                set({
+                    testimonials: data,
+                    isLoading: false,
+                    hasMore: data.length >= get().limit
+                })
             } catch (err) {
-                set({ testimonials: [], isLoading: false })
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
 
         testimonialLazyLoad: async () => {
             try {
-                const { testimonials, offset, limit } = get()
+                const { testimonials, isLoading, offset, limit, hasMore } = get()
+
+                if (!hasMore || isLoading) return
+
                 set({ offset: offset + limit, isLoading: true })
                 const data = await axiosTestimonialList(get().offset, get().limit)
-                set({ testimonials: [ ...testimonials, ...data ], isLoading: false })
 
-                if (data.length < limit) {
-                    set({ hasMore: false })
-                }
+                const newData = (data as any) ?? data ?? []
+
+                set({
+                    testimonials: [ ...testimonials, ...newData ],
+                    isLoading: false,
+                    hasMore: newData.length >= limit
+                })
             } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
@@ -90,7 +101,10 @@ export const useTestimonialStore = create<TestimonialState>()(
     }),
         {
             name: 'testimonial-state',
-            partialize: (state) => ({ testimonials: state.testimonials })
+            partialize: (state) => ({
+                testimonials: state.testimonials,
+                offset: state.offset
+            })
         }
     )
 )

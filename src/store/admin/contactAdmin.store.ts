@@ -8,6 +8,7 @@ import {
 } from "@/shared/services/admin/contactAdmin.service";
 
 export interface ContactData {
+    id?: string
     firstname: string
     lastname: string
     email: string
@@ -30,6 +31,7 @@ export interface ContactState {
     contactDetails: (id: string) => Promise<void>
     contactSearch: (term: string | null) => Promise<void>
     contactDelete: (id: string) => Promise<void>
+    resetContact: () => void
 }
 
 export const useContactAdminStore = create<ContactState>()(
@@ -40,32 +42,50 @@ export const useContactAdminStore = create<ContactState>()(
         term: null,
         offset: 0,
         limit: 2,
-        hasMore: true,
-        count: null,
+        hasMore: false,
+        countContacts: null,
 
         contactList: async () => {
             try {
-                set({ contacts: [], isLoading: true, hasMore: true })
+                set({ contacts: [], isLoading: true, offset: 0, hasMore: true })
+
                 const data = await axiosAdminContactList(get().offset, get().limit)
-                set({ contacts: data.contacts, isLoading: false, countContacts: data.count })
+
+                set({
+                    contacts: data.contacts,
+                    isLoading: false,
+                    countContacts: data.count,
+                    hasMore: data.contacts.length >= get().limit
+                })
             } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
 
         contactLazyLoad: async () => {
             try {
-                const { contacs, offset, limit } = get()
-                set({ offset: offset + limit, isLoading: true })
-                const data = await axiosAdminContactList(get().offset, get().limit)
-                set({ contacts: [ ...contacts, ...data ], isLoading: false })
+                const { contacts, offset, limit, hasMore, isLoading } = get()
+                if (!hasMore || isLoading) return
 
-                if (data.length < limit) {
-                    set({ hasMore: false })
+                set({ offset: offset + limit, isLoading: true })
+
+                const data = await axiosAdminContactList(get().offset, get().limit)
+                const newContacts = data.contacts.length ?? []
+
+                if (newContacts.length === 0) {
+                    set({ hasMore: false, isLoading: false })
                 }
+
+                set({
+                    contacts: [ ...contacts, ...data.contacts ],
+                    isLoading: false,
+                    hasMore: data.contacts.length >= limit
+                })
             } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
@@ -77,23 +97,34 @@ export const useContactAdminStore = create<ContactState>()(
                 set({ currentContact: data, isLoading: false })
             } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
 
         contactSearch: async (term: string | null) => {
-            const trimmed = term?.toLowerCase().trim()
-            try {
-                if (!trimmed) {
-                    set({ term: null, offset: 0, hasMore: true })
-                    await get().contactList()
-                }
+            const trimmed = term?.toLowerCase().trim() || null
 
-                set({ term: trimmed, isLoading: true })
-                const data = await axiosAdminContactSearch(get().term)
-                set({ contacts: data, isLoading: false, hasMore: false })
+            if (!trimmed) {
+                set({ term: null, offset: 0, hasMore: true })
+                await get().contactList()
+                return
+            }
+            try {
+                set({ term: trimmed, isLoading: true, offset: 0 })
+
+                const data = await axiosAdminContactSearch(trimmed)
+                const results = (data as any).contacts ?? data ?? []
+
+                set({
+                    contacts: results,
+                    isLoading: false,
+                    hasMore: false,
+                    countContacts: results.length
+                })
             } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
@@ -101,15 +132,25 @@ export const useContactAdminStore = create<ContactState>()(
         contactDelete: async (id: string) => {
             try {
                 await axiosAdminContactDelete(id)
+                set({ contacts: get().contacts.filter((c: any) => c._id !== id) })
             } catch (err) {
                 console.error(err)
                 throw err
             }
         },
 
-
+        resetContact: () => {
+            set({ term: null, offset: 0, hasMore: true })
+            get().contactList()
+        },
 
     }), {
-        name: 'contact-admin-state'
+        name: 'contact-admin-state',
+        partialize: (state) => ({
+            contacts: state.contacts,
+            term: state.term,
+            offset: state.offset,
+            countContacts: state.countContacts
+        }),
     })
 )

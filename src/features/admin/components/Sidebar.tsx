@@ -18,14 +18,14 @@ export default function Sidebar() {
 
     const { countBookings, resetBooking } = useBookingAdminStore()
     const { countTestimonials, resetTestimonial } = useTestimonialAdminStore()
-    const { countContacts } = useContactAdminStore()
+    const { countContacts, resetContact } = useContactAdminStore()
 
     const pathname = usePathname()
 
     const adminPageConfig = {
         '/admin/bookings': { count: countBookings, reset: resetBooking },
         '/admin/testimonials': { count: countTestimonials, reset: resetTestimonial },
-        '/admin/contacts': { count: countContacts, reset: () => console.log('OUI') },
+        '/admin/contacts': { count: countContacts, reset: resetContact }
     }
 
     const current = adminPageConfig[pathname]

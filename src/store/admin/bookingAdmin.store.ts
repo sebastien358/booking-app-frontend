@@ -64,43 +64,63 @@ export const useBookingAdminStore = create<BookingState>()(
             try {
                 set({ bookings: [], isLoading: true, offset: 0, hasMore: true })
                 const data = await axiosBookingAdminList(get().offset, get().limit)
-                set({ bookings: data.appointments, isLoading: false, countBookings: data.count })
+                set({
+                    bookings: data.appointments,
+                    isLoading: false,
+                    countBookings: data.count,
+                    hasMore: data.appointments.length >= get().limit
+                })
             } catch (err) {
-                set({ bookings: [], isLoading: true, offset: 0 })
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
 
         bookingLazyLoad: async () => {
             try {
-                const { bookings, offset, limit } = get()
+                const { bookings, offset, limit, hasMore, isLoading } = get()
+                if (!hasMore || isLoading) return
+
                 set({ offset: offset + limit, isLoading: true })
                 const data = await axiosBookingAdminList(get().offset, get().limit)
-                set({ bookings: [ ...bookings, ...data ], isLoading: false })
 
-                if (data.length < limit) {
-                    set({ hasMore: false })
+                const newBookings = data.length ?? []
+                if (newBookings.length) {
+                    set({ hasMore: false, isLoading: false })
                 }
-            } catch(err) {
+
+                set({
+                    bookings: [ ...bookings, ...data.appointments ],
+                    isLoading: false,
+                    hasMore: data.appointments.length >= limit
+                })
+            } catch (err) {
                 console.error(err)
+                set({ isLoading: false })
                 throw err
             }
         },
 
         bookingSearch: async (term: string | null) => {
-            const trimmed = term?.toLowerCase().trim()
-
+            const trimmed = term?.toLowerCase().trim() || null
             if (!trimmed) {
                 set({ term: null, offset: 0 })
                 get().bookingList()
                 return
             }
-
             try {
-                set({ term: trimmed, isLoading: true })
+                set({ term: trimmed, isLoading: true, offset: 0 })
+
                 const data = await axiosBookingAdminSearch(get().term)
-                set({ bookings: data, isLoading: false, hasMore: false })
+                const results = (data as any) ?? data ?? []
+
+                set({
+                    bookings: data,
+                    isLoading: false,
+                    hasMore: false,
+                    countBookings: results.length
+                })
             } catch (err) {
                 console.error(err)
                 set({ isLoading: false })
@@ -143,6 +163,11 @@ export const useBookingAdminStore = create<BookingState>()(
 
     }), {
         name: 'booking-admin-storage',
-        partialize: (state) => ({ bookings: state.bookings })
+        partialize: (state) => ({
+            bookings: state.bookings,
+            offset: state.offset,
+            term: state.term,
+            countBookings: state.countBookings
+        })
     })
 )

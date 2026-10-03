@@ -56,6 +56,7 @@ export default function ContactList() {
                         <div className={styles['load-contact']}>
                             {hasMore && (
                                 <button
+                                    onClick={() => contactLazyLoad()}
                                     className={styles['btn-load']}
                                 >
                                     Charger plus

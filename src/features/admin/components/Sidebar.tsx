@@ -11,7 +11,9 @@ const adminLinks = [
     {name: 'Accueil', path: '/'},
     {name: 'Tous les rendez-vous', path: '/admin/bookings'},
     {name: 'Tous les témoignanges', path: '/admin/testimonials'},
-    {name: 'Tous les messages', path: '/admin/contacts'}
+    {name: 'Tous les messages', path: '/admin/contacts'},
+    {name: 'Tous les services', path: '/admin/services' },
+    {name: 'Ajouter un service', path: '/admin/services/add' }
 ]
 
 export default function Sidebar() {
@@ -25,7 +27,8 @@ export default function Sidebar() {
     const adminPageConfig = {
         '/admin/bookings': { count: countBookings, reset: resetBooking },
         '/admin/testimonials': { count: countTestimonials, reset: resetTestimonial },
-        '/admin/contacts': { count: countContacts, reset: resetContact }
+        '/admin/contacts': { count: countContacts, reset: resetContact },
+        '/admin/services': { count: null, reset: null }
     }
 
     const current = adminPageConfig[pathname]

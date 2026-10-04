@@ -79,7 +79,6 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
         setOpenMobile(!openMobile)
     }
 
-    let byPrefixAndName;
     return (
         <header className={styles['header']}>
             <div className={styles['header__container']}>

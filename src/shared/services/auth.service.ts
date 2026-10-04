@@ -65,3 +65,16 @@ export async function axiosRequestPassword(data: string) {
         throw err
     }
 }
+
+export async function axiosResetPassword(data: any, token: string) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/user/reset-password/${token}`, data)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de la réinitialisation du mot de passe : ${response.status}`)
+    } catch(err: any) {
+        console.error(err)
+        throw err
+    }
+}

@@ -1,8 +1,12 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {axiosInfoMe, axiosLogin, axiosRegister, axiosRequestPassword} from "@/shared/services/auth.service";
-import {isAxiosError} from "axios";
-import {ApiError} from "next/dist/server/api-utils";
+import {
+    axiosInfoMe,
+    axiosLogin,
+    axiosRegister,
+    axiosRequestPassword,
+    axiosResetPassword
+} from "@/shared/services/auth.service";
 
 export interface AuthState { // renommé ProductInterface -> AuthState
     token: string | null
@@ -15,6 +19,7 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     login: (data: { email: string, password: string }) => Promise<void>
     infoMe: () => void
     requestPassword: (data: string) => Promise<void>
+    resetPassword: (data: any, token: string) => Promise<void>
     logout: () => void
     isAdmin: () => boolean
     isUser: () => boolean
@@ -53,8 +58,12 @@ export const useAuthStore = create<AuthState>()(
                     set({ token: token })
                     get().infoMe()
                 } catch(err: any) {
-                    const message = err.response?.data?.message || 'La connexion a échouée.'
-                    set({ errorMessage: message })
+                    const apiError = err?.response?.data
+                    if (apiError?.status === 401) {
+                        set({ errorMessage: 'Identifiant ou mot de passe invalide' })
+                    } else {
+                        set({ errorMessage: 'La connexion a échouée.' })
+                    }
                     throw err
                 }
             },
@@ -76,6 +85,20 @@ export const useAuthStore = create<AuthState>()(
                     const apiError = err?.response?.data
                     if (apiError?.type === 'ERROR_REQUEST_PASSWORD') {
                         set({ errorMessage: apiError?.message })
+                    } else {
+                        set({ errorMessage: 'Une erreur est survenue' })
+                    }
+                    throw err
+                }
+            },
+
+            resetPassword: async (data: any, token: string) => {
+                try {
+                    await axiosResetPassword(data, token)
+                } catch (err: any) {
+                    const apiError = err?.response?.data
+                    if (apiError?.type === 'ERROR_RESET_PASSWORD_EXPIRED') {
+                        set({ errorMessage: 'Le mot de passe a bien été réiniatilisé' })
                     } else {
                         set({ errorMessage: 'Une erreur est survenue' })
                     }

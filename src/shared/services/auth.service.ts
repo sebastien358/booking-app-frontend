@@ -11,6 +11,22 @@ axios.interceptors.request.use((config) => {
     return config
 }, (error) => Promise.reject(error))
 
+axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const authStore = useAuthStore.getState()
+        const hasAuthHeader = Boolean(
+            error.config?.headers?.Authorization ||
+            error.config?.headers?.authorization
+        )
+        if (error.response?.status === 401 && hasAuthHeader) {
+            authStore.logout()
+            window.location.href = '/'
+        }
+        return Promise.reject(error)
+    }
+)
+
 export async function axiosRegister(data: {email: string, password: string}) {
     try {
         const response = await axios.post(`${BASE_URL}/api/user/register`, data)

@@ -52,6 +52,7 @@
 
 .service-admin {
   .grid-container {
+    margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;

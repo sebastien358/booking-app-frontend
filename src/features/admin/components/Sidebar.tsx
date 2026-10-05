@@ -6,6 +6,7 @@ import {usePathname} from "next/navigation";
 import {useBookingAdminStore} from "@/store/admin/bookingAdmin.store";
 import {useTestimonialAdminStore} from "@/store/admin/testimonialAdmin.store";
 import {useContactAdminStore} from "@/store/admin/contactAdmin.store";
+import {useServiceAdminStore} from "@/store/admin/serviceAdmin.store";
 
 const adminLinks = [
     {name: 'Accueil', path: '/'},
@@ -21,6 +22,7 @@ export default function Sidebar() {
     const { countBookings, resetBooking } = useBookingAdminStore()
     const { countTestimonials, resetTestimonial } = useTestimonialAdminStore()
     const { countContacts, resetContact } = useContactAdminStore()
+    const { countServices, resetService } = useServiceAdminStore()
 
     const pathname = usePathname()
 
@@ -28,7 +30,7 @@ export default function Sidebar() {
         '/admin/bookings': { count: countBookings, reset: resetBooking },
         '/admin/testimonials': { count: countTestimonials, reset: resetTestimonial },
         '/admin/contacts': { count: countContacts, reset: resetContact },
-        '/admin/services': { count: null, reset: null }
+        '/admin/services': { count: countServices, reset: resetService }
     }
 
     const current = adminPageConfig[pathname]

@@ -15,8 +15,8 @@ export const useServiceStore = create<ServiceState>()(
             isLoadingService: false,
 
             servicesList: async () => {
-                set({ isLoadingService: true })
                 try {
+                    set({ isLoadingService: true })
                     const data = await axiosServicesList()
                     set({ services: data, isLoadingService: false })
                 } catch (err) {

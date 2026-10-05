@@ -86,7 +86,7 @@ export const useBookingAdminStore = create<BookingState>()(
                 const data = await axiosBookingAdminList(get().offset, get().limit)
 
                 const newBookings = data.appointments.length ?? []
-                if (newBookings.length) {
+                if (newBookings.length === 0) {
                     set({ hasMore: false, isLoading: false })
                 }
 

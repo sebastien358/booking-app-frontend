@@ -1,13 +1,14 @@
-'use client'
+"use client"
 
 import styles from './ServiceList.module.scss'
 import Link from "next/link";
 import {useServiceAdminStore} from "@/store/admin/serviceAdmin.store";
 import {useEffect} from "react";
+import InputSearch from "@/components/input-search/InputSearch";
 
 export default function ServiceList() {
 
-    const { serviceList, services, isLoading } = useServiceAdminStore()
+    const { serviceList, serviceSearch, serviceLazyLoad, services, term, isLoading, hasMore } = useServiceAdminStore()
 
     useEffect(() => {
         serviceList()
@@ -23,6 +24,14 @@ export default function ServiceList() {
                 <section className={styles['service-admin']}>
                     <div className={styles['container']}>
                         {/* Search */}
+
+                        <InputSearch
+                            term={term}
+                            search={serviceSearch}
+                            placeholder='Rechercher un service...'
+                            activeSearch='service-admin'
+                        />
+
                         <div className={styles['grid-container']}>
                             {services.map((service) => (
                                 <Link
@@ -37,18 +46,31 @@ export default function ServiceList() {
                             ))}
                         </div>
 
-                        <div className={styles['load-contact']}>
-                            <button
-                                className={styles['btn-load']}
-                            >
-                                Charger plus
-                            </button>
-                        </div>
+                        {hasMore && (
+                            <div className={styles['load-contact']}>
+                                <button
+                                    onClick={() => serviceLazyLoad()}
+                                    className={styles['btn-load']}
+                                >
+                                    Charger plus
+                                </button>
+                            </div>
+                        )}
+
                     </div>
                 </section>
             ) : (
-                <section className={styles['empty-state']}>
-                    <p>Aucun service pour le moment</p>
+                <section>
+                    <InputSearch
+                        term={term}
+                        search={serviceSearch}
+                        placeholder='Rechercher un service...'
+                        activeSearch='service-admin'
+                    />
+
+                    <div className={styles['empty-state']}>
+                        <p>Aucun service pour le moment</p>
+                    </div>
                 </section>
             )}
         </main>

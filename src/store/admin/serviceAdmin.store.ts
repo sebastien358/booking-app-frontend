@@ -1,6 +1,7 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {
+    axiosAdminServiceCreate,
     axiosAdminServiceDelete,
     axiosAdminServiceDetails,
     axiosAdminServiceList,
@@ -10,14 +11,22 @@ import {
 export interface CategoryData {
     id: number
     name: string
+    slug: string
 }
 
 export interface ServiceData {
-    id: number
+    id: number | null
     duration: number
     name: string
-    price: string
+    price: number
     category: CategoryData
+}
+
+export interface ServiceFormData {
+    price: number
+    duration: number
+    category: string
+    name: string
 }
 
 export interface ServiceState {
@@ -28,13 +37,16 @@ export interface ServiceState {
     limit: number
     term: string | null,
     countServices: null | number
+    errorMessage: string | null
     hasMore: boolean
 
     serviceList: () => Promise<void>
     serviceDetails: (id: string) => Promise<void>
     serviceSearch: (term: string | null) => Promise<void >
     serviceLazyLoad: () => Promise<void>
+    serviceCreate: (data: ServiceFormData) => Promise<void>
     serviceDelete: (id: string) => Promise<void>
+    resetErrorForm: () => void
     resetService: () => void
 }
 
@@ -47,6 +59,7 @@ export const useServiceAdminStore = create<ServiceState>()(
         limit: 4,
         term: null,
         countServices: null,
+        errorMessage: null,
         hasMore: true,
 
         serviceList: async () => {
@@ -67,7 +80,7 @@ export const useServiceAdminStore = create<ServiceState>()(
                     countServices: data.count,
                     hasMore: data.services.length >= get().limit
                 })
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error(err)
                 set({ isLoading: false })
                 throw err
@@ -79,7 +92,7 @@ export const useServiceAdminStore = create<ServiceState>()(
                 set({ currentService: null, isLoading: true })
                 const data = await axiosAdminServiceDetails(id)
                 set({ currentService: data, isLoading: false })
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error(err)
                 set({ isLoading: false })
                 throw err
@@ -98,7 +111,7 @@ export const useServiceAdminStore = create<ServiceState>()(
                 set({ term: trimmed, isLoading: true, hasMore: true })
                 const data = await axiosAdminServiceSearch(get().term)
                 set({ services: data, isLoading: false , hasMore: false })
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error(err)
                 set({ isLoading: false })
                 throw err
@@ -124,9 +137,18 @@ export const useServiceAdminStore = create<ServiceState>()(
                     countServices: data.count,
                     hasMore: newServices.length >= limit
                 })
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error(err)
                 set({ isLoading: false })
+                throw err
+            }
+        },
+
+        serviceCreate: async (data: ServiceFormData) => {
+            try {
+                await axiosAdminServiceCreate(data)
+            } catch (err: unknown) {
+                set({ errorMessage: 'L\'ajout d\'un service a échoué' })
                 throw err
             }
         },
@@ -137,11 +159,13 @@ export const useServiceAdminStore = create<ServiceState>()(
             try {
                 await axiosAdminServiceDelete(id)
                 set({ currentService: null })
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error(err)
                 throw err
             }
         },
+
+        resetErrorForm: () => set({ errorMessage: null }),
 
         resetService: async () => {
             try {

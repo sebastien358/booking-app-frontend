@@ -131,14 +131,14 @@ export default function Header({ bookingOpen }: { bookingOpen: () => void }) {
                                     <NavLink href="/admin/bookings" dropdown>
                                         Espace admin
                                     </NavLink>
-                                    <Link onClick={() => logout()} href="/login">
+                                    <Link href="/login" className={styles['logout']} onClick={() => logout()} >
                                         Déconnexion
                                     </Link>
                                 </div>
                             ) : token && isUser() && !isAdmin() && (
                                 <div className={`${styles['header__actions__menu']} ${isVisible ? styles['header__actions__menu__open'] : ''}`}>
                                     <p>User</p>
-                                    <Link onClick={() => logout()} className={styles['logout']} href="/login">
+                                    <Link href="/login" onClick={() => logout()} className={styles['logout']} >
                                         Déconnexion
                                     </Link>
                                 </div>

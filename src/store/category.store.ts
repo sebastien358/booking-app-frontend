@@ -2,9 +2,16 @@ import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {axiosCategoriesList} from "@/shared/services/category.service";
 
-interface CategoryState {
-    categories: any[]
-    isLoadingCategory: boolean
+export interface CategoryData {
+    id: string
+    name: string
+    slug: string
+}
+
+ export interface CategoryState {
+    categories: CategoryData[]
+    isLoading: boolean
+    errorMessage: string | null
 
     categoriesList: () => void
 }
@@ -12,20 +19,24 @@ interface CategoryState {
 export const useCategoryStore = create<CategoryState>()(
     persist((set, get) => ({
         categories: [],
-        isLoadingCategory: false,
+        isLoading: false,
+        errorMessage: null,
 
         categoriesList: async () => {
-            set({ isLoadingCategory: true })
             try {
+                set({ categories: [], isLoading: true })
                 const data = await axiosCategoriesList()
-                set({ categories: data, isLoadingCategory: false })
+                set({ categories: data, isLoading: false })
             } catch (err) {
                 console.error(err)
-                set({ isLoadingCategory: false })
+                set({ isLoading: false })
                 throw err
             }
         },
     }),
-        {name: 'category-state'}
+        {
+            name: 'category-state',
+            partialize: (state) => ({ categories: state.categories })
+        }
     )
 )

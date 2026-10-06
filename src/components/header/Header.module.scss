@@ -59,6 +59,7 @@
     display: flex;
     align-items: center;
     gap: 1.8rem;
+
     a {
       font-size: 14px;
       color: #333;
@@ -67,12 +68,10 @@
     a:hover {
       color: #b22ad0;
     }
+
     a:last-child {
-      color: red;
-      font-size: 13px;
-    }
-    a:last-child:hover {
-      text-decoration: underline;
+      //color: red;
+      //font-size: 13px;
     }
   }
   &__actions {
@@ -109,7 +108,29 @@
     padding: 25px 30px;
     gap: 12px;
     top: 65px;
-    left: -50px
+    left: -50px;
+    a {
+      font-size: 14px;
+      color: #333;
+      transition: 0.2s;
+    }
+    a:hover {
+      color: #b22ad0;
+      text-decoration: underline;
+    }
+
+    .logout {
+      color: red;
+
+    }
+    .logout:hover {
+      text-decoration: underline;
+      color: red;
+    }
+
+
+
+
   }
   &__actions__menu__open {
     opacity: 1;

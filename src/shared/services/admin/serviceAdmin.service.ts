@@ -1,4 +1,5 @@
 import axios from "axios";
+import {ServiceFormData} from "@/store/admin/serviceAdmin.store";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 
@@ -49,10 +50,23 @@ export async function axiosAdminServiceSearch(term: string | null) {
     }
 }
 
+export async function axiosAdminServiceCreate(data: ServiceFormData) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/admin/service/create`, data)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de l'ajout d'un service : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
 export async function axiosAdminServiceDelete(id: string) {
     try {
         const response = await axios.delete(`${BASE_URL}/api/admin/service/delete/${id}`)
-        if (response.status === 200 ||response.status === 204) {
+        if (response.status === 200 || response.status === 204) {
             return response.data
         }
         throw new Error(`Erreur de la suppression d'un service : ${response.status}`)

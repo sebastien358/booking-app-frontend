@@ -6,11 +6,11 @@ import {usePathname} from "next/navigation";
 type NavLinkProps = {
     href: string
     children: string
-    dropdown?: boolean
-    dropdownSidebar?: boolean
+    dropdown: boolean | null
+    dropdownSidebar: boolean | null
 }
 
-export default function NavLink({href, children, dropdown = false, dropdownSidebar= false}: NavLinkProps) {
+export default function NavLink({ href, children, dropdown = false, dropdownSidebar = false }: NavLinkProps) {
     const pathName = usePathname()
     const isActive = pathName === href
 

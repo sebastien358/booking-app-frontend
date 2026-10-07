@@ -41,7 +41,7 @@ export default function Sidebar() {
     }
 
     return (
-        <div className={styles['admin-sidebar']}>
+        <main className={styles['admin-sidebar']}>
             <div className={styles['admin-sidebar__container']}>
                 <h2>Admin</h2>
                 <div className={styles['admin-sidebar__container__nav']}>
@@ -65,6 +65,6 @@ export default function Sidebar() {
                     </button>
                 </div>
             )}
-        </div>
+        </main>
     )
 }

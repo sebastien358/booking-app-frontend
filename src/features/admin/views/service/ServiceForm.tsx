@@ -28,8 +28,8 @@ const schema = z.object({
     name: z
         .string()
         .trim()
-        .min(1, { message: 'Le nom de la catégorie est requise' })
-        .max(150, { message: 'Le nom de la catégorie doit contenir 150 caractères maximum' })
+        .min(1, { message: 'Le nom du service est requis' })
+        .max(150, { message: 'Le nom du service doit contenir au maximum 150 caractères' })
 })
 
 export default function ServiceForm() {
@@ -50,7 +50,7 @@ export default function ServiceForm() {
             price: null,
             duration: null,
             category: null,
-            name: ''
+            name: ""
         })
     })
 
@@ -63,8 +63,6 @@ export default function ServiceForm() {
     const [ successMessage, setSuccessMessage ] = useState<string | null>(null)
 
     const router = useRouter()
-
-
 
     const onSubmit = async (data: ServiceFormData) => {
         try {
@@ -91,7 +89,7 @@ export default function ServiceForm() {
     }
 
     return (
-        <div className={`${styles['staff']} ${styles['container']}`}>
+        <main className={`${styles['staff']} ${styles['container']}`}>
             {/* FORMULAIRE */}
             <div className={styles['staff__form']}>
                 <h2 className={styles['staff__title']}>Ajout Service</h2>
@@ -132,7 +130,7 @@ export default function ServiceForm() {
                     </div>
 
                     <div className={styles['form-group']}>
-                        <textarea {...register('name')} placeholder="Name"></textarea>
+                        <textarea {...register('name')} placeholder="Nom du service"></textarea>
                         {errors.name && <span className={styles['error-field']}>
                             {errors.name.message}
                         </span>}
@@ -148,6 +146,6 @@ export default function ServiceForm() {
                     </div>
                 </form>
             </div>
-        </div>
+        </main>
     )
 }

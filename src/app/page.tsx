@@ -141,28 +141,31 @@ export default function HomePage() {
         </section>
 
         {/* TESTIMONIALS */}
-        <section id="testimonials" className={styles['testimonial-section']}>
-          <div className={styles['testimonial']}>
+
+        <section id="testimonials" className={styles['testimonials-section']}>
+          <div className={styles['testimonials']}>
             <div className={styles['testimonials__header']}>
               <h2 className={styles['testimonials__title']}> Nos clients<br /> <span>témoignent</span> </h2>
               <p className={styles['testimonials__subtitle']}> Découvrez les retours de celles et ceux qui nous ont fait confiance pour leur bien-être et leur accompagnement. </p>
             </div>
 
             {testimonialStore.loading && (
-                <div className={styles['loading-overlay']}><span className={styles['loading-overlay__loader']}></span></div>
+                <div className={styles['loading-overlay']}>
+                  <span className={styles['loading-overlay__loader']}></span>
+                </div>
             )}
 
             {testimonialStore.publishedTestimonials.length > 0 && (
-                <div className={styles['testimonial-card']}>
-                  <div className={styles['testimonial-card__elems']}>
+                <div className={styles['testimonials__card']}>
+                  <div className={styles['testimonials__elems']}>
                     {testimonialStore.publishedTestimonials.map((testimonial) => (
-                        <div key={testimonial.id} className={styles['testimonial-card__items']}>
-                          <div className={styles['testimonial-card__content']}>
-                            <div className={styles['testimonial-card__stars']}>
+                        <div key={testimonial.id} className={styles['testimonials__items']}>
+                          <div className={styles['testimonials__content']}>
+                            <div className={styles['testimonials__stars']}>
                               {[...Array(testimonial.rating)].map((_, nbr) => <span key={nbr}>⭐️</span>)}
                             </div>
-                            <p className={styles['testimonial-card__text']}>{testimonial.message}</p>
-                            <div className={styles['testimonial-card__user']}>
+                            <p className={styles['testimonials__text']}>{testimonial.message}</p>
+                            <div className={styles['testimonials__user']}>
                               <Image src={testimonial.picture} alt="Photos clients" />
                               <div>
                                 <div className={styles['name']}>{testimonial.author}</div>
@@ -175,29 +178,44 @@ export default function HomePage() {
                   </div>
                 </div>
             )}
+          </div>
 
-            <div className={styles['testimonial-redirect__link']}>
-              <Link href="/testimonials">Voir tous les témoignages →</Link>
-            </div>
+          <div className={styles['testimonials__link']}>
+            <Link href="/testimonials">Voir tous les témoignages →</Link>
+          </div>
 
-            <div className={styles['testimonials__cta']}>
-              <h3 className={styles['testimonial-title']}>Ils nous ont fait confiance</h3>
-              <p className={styles['testimonial-subtitle']}> Plus de 150 personnes nous ont déjà fait confiance pour leur bien-être et leur accompagnement. </p>
-              <div className={styles['testimonials__stats']}>
-                <Image src={user1} alt={'user 1'} width={30} height={30} />
-                <Image src={user2} alt={'user 2'} width={30} height={30} />
-                <Image src={user3} alt={'user 3'} width={30} height={30} />
-                <div className={styles['avatars-users']}><span>+150</span></div>
-                <div className={styles['testimonials__item']}>
-                  <div className={styles['stat']}>95% de satisfaction</div>
-                  <span className={styles['reviews']}>Une expérience reconnue et appréciée</span>
+          {/* TESTIMONIALS CTA */}
+
+          <div className={styles['testimonials-cta']}>
+            <h3 className={styles['testimonials-cta__title']}>
+              Ils nous ont fait confiance
+            </h3>
+            <p className={styles['testimonials-cta__subtitle']}>
+              Plus de 150 personnes nous ont déjà fait confiance pour leur bien-être et leur accompagnement.
+            </p>
+            <div className={styles['testimonials-cta__stats']}>
+              <div className={styles['testimonials-cta__avatar']}>
+                <Image src={user1} alt={'user 1'} width={30} height={30} className={styles['image-avatar']} />
+                <Image src={user2} alt={'user 2'} width={30} height={30} className={styles['image-avatar']} />
+                <Image src={user3} alt={'user 3'} width={30} height={30} className={styles['image-avatar']} />
+                <div className={styles['testimonials-cta__avatars-users']}>
+                  <span>+150</span>
                 </div>
+              </div>
+              <div className={styles['testimonials-cta__items']}>
+                <div className={styles['stat']}>
+                  95% de satisfaction
+                </div>
+                <span className={styles['reviews']}>
+                  Une expérience reconnue et appréciée
+                </span>
               </div>
             </div>
           </div>
         </section>
 
         {/* SCROLL TO TOP */}
+
         <button
             className={`${styles['scroll-top']} ${show ? styles['scroll-top__visible'] : ''}`}
             onClick={() => scrollTop()}

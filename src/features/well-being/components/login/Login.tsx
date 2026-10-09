@@ -9,6 +9,7 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {useAuthStore} from "@/store/auth.store";
 import {useRouter} from "next/navigation";
 import {useBookingModalStore} from "@/store/bookingModal.store";
+import BookingView from "@/features/well-being/components/booking/BookingView";
 
 const schema = z.object({
     email: z
@@ -113,6 +114,8 @@ export default function Login() {
                     </form>
                 </div>
             </div>
+            {/* Modal de réservation */}
+            <BookingView />
         </section>
     )
 }

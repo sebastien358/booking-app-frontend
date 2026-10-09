@@ -1,6 +1,5 @@
 .footer {
   opacity: 1;
-  //transform: translateY(20px);
   background: #050816; /* noir légèrement violet, comme Figma */
   color: #f9fafb;
   border-radius: 24px 24px 0 0;
@@ -353,13 +352,13 @@
   gap: 1.2rem;
 }
 
-.footer__bottom-links a {
-  text-decoration: none;
+.footer__bottom p {
   color: rgba(209, 213, 219, 0.75);
   transition: color 0.2s ease;
 }
 
-.footer__bottom-links a:hover {
+.footer__bottom p:last-child:hover {
+  cursor: pointer;
   color: #e5e7eb;
 }
 

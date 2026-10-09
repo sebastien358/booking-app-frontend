@@ -32,7 +32,7 @@
 .testimonials {
   &__header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 3.5rem;
   }
   &__title {
     color: #555;
@@ -59,7 +59,7 @@
       font-size: 14px;
     }
     &__header {
-      margin-bottom: 3rem;
+      //margin-bottom: 4rem;
     }
     &__cards {
       gap: 1.3rem;
@@ -264,11 +264,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 40px;
   @media (max-width: 991.98px) {
-    margin-bottom: 30px;
+    margin-bottom: 25px;
   }
   @media (max-width: 767.98px) {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   .loading-text {
     font-size: 15px;
@@ -300,11 +301,16 @@
 /* PHRASE CTA */
 
 .testimonials-cta {
-  padding: 20px 20px 24px 20px;
+  padding: 45px 20px 24px 20px;
+
+
   text-align: center;
   margin: 0 auto;
   font-size: 0.95rem;
   color: #8a8a8a;
+  @media (max-width: 767.98px) {
+    padding: 30px 20px 24px 20px;
+  }
   p {
     font-size: 15px;
     color: #6b7280; /* gris élégant */

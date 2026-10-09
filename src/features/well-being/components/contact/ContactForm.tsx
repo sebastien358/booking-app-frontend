@@ -6,6 +6,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import { z } from 'zod'
 import {useState} from "react";
 import {ContactData, useContact} from "@/store/contact.store";
+import BookingView from "@/features/well-being/components/booking/BookingView";
 
 const DELAY_TIMEOUT = 2000
 
@@ -120,6 +121,9 @@ export default function ContactForm() {
                     </div>
                 </section>
             </div>
+
+            {/* Modal de réservation */}
+            <BookingView />
         </main>
     )
 }

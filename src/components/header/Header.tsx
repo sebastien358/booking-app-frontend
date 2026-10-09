@@ -1,12 +1,13 @@
-"use client";
+"use client"
+
+import styles from './Header.module.scss'
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
-import styles from './Header.module.scss'
 import NavLink from "@/app/nav-link/NavLink";
-import {useAuthStore} from "@/store/auth.store";
-import {useBookingModalStore} from "@/store/bookingModal.store";
+import { useAuthStore } from "@/store/auth.store";
+import { useBookingModalStore } from "@/store/bookingModal.store";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'

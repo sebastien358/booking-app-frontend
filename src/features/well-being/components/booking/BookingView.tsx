@@ -341,7 +341,10 @@ export default function BookingView() {
                                             {serviceMenu && (
                                                 <div className={styles['service-menu']}>
                                                     {filteredServices?.map((service) => (
-                                                        <div key={service.id} className={`${styles['service-items']} ${isActiveService(service) ? styles['active-service'] : ''}`} onClick={() => onClickService(service)}>
+                                                        <div
+                                                            key={service.id}
+                                                            onClick={() => onClickService(service)}
+                                                            className={`${styles['service-items']} ${isActiveService(service) ? styles['active-service'] : ''}`}>
                                                             <span className={styles['name']}>{service.name}</span>
                                                             <span>{service.duration} min</span>
                                                             <span>{service.price}€</span>
@@ -372,7 +375,7 @@ export default function BookingView() {
                                                                 />
                                                                 <span className={styles['name']}>Pro: {staff.firstname}</span>
                                                             </div>
-                                                            <input type="radio" name="staff" onClick={() => onClickStaff(staff)} />
+                                                            <input onClick={() => onClickStaff(staff)} type="radio" name="staff" />
                                                         </div>
                                                     </label>
                                                 ))}
@@ -380,7 +383,7 @@ export default function BookingView() {
                                         </div>
                                     </section>
                                     <div className={styles['booking__placeholder']}>
-                                        <p>👤 Veuillez sélectionner un avocat pour afficher les disponibilités</p>
+                                        <p>👤 Choisissez votre accompagnante pour voir les créneaux</p>
                                     </div>
                                 </>
                             )}
@@ -400,7 +403,10 @@ export default function BookingView() {
                                     <p>• Durée : {serviceDuration} min</p>
                                 </div>
 
-                                <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
+                                <FontAwesomeIcon
+                                    icon={faXmark}
+                                    onClick={() => closeModalBooking()}
+                                />
                             </div>
 
                             {/* Separator */}
@@ -429,7 +435,11 @@ export default function BookingView() {
                                     <div className={styles['days-list']}>
                                         {visibleDays.map((day) => (
                                             <div key={day.value}>
-                                                <button onClick={() => onClickDay(day)} className={`${styles['day-item']} ${isActiveDay(day) ? styles['active'] : ''}`}>{day.label}</button>
+                                                <button
+                                                    onClick={() => onClickDay(day)}
+                                                    className={`${styles['day-item']} ${isActiveDay(day) ? styles['active'] : ''}`}>
+                                                    {day.label}
+                                                </button>
                                             </div>
                                         ))}
                                     </div>
@@ -445,7 +455,12 @@ export default function BookingView() {
                                 ) : slots?.length > 0 ? (
                                     <div className={styles['booking__slots']}>
                                         {slots.map((slot) => (
-                                            <button key={slot.label} onClick={() => onClickSelectedSlot(slot)} className={`${styles['btn']} ${styles['btn-reservation']} ${isActiveSlot(slot) ? styles['active'] : ''}   `}>{slot.label}</button>
+                                            <button
+                                                key={slot.label}
+                                                onClick={() => onClickSelectedSlot(slot)}
+                                                className={`${styles['btn']} ${styles['btn-reservation']} ${isActiveSlot(slot) ? styles['active'] : ''}`}>
+                                                {slot.label}
+                                            </button>
                                         ))}
                                     </div>
                                 ) : (
@@ -470,7 +485,10 @@ export default function BookingView() {
                                     <p>• {selectedDay} - <strong>{slotLabel}</strong></p>
                                     <p>• Durée : {serviceDuration} min - <strong>{servicePrice}€</strong></p>
                                 </div>
-                                <FontAwesomeIcon icon={faXmark} onClick={() => closeModalBooking()} />
+                                <FontAwesomeIcon
+                                    icon={faXmark}
+                                    onClick={() => closeModalBooking()}
+                                />
                             </div>
 
                             {/* Separator */}
@@ -518,7 +536,10 @@ export default function BookingView() {
                                 </svg>
                             </div>
 
-                            <BookingConfirm selectedDay={selectedDay} slotLabel={slotLabel} />
+                            <BookingConfirm
+                                selectedDay={selectedDay}
+                                slotLabel={slotLabel}
+                            />
                         </section>
                     </div>
                 </main>

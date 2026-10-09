@@ -10,26 +10,26 @@ export interface CategoryData {
 
  export interface CategoryState {
     categories: CategoryData[]
-    isLoading: boolean
+    isLoadingCategory: boolean
     errorMessage: string | null
 
     categoriesList: () => void
 }
 
 export const useCategoryStore = create<CategoryState>()(
-    persist((set, get) => ({
+    persist((set) => ({
         categories: [],
-        isLoading: false,
+        isLoadingCategory: false,
         errorMessage: null,
 
         categoriesList: async () => {
             try {
-                set({ categories: [], isLoading: true })
+                set({ categories: [], isLoadingCategory: true })
                 const data = await axiosCategoriesList()
-                set({ categories: data, isLoading: false })
+                set({ categories: data, isLoadingCategory: false })
             } catch (err) {
                 console.error(err)
-                set({ isLoading: false })
+                set({ isLoadingCategory: false })
                 throw err
             }
         },

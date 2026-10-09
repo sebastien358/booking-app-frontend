@@ -6,6 +6,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import { z } from 'zod'
 import {useAuthStore} from "@/store/auth.store";
 import {useState} from "react";
+import BookingView from "@/features/well-being/components/booking/BookingView";
 
 const schema = z.object({
     firstname: z
@@ -127,6 +128,8 @@ export default function Register() {
                     </div>
                 </form>
             </div>
+            {/* Modal de réservation */}
+            <BookingView />
         </section>
     )
 }

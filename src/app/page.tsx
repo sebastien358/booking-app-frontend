@@ -14,13 +14,14 @@ import Image from "next/image";
 import {useScrollTop} from "@/shared/scroll-top/scrollTop";
 import BookingView from "@/features/well-being/components/booking/BookingView";
 import {useState} from "react";
+import {useBookingModalStore} from "@/store/bookingModal.store";
 
 export default function HomePage() {
   const [isOpen] = useState(true); // pour tester
   const closingHour = "18h";
   const nextOpening = "Lundi 9h";
 
-  const bookingOpen = () => alert("Modal de réservation");
+  const { openModalBooking } = useBookingModalStore()
 
   const testimonialStore = {
     loading: false,
@@ -52,7 +53,7 @@ export default function HomePage() {
                 Dans un espace dédié au bien-être et à l’accompagnement, nous vous proposons des consultations personnalisées pour vous aider à avancer, à votre rythme, vers un mieux-être durable.
               </p>
               <div className={styles['hero__cta']}>
-                <button onClick={bookingOpen} className={styles['btn-primary']}>
+                <button onClick={() => openModalBooking()} className={styles['btn-primary']}>
                   Réserver maintenant
                 </button>
                 <a href="tel:+33780468148" className={styles['btn-secondary']}>
@@ -115,7 +116,7 @@ export default function HomePage() {
                 </ul>
                 <div className={styles['service-card__footer']}>
                   <span className={styles['price']}>À partir de 40€</span>
-                  <button onClick={bookingOpen} className={styles['reserve']}>Réserver</button>
+                  <button onClick={() => openModalBooking()} className={styles['reserve']}>Réserver</button>
                 </div>
               </div>
             </div>
@@ -125,7 +126,8 @@ export default function HomePage() {
                 <h3 className={styles['service-card__title']}>🌿 Stress & émotions</h3>
                 <p className={styles['service-card__text']}> Apprenez à mieux comprendre et apaiser vos tensions émotionnelles et mentales. </p>
                 <ul className={styles['service-card__list']}><li>Produits premium</li><li>Techniques d’experts</li><li>Couleur sur-mesure</li></ul>
-                <div className={styles['service-card__footer']}><span className={styles['price']}>À partir de 40€</span><button className={styles['reserve']}>Réserver</button></div>
+                <div className={styles['service-card__footer']}><span className={styles['price']}>À partir de 40€</span>
+                  <button onClick={() => openModalBooking()} className={styles['reserve']}>Réserver</button></div>
               </div>
             </div>
             <div className={styles['service-card']}>
@@ -134,7 +136,8 @@ export default function HomePage() {
                 <h3 className={styles['service-card__title']}>✨ Développement personnel</h3>
                 <p className={styles['service-card__text']}> Un accompagnement pour avancer, prendre du recul et vous reconnecter à l’essentiel. </p>
                 <ul className={styles['service-card__list']}><li>Diagnostic personnalisé</li><li>Soins restructurants</li><li>Résultats durables</li></ul>
-                <div className={styles['service-card__footer']}><span className={styles['price']}>À partir de 40€</span><button className={styles['reserve']}>Réserver</button></div>
+                <div className={styles['service-card__footer']}><span className={styles['price']}>À partir de 40€</span>
+                  <button onClick={() => openModalBooking()} className={styles['reserve']}>Réserver</button></div>
               </div>
             </div>
           </div>

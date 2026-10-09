@@ -1,11 +1,22 @@
 "use client";
 
-import Link from 'next/link';
 import styles from './Footer.module.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInstagram, faFacebook, faSquareTwitter} from '@fortawesome/free-brands-svg-icons';
+import {useBookingModalStore} from "@/store/bookingModal.store";
+import {useState} from "react";
+import LegalNotice from "@/components/legal-notice/LegalNotice";
 
 export default function Footer() {
+
+    const { openModalBooking } = useBookingModalStore()
+
+    const [openModalLegal, setOpenModalLegal] = useState<boolean>(false)
+
+    const closeModalLegal = () => {
+        setOpenModalLegal(false)
+    }
+
     return (
         <footer className={styles['footer']}>
             <div className={styles['footer__container']}>
@@ -19,8 +30,12 @@ export default function Footer() {
                             </svg>
                         </div>
                         <div>
-                            <h3 className={styles['footer__brand']}>Cabinet Bien-Être</h3>
-                            <p className={styles['footer__subtitle']}>Consultations sur rendez-vous</p>
+                            <h3 className={styles['footer__brand']}>
+                                Cabinet Bien-Être
+                            </h3>
+                            <p className={styles['footer__subtitle']}>
+                                Consultations sur rendez-vous
+                            </p>
                         </div>
                     </div>
                     <p className={styles['footer__desc']}>
@@ -38,7 +53,6 @@ export default function Footer() {
                         </a>
                     </div>
                 </div>
-
                 {/* COLONNE 2 */}
                 <div className={styles['footer__col']}>
                     <div className="d-flex align-items-center">
@@ -53,11 +67,12 @@ export default function Footer() {
                     <p>📞 01 42 56 78 90</p>
                     <span>✉️ contact@salon-bien-etre.fr</span>
                 </div>
-
                 {/* COLONNE 3 */}
                 <div className={styles['footer__col']}>
                     <div className={styles['footer__col__hour']}>
-                        <h4 className={styles['footer__col__title']}>🕒 Horaires</h4>
+                        <h4 className={styles['footer__col__title']}>
+                            🕒 Horaires
+                        </h4>
                     </div>
                     <ul>
                         <li>Lun - Vendredi : 9h - 18h</li>
@@ -72,28 +87,35 @@ export default function Footer() {
                         <small>Ferme à 18h aujourd’hui</small>
                     </div>
                 </div>
-
                 {/* COLONNE 4 */}
                 <div className={styles['footer__col']}>
-                    <h4 className={styles['footer__col__title']}>Services</h4>
+                    <h4 className={styles['footer__col__title']}>
+                        Services
+                    </h4>
                     <ul>
                         <li>Accompagnement bien-être</li>
                         <li>Stress & émotions</li>
                         <li>Développement personnel</li>
                         <li>Consultations personnalisées</li>
                     </ul>
-                    <Link href="/contact/form" className={styles['footer__cta']}>
+                    <button
+                        onClick={() => openModalBooking()}
+                        className={styles['footer__cta']}>
                         Prendre rendez-vous
-                    </Link>
+                    </button>
                 </div>
             </div>
-
             <div className={styles['footer__bottom']}>
                 <p>© 2026 Cabinet Bien-Être. Tous droits réservés.</p>
-                <Link href="/legal" className={styles['legal-notices']}>
+                <p onClick={() => setOpenModalLegal(true)} className={styles['legal-notices']}>
                     Mentions légales — Politique de confidentialité — CGV
-                </Link>
+                </p>
             </div>
+
+            <LegalNotice
+                openModalLegal={openModalLegal}
+                closeModalLegal={closeModalLegal}
+            />
         </footer>
     )
 }

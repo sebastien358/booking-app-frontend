@@ -80,7 +80,14 @@
     }
   }
   .testimonial__stars span {
-    font-size: 12px;
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+  .testimonial__stars .full {
+    opacity: 1;
+  }
+  .testimonial__stars .empty {
+   opacity: 0.25;
   }
   .testimonial__is__read {
     font-size: 10px;

@@ -6,15 +6,22 @@ import {useEffect, useState} from "react";
 import {useTestimonialStore} from "@/store/testimonial.store";
 import NoImage from '@/assets/images/no.svg'
 import Image from "next/image";
+import BookingView from "@/features/well-being/components/booking/BookingView";
 
 export default function Testimonial() {
     {/* Store Testimonial */}
 
-    const { testimonialList, testimonialLazyLoad, testimonials, isLoading, hasMore } = useTestimonialStore()
+    const {
+        testimonialList,
+        testimonialLazyLoad,
+        testimonials,
+        isLoading,
+        hasMore
+    } = useTestimonialStore()
 
     useEffect(() => {
         testimonialList()
-    }, []);
+    }, [testimonialList]);
 
     console.log(testimonials)
 
@@ -54,7 +61,12 @@ export default function Testimonial() {
                                     <div className={styles['testimonials-card__content']}>
                                         <div className={styles['testimonials-card__stars']}>
                                             {[1, 2, 3, 4, 5].map((n, index) => (
-                                                <span key={index}>{n <= t.rating ? '⭐' : '☆'}</span>
+                                                <span
+                                                    key={index}
+                                                    className={n <= t.rating ? styles['full'] : styles['empty']}
+                                                >
+                                                    ⭐️
+                                                </span>
                                             ))}
                                         </div>
                                         <p className={styles['testimonials-card__text']}>
@@ -89,7 +101,7 @@ export default function Testimonial() {
 
                 {hasMore && (
                     <section className={styles['testimonials-load-more']}>
-                        <button className={styles['btn-load']} onClick={() => testimonialLazyLoad()}>
+                        <button onClick={() => testimonialLazyLoad()} className={styles['btn-load']}>
                             <span>Charger plus de témoignages</span>
                         </button>
                     </section>
@@ -106,10 +118,16 @@ export default function Testimonial() {
                 </section>
             </div>
 
+            {/* Modal pouir ajouter un témoignage */}
+
             <ModalTestimonial
                 openModal={openModal}
                 closeModal={closeModal}
             />
+
+            {/* Modal pour faire une réservation d'un rdv */}
+
+            <BookingView />
         </main>
     )
 }

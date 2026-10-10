@@ -65,7 +65,12 @@ export default function TestimonialList() {
                                             <h3>{t.author}</h3>
                                             <div className={styles['testimonial__stars']}>
                                                 {[1, 2, 3, 4, 5].map((n, index) => (
-                                                    <span key={index}>{n <= t.rating ? '⭐' : '☆'}</span>
+                                                    <span
+                                                        key={index}
+                                                        className={n <= t.rating ? styles['full'] : styles['empty']}
+                                                    >
+                                                        ⭐
+                                                    </span>
                                                 ))}
                                             </div>
                                         </div>

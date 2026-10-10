@@ -784,7 +784,19 @@
       align-items: center;
       color: #ffbf00;
       font-size: 1.3rem;
-      column-gap: 3px;
+      column-gap: 2px;
+      span {
+       letter-spacing: 3px;
+        font-size: 18px;
+      }
+      .full {
+        color: #ffbf00;
+        opacity: 1;
+      }
+      .empty {
+        color: #ffbf00;
+        opacity: 0.25;
+      }
     }
     &__text {
       margin-bottom: 1rem;

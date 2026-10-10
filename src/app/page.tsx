@@ -27,7 +27,7 @@ export default function HomePage() {
     loading: false,
     publishedTestimonials: [
       { id: 1, rating: 5, message: "Un accompagnement incroyable, très à l'écoute.", author: "Marie D.", job: "Comptable", picture: user1 },
-      { id: 2, rating: 5, message: "Je me sens apaisée après chaque séance.", author: "Sophie M.", job: "Designer", picture: user2 },
+      { id: 2, rating: 3, message: "Je me sens apaisée après chaque séance.", author: "Sophie M.", job: "Designer", picture: user2 },
       { id: 3, rating: 5, message: "Je me sens apaisée.", author: "Sophie M.", job: "Designer", picture: user3 },
     ]
   };
@@ -165,7 +165,14 @@ export default function HomePage() {
                         <div key={testimonial.id} className={styles['testimonials__items']}>
                           <div className={styles['testimonials__content']}>
                             <div className={styles['testimonials__stars']}>
-                              {[...Array(testimonial.rating)].map((_, nbr) => <span key={nbr}>⭐️</span>)}
+                              {[1, 2, 3, 4, 5].map((n, index) => (
+                                  <span
+                                      key={index}
+                                      className={n <= testimonial.rating ? styles['full'] : styles['empty']}
+                                  >
+                                    ⭐️
+                                  </span>
+                              ))}
                             </div>
                             <p className={styles['testimonials__text']}>{testimonial.message}</p>
                             <div className={styles['testimonials__user']}>

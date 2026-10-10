@@ -64,7 +64,12 @@ export default function TestimonialDetails({ id, testimonialAdminToggle, testimo
                                     <h2>{currentTestimonial.author}</h2>
                                     <div className={styles['rating']}>
                                         {[1, 2, 3, 4, 5].map((n, index) => (
-                                            <span key={index}>{n <= currentTestimonial.rating ? '⭐' : '☆'}</span>
+                                            <span
+                                                key={index}
+                                                className={n <= currentTestimonial.rating ? styles['full'] : styles['empty']}
+                                            >
+                                                ⭐
+                                            </span>
                                         ))}
                                     </div>
                                     <div className={styles['sub']}>

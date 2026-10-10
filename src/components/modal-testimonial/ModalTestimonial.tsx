@@ -43,7 +43,8 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
         message: z
             .string()
             .trim()
-            .min(30, { message: 'Votre message doit contenir au moins 30 caractères' }),
+            .min(100, { message: 'Votre message doit contenir au moins 100 caractères' })
+            .max(180, { message: 'Votre message doit contenir au maximum 180 caractères' }),
         image: z
             .any()
             .nullable()
@@ -79,7 +80,10 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
             setValue('image', null, { shouldValidate: true })
             return
         }
+
         setFilename(file.name)
+
+        console.log(file.name)
         setValue('image', file, { shouldValidate: true })
     }
 
@@ -118,7 +122,7 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
     }
 
     return (
-        <>
+        <main>
             {openModal && (
                 <section className={styles['modal-testimonial']}>
                     <div className={styles['testimonials__form']}>
@@ -129,11 +133,15 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className={styles['form-group']}>
                                 <input {...register('author')} type="text" placeholder="Votre nom" />
-                                {errors.author && <span className={styles['error-field']}>{errors.author?.message}</span>}
+                                {errors.author && <span className={styles['error-field']}>
+                                    {errors.author?.message}
+                                </span>}
                             </div>
                             <div className={styles['form-group']}>
                                 <input {...register('job')} type="text" placeholder="Votre profession" />
-                                {errors.job && <span className={styles['error-field']}>{errors.job?.message}</span>}
+                                {errors.job && <span className={styles['error-field']}>
+                                    {errors.job?.message}
+                                </span>}
                             </div>
                             <div className={styles['form-group']}>
                                 <div className={styles['select-wrapper']}>
@@ -146,13 +154,17 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
                                         <option value="1">⭐ – Décevant</option>
                                     </select>
                                 </div>
-                                {errors.rating && <span className={styles['error-field']}>{errors.rating?.message}</span>}
+                                {errors.rating && <span className={styles['error-field']}>
+                                    {errors.rating?.message}
+                                </span>}
                             </div>
                             <div className={styles['form-group']}>
                                 <div className={styles['input-file']}>
                                     <label className={styles['input-file__label']}>
                                         <input className={styles['input-file__input']} type="file" onChange={(e) => onChangeImage(e)} />
-                                        <span className={filename ? styles['filename'] : styles['filename-active']}>{'Choisir une image' || filename}</span>
+                                        <span className={filename ? styles['filename'] : styles['filename-active']}>
+                                            {!filename ? 'Choisir une image' : filename }
+                                        </span>
                                     </label>
                                     <small className={styles['file-hint']}>
                                         Image facultative
@@ -161,7 +173,9 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
                             </div>
                             <div className={styles['form-group-textarea']}>
                                 <textarea {...register('message')} placeholder="Votre Témoignage..."></textarea>
-                                {errors.message && <span className={styles['error-field']}>{errors.message?.message}</span>}
+                                {errors.message && <span className={styles['error-field']}>
+                                    {errors.message?.message}
+                                </span>}
                             </div>
 
                             {successMessage && (<p className={styles['success-message']}>{successMessage}</p>)}
@@ -176,6 +190,6 @@ export default function ModalTestimonial({ openModal, closeModal }: ModalTestimo
                     </div>
                 </section>
             )}
-        </>
+        </main>
     )
 }

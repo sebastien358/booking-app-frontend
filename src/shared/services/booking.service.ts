@@ -22,6 +22,23 @@ export const axiosBookingSlots = async (bookingCategoryId: number, bookingServic
     }
 }
 
+export async function axiosHoldSlotBooking(slotStart: string, bookingServiceId: number, bookingStaffId: number) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/appointment/hold/slots`, {
+            start: slotStart,
+            serviceId: bookingServiceId,
+            staffId: bookingStaffId
+        })
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de la création d'un rendez-vous : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
 export const axiosCreateBooking = async (dataBooking: any) => {
     try {
         const response = await axios.post(`${BASE_URL}/api/appointment/create`, dataBooking)
@@ -34,3 +51,4 @@ export const axiosCreateBooking = async (dataBooking: any) => {
         throw err
     }
 }
+

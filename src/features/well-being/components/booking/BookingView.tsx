@@ -42,7 +42,9 @@ export default function BookingView() {
         informationCompletedThree,
         loadingSlots,
         slots,
-        successBooking
+        successBooking,
+
+        holdSlot
     } = useBookingStore()
 
     {/* STORE MODAL BOOKING */}
@@ -55,7 +57,7 @@ export default function BookingView() {
 
     useEffect(() => {
         categoriesList()
-    }, []);
+    }, [categoriesList]);
 
     {/* SELECTED CATEGORY */}
 
@@ -92,7 +94,7 @@ export default function BookingView() {
 
     useEffect(() => {
         servicesList()
-    }, []);
+    }, [servicesList]);
 
     const filteredServices = useMemo(() => {
         if (!services || !bookingDraft.bookingCategoryId) return [];
@@ -122,7 +124,7 @@ export default function BookingView() {
 
     useEffect(() => {
         staffList()
-    }, []);
+    }, [staffList]);
 
     type Staff = {
         id: number
@@ -168,7 +170,7 @@ export default function BookingView() {
         return days
     }, [now]);
 
-    const [pageSize] = useState(3);
+    const [pageSize] = useState<number>(3);
     const [carouselIndex, setCarouselIndex] = useState(0);
 
     const maxIndex = useMemo(() => {
@@ -243,6 +245,8 @@ export default function BookingView() {
     const onClickSelectedSlot = async (slot: Slot) => {
         setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })
         setSlotLabel(slot.label)
+
+        await holdSlot(slot.start)
 
         if (!token && !isUser()) {
             setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })

@@ -1,6 +1,10 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import {axiosBookingSlots, axiosCreateBooking} from "@/shared/services/booking.service";
+import {
+    axiosBookingSlots,
+    axiosCreateBooking,
+    axiosHoldSlotBooking
+} from "@/shared/services/booking.service";
 import axios, {isAxiosError} from "axios";
 
 export interface BookingDraft {
@@ -47,6 +51,9 @@ interface BookingState {
     setSelectedDay: (selectedDay: string) => string
     setSlotLabel: (slotLabel: string) => string
     axiosSlots: () => Promise<void>
+
+    holdSlot: (slotStart: string) => Promise<void>
+
     createBooking: (dataBooking: DataBookingState, paymentIntentId: string) => Promise<any>
     setProgressStep: (progressStep: number) => number
     informationCompletedOne: () => boolean
@@ -103,6 +110,8 @@ export const useBookingStore = create<BookingState>()(
 
             setBookingDraft: (payload) => {
                 set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
+
+                console.log(get().bookingDraft)
             },
 
             setServiceName: (serviceName: string) => set({ serviceName }),
@@ -134,6 +143,22 @@ export const useBookingStore = create<BookingState>()(
                 } catch(e) {
                     console.error(e)
                     set({ loadingSlots: false })
+                }
+            },
+
+            holdSlot: async (slotStart: string) => {
+                const { bookingServiceId, bookingStaffId } = get().bookingDraft
+                if (!slotStart || !bookingServiceId || !bookingStaffId) {
+                    set({ slots: [] })
+                    return
+                }
+                try {
+                    set({ loadingSlots: true })
+                    const data = await axiosHoldSlotBooking(slotStart, bookingServiceId, bookingStaffId)
+                    set({ slots: data, loadingSlots: false })
+                } catch (err) {
+                    console.error(err)
+                    throw err
                 }
             },
 

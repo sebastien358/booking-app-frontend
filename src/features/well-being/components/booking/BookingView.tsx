@@ -43,8 +43,9 @@ export default function BookingView() {
         loadingSlots,
         slots,
         successBooking,
-
-        holdSlot
+        errorBooking,
+        holdSlot,
+        resetBooking,
     } = useBookingStore()
 
     {/* STORE MODAL BOOKING */}
@@ -267,6 +268,14 @@ export default function BookingView() {
         return (isLoadingCategory || isLoadingService || isLoadingStaff)
     }
 
+    {/* Affichage de l'erreur : Créneau en cours de réservation */}
+
+    useEffect(() => {
+        if(errorBooking){
+            setTimeout(() => resetBooking(), 2000)
+        }
+    }, [errorBooking, resetBooking])
+
     {/* Progress Step */}
 
     useEffect(() => {
@@ -466,7 +475,12 @@ export default function BookingView() {
                                                 {slot.label}
                                             </button>
                                         ))}
+
+                                        {errorBooking && <p className={styles['error-slots']}>
+                                            {errorBooking}
+                                        </p>}
                                     </div>
+
                                 ) : (
                                     <div className={styles['booking__no__reservation']}>
                                         <p>Aucun créneau disponible.</p>

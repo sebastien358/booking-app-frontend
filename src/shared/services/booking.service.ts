@@ -25,7 +25,7 @@ export const axiosBookingSlots = async (bookingCategoryId: number, bookingServic
 export async function axiosHoldSlotBooking(slotStart: string, bookingServiceId: number, bookingStaffId: number) {
     try {
         const response = await axios.post(`${BASE_URL}/api/appointment/hold/slots`, {
-            start: slotStart,
+            startAt: slotStart,
             serviceId: bookingServiceId,
             staffId: bookingStaffId
         })

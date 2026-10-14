@@ -36,6 +36,20 @@ export default function Login() {
 
     const router = useRouter()
 
+    type DataUser = {
+        email: string,
+        password: string
+    }
+
+    const onSubmit = async (data: DataUser) => {
+        try {
+            await login(data)
+            displayLogin()
+        } catch (err) {
+            displayError()
+        }
+    }
+
     const displayLogin = () => {
         clearError()
         setSuccessMessage('Vous êtes connecté')
@@ -52,25 +66,12 @@ export default function Login() {
         }, 2000)
     }
 
+
     const displayError = () => {
         setSuccessMessage(null)
         setTimeout(() => {
             clearError()
         }, 2000)
-    }
-
-    type DataUser = {
-        email: string,
-        password: string
-    }
-
-    const onSubmit = async (data: DataUser) => {
-        try {
-            await login(data)
-            displayLogin()
-        } catch (err: any) {
-            displayError()
-        }
     }
 
     return (

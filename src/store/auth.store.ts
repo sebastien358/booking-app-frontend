@@ -58,8 +58,7 @@ export const useAuthStore = create<AuthState>()(
                     set({ token: token })
                     get().infoMe()
                 } catch(err: any) {
-                    const apiError = err?.response?.data
-                    if (apiError?.status === 401) {
+                    if (err?.response?.status === 401) {
                         set({ errorMessage: 'Identifiant ou mot de passe invalide' })
                     } else {
                         set({ errorMessage: 'La connexion a échouée.' })

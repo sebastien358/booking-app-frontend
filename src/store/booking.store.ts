@@ -7,6 +7,8 @@ import {
 } from "@/shared/services/booking.service";
 import axios, {isAxiosError} from "axios";
 
+const DELAY_TIME_SLOTS = 400
+
 export interface BookingDraft {
     bookingCategoryId: number | null
     bookingServiceId: number | null
@@ -60,6 +62,7 @@ interface BookingState {
     informationCompletedTwo: () => boolean
     informationCompletedThree: () => boolean
     isStep2Complete: () => boolean
+    resetBooking: () => void
 }
 
 export const useBookingStore = create<BookingState>()(
@@ -109,9 +112,7 @@ export const useBookingStore = create<BookingState>()(
             },
 
             setBookingDraft: (payload) => {
-                set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
-
-                console.log(get().bookingDraft)
+                set(state => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
             },
 
             setServiceName: (serviceName: string) => set({ serviceName }),
@@ -139,7 +140,7 @@ export const useBookingStore = create<BookingState>()(
 
                     setTimeout(() => {
                         set({ slots: data, loadingSlots: false })
-                    }, 400)
+                    }, DELAY_TIME_SLOTS)
                 } catch(e) {
                     console.error(e)
                     set({ loadingSlots: false })
@@ -156,8 +157,13 @@ export const useBookingStore = create<BookingState>()(
                     set({ loadingSlots: true })
                     const data = await axiosHoldSlotBooking(slotStart, bookingServiceId, bookingStaffId)
                     set({ slots: data, loadingSlots: false })
-                } catch (err) {
-                    console.error(err)
+                } catch (err: any) {
+                    const apiError = err?.response?.data
+                    if (apiError?.type === 'ALREADY_HELD') {
+                        set({ errorBooking: apiError?.message })
+                    } else {
+                        set({ errorBooking: 'Une erreur est survenue' })
+                    }
                     throw err
                 }
             },
@@ -200,7 +206,9 @@ export const useBookingStore = create<BookingState>()(
 
             informationCompletedThree: () => {
                 return get().successBooking
-            }
+            },
+
+            resetBooking: () => set({ errorBooking: null }),
         }),
         {
             name: 'booking-storage'

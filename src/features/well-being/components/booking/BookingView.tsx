@@ -81,7 +81,6 @@ export default function BookingView() {
         return category.id === bookingDraft.bookingCategoryId
     }
 
-
     {/* SERVICES */}
 
     type Service = {
@@ -271,7 +270,7 @@ export default function BookingView() {
     {/* Affichage de l'erreur : Créneau en cours de réservation */}
 
     useEffect(() => {
-        if(errorBooking){
+        if(errorBooking) {
             setTimeout(() => resetBooking(), 2000)
         }
     }, [errorBooking, resetBooking])

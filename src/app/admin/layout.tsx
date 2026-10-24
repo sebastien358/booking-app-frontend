@@ -3,11 +3,12 @@
 import React, {useEffect} from "react";
 import {useRouter} from "next/navigation";
 import {useAuthStore} from "@/store/auth.store";
-import styles from "@/app/admin/Layout.module.scss";
+import styles from "@/app/admin/layout.module.scss";
 import Sidebar from "@/features/admin/components/Sidebar";
 
 export default function adminLayout({children}: {children: React.ReactNode}) {
-    const { hasHydrated, token, isAdmin } = useAuthStore()
+    const { hasHydrated, token, isAdmin, isUser } = useAuthStore()
+
     const router = useRouter()
 
     useEffect(() => {
@@ -17,10 +18,13 @@ export default function adminLayout({children}: {children: React.ReactNode}) {
             router.push('/login')
         }
 
-        if (!hasHydrated) {
-            return null
+        if (!isUser() && isAdmin()) {
+            router.push('/admin/bookings')
         }
-    }, [hasHydrated, token, isAdmin]);
+
+        if (!hasHydrated) return null
+
+    }, [hasHydrated, token, isAdmin, isUser]);
 
     return (
         <main className={styles['admin-layout']}>

@@ -44,8 +44,8 @@ interface BookingState {
     slotLabel: string | null
     progressStep: number
 
-    setBookingDraft: (payload: Partial<BookingDraft>) => void
     resetBookingDraft: () => void
+    setBookingDraft: (payload: Partial<BookingDraft>) => void
     setServiceName: (serviceName: string) => string
     setServicePrice: (servicePrice: number) => number
     setStaffName: (staffName: string) => string
@@ -112,7 +112,7 @@ export const useBookingStore = create<BookingState>()(
             },
 
             setBookingDraft: (payload) => {
-                set(state => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
+                set((state) => ({ bookingDraft: { ...state.bookingDraft, ...payload } }))
             },
 
             setServiceName: (serviceName: string) => set({ serviceName }),

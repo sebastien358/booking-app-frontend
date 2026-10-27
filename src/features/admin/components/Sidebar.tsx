@@ -9,6 +9,7 @@ import {useTestimonialAdminStore} from "@/store/admin/testimonialAdmin.store";
 import {useContactAdminStore} from "@/store/admin/contactAdmin.store";
 import {useServiceAdminStore} from "@/store/admin/serviceAdmin.store";
 import {useAuthStore} from "@/store/auth.store";
+import {useAppointmentUserStore} from "@/store/user/appointmentUser.store";
 
 const adminLinks = [
     {name: 'Accueil', path: '/'},
@@ -23,15 +24,22 @@ const adminLinks = [
 const userLinks = [
     {name: 'Accueil', path: '/'},
     {name: 'Tous les rendez-vous', path: '/user/bookings'},
+    {name: 'Mon compte', path: '/user/account'}
 ]
 
 export default function Sidebar() {
     const { isUser, isAdmin } = useAuthStore()
 
+    // STORE ADMIN
+
     const { countBookings, resetBooking } = useBookingAdminStore()
     const { countTestimonials, resetTestimonial } = useTestimonialAdminStore()
     const { countContacts, resetContact } = useContactAdminStore()
     const { countServices, resetService } = useServiceAdminStore()
+
+    // STORE USER
+
+    const { countAppointments, resetBookingUser } = useAppointmentUserStore()
 
     const pathname = usePathname()
 
@@ -40,8 +48,8 @@ export default function Sidebar() {
         '/admin/testimonials': { count: countTestimonials, reset: resetTestimonial },
         '/admin/contacts': { count: countContacts, reset: resetContact },
         '/admin/services': { count: countServices, reset: resetService },
-        '/admin/account': { count: null, resetContact: null},
-        '/user/bookings': { count: null, resetContact: null}
+        '/admin/account': { count: null, resetContact: null },
+        '/user/bookings': { count: countAppointments, reset: resetBookingUser }
     }
 
     const current = adminPageConfig[pathname]

@@ -30,6 +30,9 @@ export default function InputSearch({ term, search, placeholder, activeSearch }:
             case 'service-admin':
                 search(e.target.value)
                 break
+            case 'booking-user':
+                search(e.target.value)
+                break
             default:
                 return ""
         }

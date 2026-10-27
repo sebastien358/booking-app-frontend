@@ -1,8 +1,9 @@
 'use client'
 
+import styles from './Login.module.scss'
+
 import { z } from "zod";
 import {useState} from "react";
-import styles from './Login.module.scss'
 import Link from "next/link";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod"
@@ -10,6 +11,8 @@ import {useAuthStore} from "@/store/auth.store";
 import {useRouter} from "next/navigation";
 import {useBookingModalStore} from "@/store/bookingModal.store";
 import BookingView from "@/features/well-being/components/booking/BookingView";
+
+const DELAY_TIMEOUT = 2000
 
 const schema = z.object({
     email: z
@@ -23,6 +26,8 @@ const schema = z.object({
 })
 
 export default function Login() {
+
+    const { token, isUser, isAdmin } = useAuthStore()
 
     const { login, errorMessage, clearError, setShowLoginModal, showLoginModal } = useAuthStore()
 
@@ -62,8 +67,16 @@ export default function Login() {
                 setShowLoginModal(false)
             }
 
-            router.push('/admin/bookings')
-        }, 2000)
+            if (isAdmin()) {
+                router.push('/admin/bookings')
+                return
+            }
+
+            if (isUser()) {
+                router.push('/user/bookings')
+                return
+            }
+        }, DELAY_TIMEOUT)
     }
 
 
@@ -71,7 +84,7 @@ export default function Login() {
         setSuccessMessage(null)
         setTimeout(() => {
             clearError()
-        }, 2000)
+        }, DELAY_TIMEOUT)
     }
 
     return (

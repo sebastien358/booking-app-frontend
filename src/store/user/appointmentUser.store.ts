@@ -1,6 +1,21 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {axiosBookingUserList, axiosBookingUserSearch} from "@/shared/services/user/appointmentUser.service";
+import {
+    axiosBookingUserDelete,
+    axiosBookingUserDetails,
+    axiosBookingUserList,
+} from "@/shared/services/user/appointmentUser.service";
+
+export interface BookingStaffData {
+    firstname: string
+    lastname: string
+}
+
+export interface BookingServiceData {
+    name: string
+    duration: number
+    price: number
+}
 
 export interface BookingsDataState {
     id: number
@@ -12,10 +27,13 @@ export interface BookingsDataState {
     startAt: string
     endAt: string
     created_at: string
+    service: BookingServiceData
+    staff: BookingStaffData
 }
 
 export interface AppointmentUserState {
     bookings: BookingsDataState[]
+    currentBooking: BookingsDataState | null
     isLoading: boolean
     offset: number
     limit: number
@@ -23,13 +41,16 @@ export interface AppointmentUserState {
     hasMore: boolean
 
     bookingUserList: () => Promise<void>
+    bookingUserDetails: (id: string) => Promise<void>
     bookingUserLazyLoad: () => Promise<void>
+    bookingUserDelete: (id: string) => Promise<void>
     resetBookingUser: () => void
 }
 
 export const useAppointmentUserStore = create<AppointmentUserState>()(
     persist((set, get) => ({
         bookings: [],
+        currentBooking: null,
         isLoading: false,
         offset: 0,
         limit: 2,
@@ -46,6 +67,18 @@ export const useAppointmentUserStore = create<AppointmentUserState>()(
                     countAppointments: data.count,
                     hasMore: data.appointments.length >= get().limit
                 })
+            } catch (err){
+                console.error(err)
+                set({ isLoading: false })
+                throw err
+            }
+        },
+
+        bookingUserDetails: async (id: string) => {
+            try {
+                set({ currentBooking: null, isLoading: true })
+                const data = await axiosBookingUserDetails(id)
+                set({ currentBooking: data, isLoading: false })
             } catch (err){
                 console.error(err)
                 set({ isLoading: false })
@@ -74,6 +107,15 @@ export const useAppointmentUserStore = create<AppointmentUserState>()(
             } catch (err){
                 console.error(err)
                 set({ isLoading: false })
+                throw err
+            }
+        },
+
+        bookingUserDelete: async (id: string) => {
+            try {
+                await axiosBookingUserDelete(id)
+            } catch (err: any) {
+                console.error(err)
                 throw err
             }
         },

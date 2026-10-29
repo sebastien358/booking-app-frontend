@@ -20,17 +20,26 @@ export async function axiosBookingUserList(offset: number, limit: number) {
     }
 }
 
-export async function axiosBookingUserSearch(search: string | null) {
+export async function axiosBookingUserDetails(id: string) {
     try {
-        const response = await axios.get(`${BASE_URL}/api/user/bookings/search`, {
-            params: {
-                search
-            }
-        })
+        const response = await axios.get(`${BASE_URL}/api/user/bookings/details/${id}`)
         if (response.status >= 200 && response.status < 300) {
             return response.data
         }
-        throw new Error(`Erreur de la récupération des rendez-vous (search) : ${response.status}`)
+        throw new Error(`Erreur de la récupération d'un' rendez-vous : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
+export async function axiosBookingUserDelete(id: string) {
+    try {
+        const response = await axios.delete(`${BASE_URL}/api/user/bookings/delete/${id}`)
+        if (response.status === 200 || response.status === 204) {
+            return response.data
+        }
+        throw new Error(`Erreur de la suprpression d'un rendez-vous : ${response.status}`)
     } catch (err) {
         console.error(err)
         throw err

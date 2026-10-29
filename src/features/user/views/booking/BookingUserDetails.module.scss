@@ -1,0 +1,210 @@
+// LOADING
+
+.loading-indicator,
+.empty-state {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 767.98px) {
+    min-height: 150px;
+  }
+  p {
+    font-size: 15px;
+    color: #9ca3af;
+    @media (max-width: 767.98px) {
+      font-size: 14px;
+    }
+  }
+}
+
+/*======================
+  BOOKINGS
+======================*/
+
+.booking-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 20px;
+  .booking-details {
+    width: 550px;
+    padding: 1.6rem;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    font-family: "Inter", sans-serif;
+    h2 {
+      color: black;
+      font-size: 18px;
+    }
+    .meta {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+      .booking-email {
+        margin-top: 5px;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+      }
+      .unread {
+        font-size: 13px;
+      }
+    }
+    .message-body {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1.4rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      .date-title {
+        color: #475569;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      p {
+        color: #374151;
+        font-size: 13px;
+      }
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      column-gap: 5px;
+      .btn-reply {
+        color: white;
+        border-radius: 8px;
+        padding: 11px;
+        background: #3b82f6;
+        font-size: 11px;
+        margin-top: 10px;
+        transition: all 125ms ease;
+        @media (max-width: 767.98px) {
+          font-size: 10px;
+        }
+        a {
+          color: #fff;
+        }
+        &:hover {
+          background: #2563eb;
+          transform: translateY(-1px);
+        }
+      }
+      .btn-delete {
+        cursor: pointer;
+        border-radius: 8px;
+        padding: 11px;
+        margin-top: 10px;
+        font-size: 11px;
+        background: #ef4444;
+        color: #fff;
+        transition: all 125ms ease;
+        border: 0;
+        @media (max-width: 767.98px) {
+          font-size: 10px;
+        }
+        &:hover {
+          background: #dc2626;
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 991.98px) {
+  .booking-container {
+    margin: 30px 20px;
+    .booking-details {
+      width: 500px;
+      h2 {
+        color: black;
+        font-size: 18px;
+      }
+      .meta {
+        margin-bottom: 10px;
+        .booking-email {
+          margin-top: 12px;
+          font-size: 14px;
+        }
+        .status {
+          font-size: 12px;
+        }
+      }
+      .message-body {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1.7rem 1.2rem;
+        .date-title {
+          margin-bottom: 9px;
+        }
+        p {
+          margin-top: 15px;
+          color: #374151; /* gris foncé élégant (Tailwind gray-700) */
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .booking-container {
+    margin: 30px 10px;
+    .booking-details {
+      width: 320px;
+      padding: 15px;
+      h2 {
+        color: black;
+        font-size: 15px;
+      }
+      .meta {
+        .booking-email {
+          font-size: 13px;
+          margin-top: 8px;
+        }
+        .status {
+          font-size: 11px;
+        }
+      }
+      .message-body {
+        padding: 1rem;
+        .date-title {
+          font-size: 13px;
+        }
+        p {
+          margin-top: 13px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 575.98px) {
+  .booking-container {
+    .booking-details {
+      width: 320px;
+    }
+  }
+}
+
+/*======================
+  LOADING
+======================*/
+
+.loading-state {
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  p {
+    color: #9ca3af;
+  }
+}

@@ -12,11 +12,16 @@
 .modal {
   background: #faf9f7;
   border-radius: 12px;
-  padding: 40px 32px;
+  padding: 30px;
   max-width: 420px;
   width: 100%;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  .error-message {
+    color: red;
+    font-size: 13px;
+    padding-top: 20px;
+  }
   &__icon {
     font-size: 40px;
     margin-bottom: 16px;
@@ -31,7 +36,7 @@
     font-size: 14px;
     color: #666;
     line-height: 1.6;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
   }
   &__actions {
     display: flex;

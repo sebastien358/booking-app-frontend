@@ -5,7 +5,6 @@ import styles from './BookingUserList.module.scss'
 import {BookingsDataState, useAppointmentUserStore} from "@/store/user/appointmentUser.store";
 import {useEffect} from "react";
 import Link from "next/link";
-import InputSearch from "@/components/input-search/InputSearch";
 
 export default function BookingUserList() {
 
@@ -20,24 +19,6 @@ export default function BookingUserList() {
         if (!date) return ""
         const d = new Date(date)
         return Intl.DateTimeFormat('fr-FR').format(d)
-    }
-
-    const bookingStartAt = (startAt: Date) => {
-        if (!startAt) return ""
-        const d = new Date(startAt)
-        return Intl.DateTimeFormat('fr-FR', {
-            hour: "numeric",
-            minute: "numeric",
-        }).format(d)
-    }
-
-    const bookingEndAt = (endAt: Date) => {
-        if (!endAt) return ""
-        const d = new Date(endAt)
-        return Intl.DateTimeFormat('fr-FR', {
-            hour: "numeric",
-            minute: "numeric",
-        }).format(d)
     }
 
     return (
@@ -58,15 +39,13 @@ export default function BookingUserList() {
                                 {bookings?.map((booking: BookingsDataState) => (
                                     <Link
                                         key={booking.id}
-                                        href={`/admin/bookings/${booking.id}`}
+                                        href={`/user/bookings/${booking.id}`}
                                         className={styles['grid-item']}
                                     >
                                         <h3>{booking.lastname} {booking.firstname}</h3>
                                         <p>Email : {booking.email}</p>
                                         <p>Téléphone : {booking.phone}</p>
                                         <p>Date : {displayDate(booking.created_at)}</p>
-                                        <p>Début : {bookingStartAt(booking.startAt)}</p>
-                                        <p>Fin : {bookingEndAt(booking.endAt)}</p>
                                         <small className={styles['is-read']}>
                                             {booking.is_read ? '✅ vu' : '❌ non-vu'}
                                         </small>

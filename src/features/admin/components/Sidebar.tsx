@@ -17,8 +17,9 @@ const adminLinks = [
     {name: 'Tous les témoignanges', path: '/admin/testimonials'},
     {name: 'Tous les messages', path: '/admin/contacts'},
     {name: 'Tous les services', path: '/admin/services' },
+    {name: 'Tous les clients', path: '/admin/account/clients' },
     {name: 'Ajouter un service', path: '/admin/services/add'},
-    {name: 'Mon compte', path: '/admin/account' }
+    {name: 'Mon compte', path: '/admin/account' },
 ]
 
 const userLinks = [
@@ -48,6 +49,7 @@ export default function Sidebar() {
         '/admin/testimonials': { count: countTestimonials, reset: resetTestimonial },
         '/admin/contacts': { count: countContacts, reset: resetContact },
         '/admin/services': { count: countServices, reset: resetService },
+        '/admin/account/clients': { count: null, resetContact: null },
         '/admin/account': { count: null, resetContact: null },
         '/user/bookings': { count: countAppointments, reset: resetBookingUser }
     }

@@ -2,10 +2,26 @@ import axios from "axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 
-export async function axiosTestimonialList(offset: number, limit: number) {
+export async function axiosTestimonialHomePage() {
+    try {
+        const response = await axios.get(`${BASE_URL}/api/testimonial/home`)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de la récupération des témoignages de la home page : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
+export async function axiosTestimonialList(currentPage: number, limit: number) {
     try {
         const response = await axios.get(`${BASE_URL}/api/testimonial/list`, {
-            params: { offset, limit }
+            params: {
+                currentPage,
+                limit
+            }
         })
         if (response.status >= 200 && response.status < 300) {
             return response.data

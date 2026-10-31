@@ -10,11 +10,13 @@ import about from '@/assets/images/about.jpg'
 import accompagnement from '@/assets/images/accompagnement.jpg'
 import stress from '@/assets/images/stress.jpg'
 import developpement from '@/assets/images/person.jpg'
+import noUser from '@/assets/images/no.svg'
 import Image from "next/image";
 import {useScrollTop} from "@/shared/scroll-top/scrollTop";
 import BookingView from "@/features/well-being/components/booking/BookingView";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useBookingModalStore} from "@/store/bookingModal.store";
+import {useTestimonialStore} from "@/store/testimonial.store";
 
 export default function HomePage() {
   const [isOpen] = useState(true); // pour tester
@@ -23,14 +25,11 @@ export default function HomePage() {
 
   const { openModalBooking } = useBookingModalStore()
 
-  const testimonialStore = {
-    loading: false,
-    publishedTestimonials: [
-      { id: 1, rating: 5, message: "Un accompagnement incroyable, très à l'écoute.", author: "Marie D.", job: "Comptable", picture: user1 },
-      { id: 2, rating: 3, message: "Je me sens apaisée après chaque séance.", author: "Sophie M.", job: "Designer", picture: user2 },
-      { id: 3, rating: 5, message: "Je me sens apaisée.", author: "Sophie M.", job: "Designer", picture: user3 },
-    ]
-  };
+  const { testimonialHomePage, testimonialsHome, isLoading } = useTestimonialStore()
+
+  useEffect(() => {
+    testimonialHomePage()
+  }, [testimonialHomePage]);
 
   const {show, scrollTop} = useScrollTop()
 
@@ -152,16 +151,14 @@ export default function HomePage() {
               <p className={styles['testimonials__subtitle']}> Découvrez les retours de celles et ceux qui nous ont fait confiance pour leur bien-être et leur accompagnement. </p>
             </div>
 
-            {testimonialStore.loading && (
-                <div className={styles['loading-overlay']}>
-                  <span className={styles['loading-overlay__loader']}></span>
-                </div>
-            )}
-
-            {testimonialStore.publishedTestimonials.length > 0 && (
+            {isLoading ? (
+                <section className={styles['loading-state']}>
+                  <p className={styles['loading-text']}>Chargement…</p>
+                </section>
+            ) : !isLoading && testimonialsHome.length > 0 ? (
                 <div className={styles['testimonials__card']}>
                   <div className={styles['testimonials__elems']}>
-                    {testimonialStore.publishedTestimonials.map((testimonial) => (
+                    {testimonialsHome.map((testimonial) => (
                         <div key={testimonial.id} className={styles['testimonials__items']}>
                           <div className={styles['testimonials__content']}>
                             <div className={styles['testimonials__stars']}>
@@ -176,7 +173,7 @@ export default function HomePage() {
                             </div>
                             <p className={styles['testimonials__text']}>{testimonial.message}</p>
                             <div className={styles['testimonials__user']}>
-                              <Image src={testimonial.picture} alt="Photos clients" />
+                              <Image src={testimonial.picture?.filename || noUser} alt="Photos clients" width={100} height={100} />
                               <div>
                                 <div className={styles['name']}>{testimonial.author}</div>
                                 <div className={styles['role']}>{testimonial.job}</div>
@@ -187,12 +184,20 @@ export default function HomePage() {
                     ))}
                   </div>
                 </div>
+            ) : (
+                <section className={styles['no-testimonial']}>
+                  <p className={styles['no-testimonial__text']}>
+                    Aucun témoignage pour le moment.
+                  </p>
+                </section>
             )}
           </div>
 
-          <div className={styles['testimonials__link']}>
-            <Link href="/testimonials">Voir tous les témoignages →</Link>
-          </div>
+          {testimonialsHome.length >= 3 && (
+              <div className={styles['testimonials__link']}>
+                <Link href="/testimonials">Voir tous les témoignages →</Link>
+              </div>
+          )}
 
           {/* TESTIMONIALS CTA */}
 

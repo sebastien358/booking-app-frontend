@@ -16,6 +16,7 @@ export interface AccountFormUserExist {
 
 export interface AuthState {
     token: string | null
+    userId: number | null
     user: null
     errorMessage: string | null
     showLoginModal: boolean
@@ -40,6 +41,7 @@ export const useAuthStore = create<AuthState>()(
     persist(
         (set, get) => ({
             token: null,
+            userId: null,
             user: null,
             errorMessage: null,
             showLoginModal: false,
@@ -91,7 +93,7 @@ export const useAuthStore = create<AuthState>()(
             infoMe: async () => {
                 try {
                     const data = await axiosInfoMe()
-                    set({ user: data })
+                    set({ user: data, userId: data?.id })
                 } catch(err) {
                     console.error(err)
                     throw err

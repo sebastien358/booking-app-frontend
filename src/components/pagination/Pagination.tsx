@@ -2,7 +2,7 @@ import styles from './Pagination.module.scss'
 
 type PaginationProps = {
     currentPage: number,
-    pages: number,
+    pages: number | null,
     previousPage: () => void,
     nextPage: () => void
 }
@@ -10,7 +10,7 @@ type PaginationProps = {
 export default function Pagination({ currentPage, pages, previousPage, nextPage }: PaginationProps) {
 
     return (
-        <section className={`${styles['pagination']} ${pages > 1 ? styles['active'] : ''}`}>
+        <section className={`${styles['pagination']}`}>
             <button
                 onClick={() => previousPage()}
                 disabled={currentPage === 1}

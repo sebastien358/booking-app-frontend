@@ -7,23 +7,24 @@ import {useTestimonialStore} from "@/store/testimonial.store";
 import NoImage from '@/assets/images/no.svg'
 import Image from "next/image";
 import BookingView from "@/features/well-being/components/booking/BookingView";
+import Pagination from "@/components/pagination/Pagination";
 
 export default function Testimonial() {
     {/* Store Testimonial */}
 
     const {
         testimonialList,
-        testimonialLazyLoad,
+        previousPage,
+        nextPage,
         testimonials,
         isLoading,
-        hasMore
+        currentPage,
+        pages,
     } = useTestimonialStore()
 
     useEffect(() => {
         testimonialList()
     }, [testimonialList]);
-
-    console.log(testimonials)
 
     {/* Modal pour ajouter un témoignange */}
 
@@ -99,11 +100,14 @@ export default function Testimonial() {
                     </section>
                 )}
 
-                {hasMore && (
-                    <section className={styles['testimonials-load-more']}>
-                        <button onClick={() => testimonialLazyLoad()} className={styles['btn-load']}>
-                            <span>Charger plus de témoignages</span>
-                        </button>
+                {pages > 1 && (
+                    <section className={styles['testimonials-pagination']}>
+                        <Pagination
+                            currentPage={currentPage}
+                            pages={pages}
+                            previousPage={previousPage}
+                            nextPage={nextPage}
+                        />
                     </section>
                 )}
 

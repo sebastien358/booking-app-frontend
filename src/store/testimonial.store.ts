@@ -1,6 +1,15 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {axiosTestimonialCreate, axiosTestimonialList} from "@/shared/services/testimonial.service";
+import {
+    axiosTestimonialCreate,
+    axiosTestimonialHomePage,
+    axiosTestimonialList
+} from "@/shared/services/testimonial.service";
+
+export interface PictureData {
+    id: number
+    filename: string
+}
 
 export interface TestimonialData {
     id: number
@@ -8,66 +17,59 @@ export interface TestimonialData {
     job: string
     rating: string
     message: string
-    image: File | null
+    picture: PictureData | null
     created_at: Date
 }
 
 export interface TestimonialState {
     testimonials: TestimonialData[]
+    testimonialsHome: TestimonialData[]
     isLoading: boolean
     errorMessage: string | null
-    offset: number
+    currentPage: number
+    pages: number | null
     limit: number
-    hasMore: boolean
 
+    testimonialHomePage: () => Promise<void>
     testimonialList: () => Promise<void>
-    testimonialLazyLoad: () => Promise<void>
     testimonialCreate: (data: TestimonialData) => Promise<void>
+    previousPage: () => void
+    nextPage: () => void
     resetErrorMessage: () => void
 }
 
 export const useTestimonialStore = create<TestimonialState>()(
     persist((set, get) => ({
         testimonials: [],
+        testimonialsHome: [],
         isLoading: false,
         errorMessage: null,
-        offset: 0,
+        currentPage: 1,
         limit: 6,
-        hasMore: true,
+        pages: null,
 
-        testimonialList: async () => {
+        testimonialHomePage: async () => {
             try {
-                set({ testimonials: [], isLoading: true, hasMore: true })
-                const data = await axiosTestimonialList(get().offset, get().limit)
-                set({
-                    testimonials: data,
-                    isLoading: false,
-                    hasMore: data.length >= get().limit
-                })
-            } catch (err) {
+                set({ testimonialsHome: [], isLoading: true })
+                const data = await axiosTestimonialHomePage()
+                set({ testimonialsHome: data, isLoading: false })
+
+                console.log(get().testimonialsHome)
+            } catch(err: any) {
                 console.error(err)
                 set({ isLoading: false })
                 throw err
             }
         },
 
-        testimonialLazyLoad: async () => {
+        testimonialList: async () => {
             try {
-                const { testimonials, isLoading, offset, limit, hasMore } = get()
-                if (!hasMore || isLoading) return
-
-                set({ offset: offset + limit, isLoading: true })
-                const data = await axiosTestimonialList(get().offset, get().limit)
-
-                const newData = (data as any) ?? data ?? []
-                if (newData.length === 0) {
-                    set({ hasMore: false, isLoading: false })
-                }
-
+                set({ testimonials: [], isLoading: true })
+                const data = await axiosTestimonialList(get().currentPage, get().limit)
                 set({
-                    testimonials: [ ...testimonials, ...newData ],
+                    testimonials: data.testimonials,
+                    pages: data.pages,
                     isLoading: false,
-                    hasMore: newData.length >= limit
                 })
             } catch (err) {
                 console.error(err)
@@ -85,8 +87,6 @@ export const useTestimonialStore = create<TestimonialState>()(
                 formData.append('message', data.message)
                 formData.append('rating', data.rating)
 
-                // Si il y a une image dans le fichier
-
                 if (data.image) {
                     formData.append('image', data.image)
                 }
@@ -98,14 +98,40 @@ export const useTestimonialStore = create<TestimonialState>()(
             }
         },
 
-        resetErrorMessage: () => set({ errorMessage: null }),
+        previousPage: async () => {
+            try {
+                const { currentPage } = get()
+                if (currentPage > 0) {
+                    set({ currentPage: currentPage - 1 })
+                    await get().testimonialList()
+                }
+            } catch (err: any) {
+                console.error(err)
+                throw err
+            }
+        },
 
+        nextPage: async () => {
+            try {
+                const { currentPage, pages } = get()
+                if (pages !== null && currentPage < pages) {
+                    set({ currentPage: currentPage + 1 })
+                    await get().testimonialList()
+                }
+            } catch (err: any) {
+                console.error(err)
+                throw err
+            }
+        },
+
+        resetErrorMessage: () => set({ errorMessage: null }),
     }),
         {
             name: 'testimonial-state',
             partialize: (state) => ({
                 testimonials: state.testimonials,
-                offset: state.offset
+                testimonialsHome: state.testimonialsHome,
+                pages: state.pages
             })
         }
     )

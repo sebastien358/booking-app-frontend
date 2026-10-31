@@ -16,6 +16,32 @@ export async function axiosAdminInfoMe() {
     }
 }
 
+export async function axiosAdminClients() {
+    try {
+        const response = await axios.get(`${BASE_URL}/api/admin/account/clients`)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur de la récupération des clients : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
+export async function axiosAdminClientIsRead(id: number) {
+    try {
+        const response = await axios.get(`${BASE_URL}/api/admin/account/clients/is-read/${id}`)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur notification client (vu) : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
 export async function axiosAdminUserEdit(data: UserEditState) {
     try {
         const response = await axios.post(`${BASE_URL}/api/admin/account/edit`, data)

@@ -1,6 +1,7 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {
+    axiosAccountExist,
     axiosInfoMe,
     axiosLogin,
     axiosRegister,
@@ -8,7 +9,12 @@ import {
     axiosResetPassword
 } from "@/shared/services/auth.service";
 
-export interface AuthState { // renommé ProductInterface -> AuthState
+export interface AccountFormUserExist {
+    email: string
+    password: string
+}
+
+export interface AuthState {
     token: string | null
     user: null
     errorMessage: string | null
@@ -16,6 +22,7 @@ export interface AuthState { // renommé ProductInterface -> AuthState
     hasHydrated: boolean
 
     registerUser: (data: any) => Promise<void>
+    accountExist: (email: AccountFormUserExist) =>Promise<void>
     login: (data: { email: string, password: string }) => Promise<void>
     infoMe: () => void
     requestPassword: (data: string) => Promise<void>
@@ -47,6 +54,20 @@ export const useAuthStore = create<AuthState>()(
                         set({ errorMessage: apiError?.message })
                     } else {
                         set({ errorMessage: 'L\'inscription a échouée' })
+                    }
+                    throw err
+                }
+            },
+
+            accountExist: async (data: AccountFormUserExist) => {
+                try {
+                    await axiosAccountExist(data)
+                } catch (err: any) {
+                    const apiError = err?.response?.data
+                    if (apiError.type === 'ERROR_ACCOUNT_EXIST') {
+                        set({ errorMessage: apiError.message })
+                    } else {
+                        set({ errorMessage: 'Une erreur est survenue' })
                     }
                     throw err
                 }

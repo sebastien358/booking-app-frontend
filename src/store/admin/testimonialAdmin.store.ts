@@ -53,7 +53,7 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
 
         testimonialAdminList: async () => {
             try {
-                set({ testimonials: [], isLoading: true, hasMore: true })
+                set({ testimonials: [], isLoading: true, offset: 0, hasMore: true })
                 const data = await axiosAdminTestimonialList(get().offset, get().limit)
 
                 set({
@@ -72,14 +72,12 @@ export const useTestimonialAdminStore = create<TestimonialState>()(
         testimonialAdminLazyLoad: async () => {
             try {
                 const { testimonials, offset, limit, isLoading, hasMore} = get()
-
                 if (!hasMore || isLoading) return
 
                 set({ offset: offset + limit , isLoading: true })
                 const data = await axiosAdminTestimonialList(get().offset, get().limit)
 
-                const newContacts = data.testimonials ?? []
-
+                const newContacts = data ?? data.testimonials ?? []
                 if (newContacts.length === 0) {
                     set({ hasMore: false, isLoading: false })
                 }

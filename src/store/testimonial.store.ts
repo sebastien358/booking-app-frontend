@@ -54,13 +54,15 @@ export const useTestimonialStore = create<TestimonialState>()(
         testimonialLazyLoad: async () => {
             try {
                 const { testimonials, isLoading, offset, limit, hasMore } = get()
-
                 if (!hasMore || isLoading) return
 
                 set({ offset: offset + limit, isLoading: true })
                 const data = await axiosTestimonialList(get().offset, get().limit)
 
                 const newData = (data as any) ?? data ?? []
+                if (newData.length === 0) {
+                    set({ hasMore: false, isLoading: false })
+                }
 
                 set({
                     testimonials: [ ...testimonials, ...newData ],

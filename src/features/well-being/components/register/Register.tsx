@@ -7,6 +7,7 @@ import { z } from 'zod'
 import {useAuthStore} from "@/store/auth.store";
 import {useState} from "react";
 import BookingView from "@/features/well-being/components/booking/BookingView";
+import {useRouter} from "next/navigation";
 
 const schema = z.object({
     firstname: z
@@ -49,6 +50,8 @@ export default function Register() {
 
     const { registerUser, errorMessage, clearError } = useAuthStore()
 
+    const router = useRouter()
+
     const {register, handleSubmit, reset, formState: {errors, isSubmitting} } = useForm({
         resolver: zodResolver(schema)
     })
@@ -68,6 +71,7 @@ export default function Register() {
         setSuccessMessage('Compte créé avec succès. ✨')
         setTimeout(() => {
             setSuccessMessage(null)
+            router.push('/login')
             reset()
         }, 2000)
     }

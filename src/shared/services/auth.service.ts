@@ -1,5 +1,5 @@
 import axios from "axios";
-import {useAuthStore} from "@/store/auth.store";
+import {AccountFormUserExist, useAuthStore} from "@/store/auth.store";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL as string
 
@@ -34,6 +34,19 @@ export async function axiosRegister(data: {email: string, password: string}) {
             return response.data
         }
         throw new Error(`Erreur de l'inscription' : ${response.status}`)
+    } catch(err: any) {
+        console.error(err)
+        throw err
+    }
+}
+
+export async function axiosAccountExist(data: AccountFormUserExist) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/user/account-exist`, data)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur vérification de l'exitance d'un utilisateur : ${response.status}`)
     } catch(err: any) {
         console.error(err)
         throw err

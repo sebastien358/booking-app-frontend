@@ -27,9 +27,9 @@ const schema = z.object({
 
 export default function Login() {
 
-    const { token, isUser, isAdmin } = useAuthStore()
+    const { isUser, isAdmin } = useAuthStore()
 
-    const { login, errorMessage, clearError, setShowLoginModal, showLoginModal } = useAuthStore()
+    const { accountExist, login, errorMessage, clearError, setShowLoginModal, showLoginModal } = useAuthStore()
 
     const { openModalBooking } = useBookingModalStore()
 
@@ -48,9 +48,10 @@ export default function Login() {
 
     const onSubmit = async (data: DataUser) => {
         try {
+            await accountExist(data)
             await login(data)
             displayLogin()
-        } catch (err) {
+        } catch (err: any) {
             displayError()
         }
     }
@@ -65,6 +66,7 @@ export default function Login() {
             if (showLoginModal) {
                 openModalBooking()
                 setShowLoginModal(false)
+                return
             }
 
             if (isAdmin()) {
@@ -72,13 +74,13 @@ export default function Login() {
                 return
             }
 
-            if (isUser()) {
+            if (isUser() && !showLoginModal) {
                 router.push('/user/bookings')
                 return
             }
+
         }, DELAY_TIMEOUT)
     }
-
 
     const displayError = () => {
         setSuccessMessage(null)

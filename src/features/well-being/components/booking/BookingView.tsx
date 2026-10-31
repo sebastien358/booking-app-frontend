@@ -229,6 +229,13 @@ export default function BookingView() {
         })
 
         axiosSlots()
+
+        const interval = setInterval(() => {
+            axiosSlots()
+        }, 30000)
+
+        return () => clearInterval(interval);
+
     }, [bookingDraft.bookingCategoryId, bookingDraft.bookingServiceId, bookingDraft.bookingStaffId, bookingDraft.bookingDate])
 
     {/* Click Slot */}
@@ -246,15 +253,16 @@ export default function BookingView() {
         setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })
         setSlotLabel(slot.label)
 
-        await holdSlot(slot.start)
-
-        if (!token && !isUser()) {
+        if (!token || !isUser()) {
             setBookingDraft({ ...bookingDraft, bookingDatetime: slot.start })
             setShowLoginModal(true)
             setSlotLabel(slot.label)
+            closeModalBooking()
             router.push('/login')
             return
         }
+
+        await holdSlot(slot.start)
     }
 
     const isActiveSlot = (slot: Slot) => {
@@ -270,7 +278,7 @@ export default function BookingView() {
     {/* Affichage de l'erreur : Créneau en cours de réservation */}
 
     useEffect(() => {
-        if(errorBooking) {
+        if (errorBooking) {
             setTimeout(() => resetBooking(), 2000)
         }
     }, [errorBooking, resetBooking])

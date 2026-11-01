@@ -21,7 +21,7 @@ export default function AccountClients() {
 
     {/*  Store Récupérations de la liste des clients */}
 
-    const { clientsList, clientIsRead, clientDelete, setClientId, users, isLoading } = useAccountAdminStore()
+    const { clientsList, clientIsRead, clientIsVisible, clientDelete, setClientId, users, isLoading } = useAccountAdminStore()
 
     useEffect(() => {
         clientsList()
@@ -35,14 +35,16 @@ export default function AccountClients() {
         return Intl.DateTimeFormat('fr-FR').format(d)
     }
 
-    {/*  Marquer comme visible ou invisible un client : (isVisible) */}
-
-    const onClickClientIsVisible = (id: number) => {}
-
     {/*  Marquer comme vu un client : (isRead) */}
 
     const onClickClientIsRead = async (id: number) => {
         await clientIsRead(id)
+    }
+
+    {/*  Marquer comme visible ou invisible un client : (isVisible) */}
+
+    const onClickClientIsVisible = async (id: number) => {
+        await clientIsVisible(id)
     }
 
     {/*  Gestion Modal de suppreession d'un client */}

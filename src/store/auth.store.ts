@@ -81,7 +81,11 @@ export const useAuthStore = create<AuthState>()(
                     set({ token: token })
                     get().infoMe()
                 } catch(err: any) {
-                    if (err?.response?.status === 401) {
+                    const resData = err?.response?.data
+                    const status = err?.response?.status
+                    if (resData?.type === 'ACCOUNT_SUSPENDED') {
+                        set({ errorMessage: resData.message })
+                    } else if (status === 401) {
                         set({ errorMessage: 'Identifiant ou mot de passe invalide' })
                     } else {
                         set({ errorMessage: 'La connexion a échouée.' })

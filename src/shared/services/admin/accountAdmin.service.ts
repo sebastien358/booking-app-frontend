@@ -42,6 +42,19 @@ export async function axiosAdminClientIsRead(id: number) {
     }
 }
 
+export async function axiosAdminClientIsVisible(id: number) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/admin/account/client/is-visible/${id}`)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur activation client : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
 export async function axiosAdminClientDelete(id: number) {
     try {
         const response = await axios.post(`${BASE_URL}/api/admin/account/client/delete/${id}`)

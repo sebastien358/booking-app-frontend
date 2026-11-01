@@ -2,7 +2,7 @@ import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {
     axiosAdminClientDelete,
-    axiosAdminClientIsRead,
+    axiosAdminClientIsRead, axiosAdminClientIsVisible,
     axiosAdminClients,
     axiosAdminInfoMe,
     axiosAdminUserEdit
@@ -36,6 +36,7 @@ export interface AccountAdminState {
     infoMe: () => Promise<void>
     clientsList: () => Promise<void>
     clientIsRead: (id: number) => Promise<void>
+    clientIsVisible: (id: number) => Promise<void>
     setClientId: (clientId: number) => number
     clientDelete: () => Promise<void>
     editAccount: (data: UserEditState) => Promise<void>
@@ -74,6 +75,16 @@ export const useAccountAdminStore = create<AccountAdminState>()(
         clientIsRead: async (id: number) => {
             try {
                 await axiosAdminClientIsRead(id)
+                await get().clientsList()
+            } catch (err: any) {
+                console.error(err)
+                throw err
+            }
+        },
+
+        clientIsVisible: async (id: number) => {
+            try {
+                await axiosAdminClientIsVisible(id)
                 await get().clientsList()
             } catch (err: any) {
                 console.error(err)

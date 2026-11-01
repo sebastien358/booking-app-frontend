@@ -2,8 +2,9 @@
 
 import styles from './AccountClients.module.scss'
 import {useAccountAdminStore} from "@/store/admin/accountAdmin.store";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useAuthStore} from "@/store/auth.store";
+import ModalConfirm from "@/components/modal-confirmation/ModalConfirm";
 
 export default function AccountClients() {
 
@@ -20,11 +21,13 @@ export default function AccountClients() {
 
     {/*  Store Récupérations de la liste des clients */}
 
-    const { clientsList, clientIsRead, users, isLoading } = useAccountAdminStore()
+    const { clientsList, clientIsRead, clientDelete, setClientId, users, isLoading } = useAccountAdminStore()
 
     useEffect(() => {
         clientsList()
     }, [clientsList]);
+
+    console.log(users)
 
     const displayDate = (date: Date) => {
         if (!date) return ""
@@ -32,16 +35,34 @@ export default function AccountClients() {
         return Intl.DateTimeFormat('fr-FR').format(d)
     }
 
+    {/*  Marquer comme visible ou invisible un client : (isVisible) */}
+
     const onClickClientIsVisible = (id: number) => {}
+
+    {/*  Marquer comme vu un client : (isRead) */}
 
     const onClickClientIsRead = async (id: number) => {
         await clientIsRead(id)
     }
 
-    const onClickOpenModal = (id: number) => {}
+    {/*  Gestion Modal de suppreession d'un client */}
 
-    const deleteUser = (id: number) => {
-        console.log(id)
+    const [activeModal, setActiveModal] = useState<boolean>(false)
+
+    const onClickOpenModal = (id: number) => {
+        setActiveModal(true)
+        setClientId(id)
+    }
+
+    const closeModal = () => {
+        setActiveModal(false)
+    }
+
+    {/*  Suppression d'un client */}
+
+    const onClickDelete = async () => {
+        await clientDelete()
+        setActiveModal(false)
     }
 
     return (
@@ -125,7 +146,7 @@ export default function AccountClients() {
                                                 <button
                                                     className={`${styles['action-btn']} ${styles['delete-btn']}`}
                                                     disabled={c.id === userId}
-                                                    onClick={() => deleteUser(c.id)}
+                                                    onClick={() => onClickOpenModal(c.id)}
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                                         <path d="M3 6h18" />
@@ -141,6 +162,13 @@ export default function AccountClients() {
                             </table>
                         </div>
                     </div>
+
+                    <ModalConfirm
+                        activeModal={activeModal}
+                        closeModal={closeModal}
+                        onClickDelete={onClickDelete}
+                    />
+
                 </section>
             ) : (
                 <div className={styles['no-client']}>

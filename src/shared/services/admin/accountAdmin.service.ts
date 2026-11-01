@@ -31,11 +31,24 @@ export async function axiosAdminClients() {
 
 export async function axiosAdminClientIsRead(id: number) {
     try {
-        const response = await axios.get(`${BASE_URL}/api/admin/account/clients/is-read/${id}`)
+        const response = await axios.post(`${BASE_URL}/api/admin/account/client/is-read/${id}`)
         if (response.status >= 200 && response.status < 300) {
             return response.data
         }
         throw new Error(`Erreur notification client (vu) : ${response.status}`)
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+}
+
+export async function axiosAdminClientDelete(id: number) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/admin/account/client/delete/${id}`)
+        if (response.status === 200 || response.status === 204) {
+            return response.data
+        }
+        throw new Error(`Erreur de la suppression d'un client : ${response.status}`)
     } catch (err) {
         console.error(err)
         throw err

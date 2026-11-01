@@ -1,6 +1,7 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {
+    axiosAdminClientDelete,
     axiosAdminClientIsRead,
     axiosAdminClients,
     axiosAdminInfoMe,
@@ -13,6 +14,8 @@ export interface UsersState {
     lastname: string
     phoneNumber: string
     email: string
+    isRead: boolean
+    isVisible: boolean
 }
 
 export interface UserState {
@@ -27,11 +30,14 @@ export interface UserEditState {
 export interface AccountAdminState {
     users: UsersState[],
     user: UserState | null
+    clientId: number | null
     isLoading: boolean
 
     infoMe: () => Promise<void>
     clientsList: () => Promise<void>
     clientIsRead: (id: number) => Promise<void>
+    setClientId: (clientId: number) => number
+    clientDelete: () => Promise<void>
     editAccount: (data: UserEditState) => Promise<void>
 }
 
@@ -39,6 +45,7 @@ export const useAccountAdminStore = create<AccountAdminState>()(
     persist((set, get) => ({
         users: [],
         user: null,
+        clientId: null,
         isLoading: false,
 
         infoMe: async () => {
@@ -67,6 +74,18 @@ export const useAccountAdminStore = create<AccountAdminState>()(
         clientIsRead: async (id: number) => {
             try {
                 await axiosAdminClientIsRead(id)
+                await get().clientsList()
+            } catch (err: any) {
+                console.error(err)
+                throw err
+            }
+        },
+
+        setClientId: (id: number) => set({ clientId: id }),
+
+        clientDelete: async () => {
+            try {
+                await axiosAdminClientDelete(get().clientId)
                 await get().clientsList()
             } catch (err: any) {
                 console.error(err)

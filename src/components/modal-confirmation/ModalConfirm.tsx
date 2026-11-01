@@ -4,9 +4,9 @@ type ModalConfirmProps = {
     activeModal: boolean
     closeModal: () => void
     onClickDelete: () => void
-    dropdownAccount: boolean | null
-    dropdownBookingUser: boolean | null
-    errorMessage: string | null
+    dropdownAccount?: boolean
+    dropdownBookingUser?: boolean
+    errorMessage?: string
 }
 
 export default function ModalConfirm({ activeModal, closeModal, onClickDelete, dropdownAccount, dropdownBookingUser, errorMessage }: ModalConfirmProps) {

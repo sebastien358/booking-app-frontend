@@ -126,6 +126,8 @@ export default function BookingView() {
         staffList()
     }, [staffList]);
 
+    console.log(staffs)
+
     type Staff = {
         id: number
         firstname: string

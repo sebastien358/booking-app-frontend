@@ -6,6 +6,7 @@ import {
     axiosAdminStaffList,
     axiosAdminStaffNew, axiosAdminStaffToggle
 } from "@/shared/services/admin/staffAdmin.service";
+import {useStaffStore} from "@/store/staff.store";
 
 export interface StaffFormData {
     firstname: string
@@ -149,6 +150,7 @@ export const useStaffAdminStore = create<StaffAdminState>()(
             try {
                 await axiosAdminStaffToggle(id)
                 await get().staffDetails(id)
+                await useStaffStore.getState().staffList()
             } catch (err: any) {
                 console.error(err)
                 throw err

@@ -2,8 +2,17 @@ import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {axiosStaffList} from "@/shared/services/staff.service";
 
-interface StaffState {
-    staffs: any[]
+export interface StaffData {
+    id: number
+    firstname: string
+    lastname: string
+    picture: {
+        filename: string | null
+    }
+}
+
+export interface StaffState {
+    staffs: StaffData[]
     isLoadingStaff: boolean
 
     staffList: () => Promise<void>
@@ -11,28 +20,26 @@ interface StaffState {
 
 export const useStaffStore = create<StaffState>()(
     persist((set, get) => ({
-            staffs: [],
-            isLoadingStaff: false,
+        staffs: [],
+        isLoadingStaff: false,
 
-            staffList: async () => {
+        staffList: async () => {
+            try {
                 set({ isLoadingStaff: true })
-                try {
-                    const data = await axiosStaffList()
-                    set({ staffs: data, isLoadingStaff: false })
+                const data = await axiosStaffList()
+                set({ staffs: data, isLoadingStaff: false })
 
-                    console.log(get().staffs)
-                } catch (err) {
-                    set({ isLoadingStaff: false })
-                    throw err
-                }
+                console.log(get().staffs)
+            } catch (err) {
+                set({ isLoadingStaff: false })
+                throw err
             }
-
-        }),
-        {
-            name: 'staff-state',
-            partialize: (state) => ({
-                staffs: state.staffs
-            })
         }
-    )
+
+    }), {
+        name: 'staff-state',
+        partialize: (state) => ({
+            staffs: state.staffs
+        })
+    })
 )

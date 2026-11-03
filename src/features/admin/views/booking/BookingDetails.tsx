@@ -65,7 +65,7 @@ export default function BookingDetails({ id, currentBooking, bookingDelete, isLo
                             <div className={styles['booking-email']}>
                                 <p>{currentBooking.email}</p>
                                 <span className={`${styles['status']} ${!currentBooking.is_read ? styles['unread'] : ''}`}>
-                                    {currentBooking.is_read ? "✅ vu" : "❌ non-vu"}
+                                    {currentBooking.is_read ? "❌ non-vu" : "✅ vu"}
                                 </span>
                             </div>
                         </div>

@@ -53,9 +53,7 @@ interface BookingState {
     setSelectedDay: (selectedDay: string) => string
     setSlotLabel: (slotLabel: string) => string
     axiosSlots: () => Promise<void>
-
     holdSlot: (slotStart: string) => Promise<void>
-
     createBooking: (dataBooking: DataBookingState, paymentIntentId: string) => Promise<any>
     setProgressStep: (progressStep: number) => number
     informationCompletedOne: () => boolean

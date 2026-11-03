@@ -1,0 +1,108 @@
+// LOADING
+
+.loading-indicator,
+.empty-state {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 767.98px) {
+    min-height: 100px;
+  }
+  p {
+    font-size: 15px;
+    color: #9ca3af;
+    @media (max-width: 767.98px) {
+      font-size: 14px;
+    }
+  }
+}
+
+.staff-admin {
+  &__container {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    @media (max-width: 991.98px) {
+      gap: 1.3rem;
+    }
+    @media (max-width: 767.98px) {
+      gap: 1rem;
+    }
+  }
+  &__grid {
+    line-height: 23px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: self-start;
+    justify-content: space-between;
+    @media (max-width: 991.98px) {
+      padding: 0.8rem;
+    }
+    @media (max-width: 767.98px) {
+      padding: 0.6rem;
+    }
+    &:hover {
+      transform: scale(1.01);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: #555;
+      @media (max-width: 991.98px) {
+        font-size: 15px;
+        margin-bottom: 0.3rem;
+      }
+      @media (max-width: 767.98px) {
+        font-size: 14px;
+        margin-bottom: 0.2rem;
+      }
+    }
+    p {
+      font-size: 13px;
+      color: #555;
+      @media (max-width: 991.98px) {
+        font-size: 12px;
+      }
+      @media (max-width: 767.98px) {
+        font-size: 11px;
+      }
+    }
+  }
+  &__infos {
+    display: flex;
+    flex-direction: column;
+  }
+  &__load {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__load .btn-load {
+    cursor: pointer;
+    outline: none;
+    padding: 0.5rem 1rem;
+    border: 0;
+    font-size: 11px;
+    background-color: #0077ff;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s;
+    &:hover {
+      background-color: #005fcc;
+    }
+  }
+}
+

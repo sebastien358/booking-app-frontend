@@ -480,106 +480,125 @@
 .booking-staff-wrapper {
   display: flex;
   justify-content: center;
-  .booking-staff {
-    margin: 0 auto 20px auto;
-    &__grid {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-    &__label {
-      margin-bottom: 7px;
-      display: none;
-      text-align: left;
+}
+
+.booking-staff {
+  margin: 0 auto 20px auto;
+  &__grid {
+    display: flex;
+    justify-content: center;
+    gap: 9px;
+  }
+  &__label {
+    margin-bottom: 7px;
+    text-align: left;
+    position: relative;
+    color: #a0a0a0;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.85;
+    align-self: flex-start;
+  }
+  &__label::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: #a06bff;
+    transition: width 0.25s ease;
+  }
+  &__cards {
+    input[type="radio"] {
+      appearance: none;
+      width: 15px;
+      height: 15px;
+      border: 2px solid #dfe4ea;
+      border-radius: 50%;
+      display: inline-block;
       position: relative;
-      color: #a0a0a0;
-      font-size: 13px;
-      font-weight: 500;
-      opacity: 0.85;
+      cursor: pointer;
+      transition: 0.2s;
     }
-    &__label.active {
-      display: block;
-      align-self: flex-start;
+    /* Effet quand sélectionné */
+    input[type="radio"]:checked {
+      border-color: #08d8ea;
+      background: #08d8ea;
     }
-    &__label::after {
+    input[type="radio"]:checked::after {
       content: "";
       position: absolute;
-      bottom: -6px;
-      left: 0;
-      height: 2px;
-      width: 0;
-      background-color: #a06bff;
-      transition: width 0.25s ease;
+      top: 3px;
+      left: 3px;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
     }
-    &__cards {
-      input[type="radio"] {
-        appearance: none;
-        width: 15px;
-        height: 15px;
-        border: 2px solid #dfe4ea;
-        border-radius: 50%;
-        display: inline-block;
-        position: relative;
-        cursor: pointer;
-        transition: 0.2s;
-      }
-      /* Effet quand sélectionné */
-      input[type="radio"]:checked {
-        border-color: #08d8ea;
-        background: #08d8ea;
-      }
-      input[type="radio"]:checked::after {
-        content: "";
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        width: 8px;
-        height: 8px;
-        background: white;
-        border-radius: 50%;
-      }
-      .name {
-        color: #6f7a86;
-        font-size: 12px;
-      }
-      .name.one-card {
-        font-size: 15px;
-        font-weight: 500;
-        color: #6f7a86;
-      }
-    }
-    &__card__content {
+  }
+  &__card__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #dfe4ea;
+    width: 145px;
+    background: white;
+    border-radius: 12px;
+    padding: 15px 12px;
+    &--onCart {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px 12px;
       border-radius: 12px;
       border: 1px solid #dfe4ea;
       background: white;
-      width: 230px;
-    }
-    &__card__content.one-card {
       padding: 20px 20px;
       gap: 16px;
-      width: 300px;
+      width: 260px;
     }
-    &__card__content__avatar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    &__card__content__avatar .name {
-      font-size: 13px;
-    }
-    &__card__content__avatar img {
+  }
+  &__avatar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  &__avatar {
+    img {
       border-radius: 50%;
-      width: 48px;
-      height: 48px;
-      object-fit: cover;
     }
-    &__card__content__avatar img.one-card {
-      width: 72px;
-      height: 72px;
+    &.multiple img {
+      width: 37px;
+      height: 37px;
+    }
+    &.one img {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  &__avatar__name {
+    font-size: 9px;
+    color: #6f7a86;
+  }
+  &__avatar__name--onCart {
+    font-size: 15px;
+    color: #6f7a86;
+  }
+  &__avatar__name--onCart:first-letter {
+    text-transform: uppercase;
+  }
+  &__avatar__name:first-letter {
+    text-transform: uppercase;
+  }
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    &--text {
+      color: #8E8EA7;
+      font-size: 13px;
+      font-style: italic;
     }
   }
 }

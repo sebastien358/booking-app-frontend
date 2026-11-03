@@ -8,7 +8,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useCategoryStore} from "@/store/category.store";
 import {useServiceStore} from "@/store/service.store";
 import {useStaffStore} from "@/store/staff.store";
-import noUser from '@/assets/images/no-user.png'
+import noUser from '@/assets/images/no.svg'
 import Image from "next/image";
 import ProgressBooking from "@/components/progress-booking/ProgressBooking";
 import {useBookingStore} from "@/store/booking.store";
@@ -378,28 +378,40 @@ export default function BookingView() {
                                     {/* Booking staff */}
                                     <section className={styles['booking-staff-wrapper']}>
                                         <div className={styles['booking-staff']}>
-                                            <p className={styles['booking-staff__label']}>
-                                                Avec qui ?
-                                            </p>
-                                            <div className={styles['booking-staff__grid']}>
-                                                {staffs.map((staff) => (
-                                                    <label className={styles['booking-staff__cards']} key={staff.id}>
-                                                        <div className={styles['booking-staff__card__content']}>
-                                                            <div className={styles['booking-staff__card__content__avatar']}>
-                                                                <Image
-                                                                    src={staff?.picture?.filename || noUser}
-                                                                    alt={staff.firstname}
-                                                                    className={styles['avatar']}
-                                                                    height={30}
-                                                                    width={30}
-                                                                />
-                                                                <span className={styles['name']}>Pro: {staff.firstname}</span>
+                                            {staffs.length > 1 && (
+                                                <p className={styles['booking-staff__label']}>
+                                                    Avec qui ?
+                                                </p>
+                                            )}
+                                            {staffs.length > 0 ? (
+                                                <div className={styles['booking-staff__grid']}>
+                                                    {staffs?.map((staff) => (
+                                                        <label className={styles['booking-staff__cards']} key={staff.id}>
+                                                            <div className={staffs.length > 1 ?
+                                                                styles['booking-staff__card__content'] : styles['booking-staff__card__content--onCart']}>
+                                                                <div className={`${styles['booking-staff__avatar']} ${staffs.length > 1 ? styles['multiple'] : styles['one']}`}>
+                                                                    <Image
+                                                                        src={staff?.picture?.filename || noUser}
+                                                                        alt={staff.firstname}
+                                                                        height={30}
+                                                                        width={30}
+                                                                    />
+                                                                    <span className={staffs.length > 1 ? styles['booking-staff__avatar__name'] : styles['booking-staff__avatar__name--onCart']}>
+                                                                        {staff.firstname}
+                                                                    </span>
+                                                                </div>
+                                                                <input onClick={() => onClickStaff(staff)} type="radio" name="staff" />
                                                             </div>
-                                                            <input onClick={() => onClickStaff(staff)} type="radio" name="staff" />
-                                                        </div>
-                                                    </label>
-                                                ))}
-                                            </div>
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <div className={styles['booking-staff__empty']}>
+                                                    <div className={styles['booking-staff__empty--text']}>
+                                                        Aucune salariée pour le moment.
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </section>
                                     <div className={styles['booking__placeholder']}>

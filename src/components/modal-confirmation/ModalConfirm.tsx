@@ -6,13 +6,14 @@ type ModalConfirmProps = {
     onClickDelete: () => void
     dropdownAccount?: boolean
     dropdownBookingUser?: boolean
+    dropdownStaffAdmin?: boolean
     errorMessage?: string
 }
 
-export default function ModalConfirm({ activeModal, closeModal, onClickDelete, dropdownAccount, dropdownBookingUser, errorMessage }: ModalConfirmProps) {
+export default function ModalConfirm({ activeModal, closeModal, onClickDelete, dropdownAccount, dropdownBookingUser, dropdownStaffAdmin, errorMessage }: ModalConfirmProps) {
 
-    let textModal = ''
-    let textButton = ''
+    let textModal = ""
+    let textButton = ""
 
     if (dropdownAccount) {
         textModal = 'Cette action est irréversible. Voulez-vous vraiment supprimer ce compte ?'
@@ -20,6 +21,9 @@ export default function ModalConfirm({ activeModal, closeModal, onClickDelete, d
     } else if(dropdownBookingUser) {
         textModal = 'Cette action est irréversible. Voulez-vous vraiment annuler votre rendez-vous ?'
         textButton = 'Annuler'
+    } else if(dropdownStaffAdmin) {
+        textModal = 'Cette action est irréversible. Voulez-vous vraiment supprimer cette employée ?'
+        textButton = 'Supprimer'
     } else {
         textModal = 'Cette action est irréversible. Voulez-vous vraiment supprimer cet élément ?'
         textButton = 'Supprimer'

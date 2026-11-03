@@ -18,8 +18,9 @@ const adminLinks = [
     {name: 'Tous les messages', path: '/admin/contacts'},
     {name: 'Tous les services', path: '/admin/services' },
     {name: 'Tous les clients', path: '/admin/account/clients' },
+    {name: 'Tous les salariées', path: '/admin/staffs' },
     {name: 'Ajouter un service', path: '/admin/services/add'},
-    {name: 'Mon compte', path: '/admin/account' },
+    {name: 'Ajouter un salarié', path: '/admin/staffs/form'},
 ]
 
 const userLinks = [

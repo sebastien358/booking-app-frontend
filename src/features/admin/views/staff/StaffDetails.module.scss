@@ -1,0 +1,93 @@
+/*======================
+  LOADING
+======================*/
+
+.loading-indicator,
+.empty-state {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @media (max-width: 767.98px) {
+    min-height: 100px;
+  }
+  p {
+    font-size: 15px;
+    color: #9ca3af;
+    @media (max-width: 767.98px) {
+      font-size: 14px;
+    }
+  }
+}
+
+/*======================
+  BOOKINGS
+======================*/
+
+.staff-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.staff-details {
+  width: 100%;
+  max-width: 320px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  font-family: "Inter", sans-serif;
+  background-color: white;
+  &__picture .img {
+    margin-bottom: 8px;
+    height: 230px;
+    width: 100%;
+    object-fit: cover;
+  }
+  &__info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+  }
+  &__info p {
+    color: black;
+    font-size: 13px;
+  }
+  &__info p:first-letter {
+    text-transform: uppercase;
+  }
+  &__buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  &__buttons .btn-delete {
+    cursor: pointer;
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    padding: 10px;
+    border: 0;
+    border-radius: 6px;
+  }
+  &__buttons .btn-inactive {
+    cursor: pointer;
+    background-color: #6b7280;
+    color: white;
+    font-size: 10px;
+    padding: 10px;
+    border: 0;
+    border-radius: 6px;
+  }
+  &__buttons .btn-active {
+    cursor: pointer;
+    background-color: #22c55e;
+    color: white;
+    font-size: 10px;
+    padding: 10px;
+    border: 0;
+    border-radius: 6px;
+  }
+}

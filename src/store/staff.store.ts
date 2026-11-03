@@ -19,6 +19,8 @@ export const useStaffStore = create<StaffState>()(
                 try {
                     const data = await axiosStaffList()
                     set({ staffs: data, isLoadingStaff: false })
+
+                    console.log(get().staffs)
                 } catch (err) {
                     set({ isLoadingStaff: false })
                     throw err
@@ -26,6 +28,11 @@ export const useStaffStore = create<StaffState>()(
             }
 
         }),
-        {name: 'staff-state'}
+        {
+            name: 'staff-state',
+            partialize: (state) => ({
+                staffs: state.staffs
+            })
+        }
     )
 )

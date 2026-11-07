@@ -16,14 +16,24 @@ const DELAY_TIMEOUT_REDIRECT_LOGIN = 1000
 
 const schema = z.object({
     email: z.string().email({ message: 'Email invalide' }),
-    password: z.string()
-        .min(8, { message: 'Le mot de passe doit contenir au moins 8 caractères' })
-        .max(50, { message: '50 caractères maximum' }),
-    passwordConfirm: z.string()
-        .min(8, { message: 'Le mot de passe doit contenir au moins 8 caractères' })
-        .max(50, { message: '50 caractères maximum' })
-}).refine((value) => value.password === value.passwordConfirm, {
-    message: 'Les mots de passe ne correspondent pas',
+    firstname: z.string().trim()
+        .min(1, { message: 'Le prénom est obligatoire' })
+        .max(100, { message: 'Le prénom est trop long' }),
+    lastname: z.string().trim()
+        .min(1, { message: 'Le nom est obligatoire' })
+        .max(100, { message: 'Le nom est trop long' }),
+    phoneNumber: z.string().trim()
+        .min(1, { message: 'Le numéro de téléphone est obligatoire' })
+        .regex(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/, {
+            message: 'Numéro de téléphone invalide'
+        }),
+    password: z.string().trim().optional(),
+    passwordConfirm: z.string().trim().optional(),
+}).refine((value) => {
+    if (!value.password || !value.passwordConfirm) return true
+    return value.password === value.passwordConfirm;
+}, {
+    message: 'Les mots de passe ne correspondent pas ou moins de 8 caractères',
     path: ['passwordConfirm']
 })
 
@@ -33,6 +43,9 @@ export default function AccountUser() {
         resolver: zodResolver(schema),
         defaultValues: {
             email: "",
+            firstname: "",
+            lastname: "",
+            phoneNumber: "",
             password: "",
             passwordConfirm: ""
         }
@@ -44,7 +57,15 @@ export default function AccountUser() {
 
     {/* Store Account User */}
 
-    const { accountUser, resetAccountUser, accountUserEdit, accountUserDelete, user, isLoading, errorMessage } = useAccountUser()
+    const {
+        accountUser,
+        resetAccountUser,
+        accountUserEdit,
+        accountUserDelete,
+        user,
+        isLoading,
+        errorMessage
+    } = useAccountUser()
 
     useEffect(() => {
         accountUser()
@@ -53,6 +74,9 @@ export default function AccountUser() {
     useEffect(() => {
         reset({
             email: user?.email,
+            firstname: user?.firstname,
+            lastname: user?.lastname,
+            phoneNumber: user?.phoneNumber,
             password: "",
             passwordConfirm: ""
         })
@@ -137,30 +161,55 @@ export default function AccountUser() {
                                     {errors.email?.message}
                                 </p>}
                             </div>
-
                             <div className={styles['form-group']}>
-                                <input {...register('password')} type={"password"} placeholder="••••••••" />
+                                <input {...register('firstname')} type={"text"} />
+                                {errors && <p className={styles['error-field']}>
+                                    {errors.firstname?.message}
+                                </p>}
+                            </div>
+                            <div className={styles['form-group']}>
+                                <input {...register('lastname')} type={"text"} />
+                                {errors && <p className={styles['error-field']}>
+                                    {errors.lastname?.message}
+                                </p>}
+                            </div>
+                            <div className={styles['form-group']}>
+                                <input {...register('phoneNumber')} type={"text"} />
+                                {errors && <p className={styles['error-field']}>
+                                    {errors.phoneNumber?.message}
+                                </p>}
+                            </div>
+                            <div className={styles['form-group']}>
+                                <input
+                                    {...register('password')}
+                                    type="password"
+                                    autoComplete="one-time-code"
+                                    readOnly
+                                    placeholder="Nouveau mot de passe (laisser vide si pas de changement)"
+                                />
                                 {errors && <p className={styles['error-field']}>
                                     {errors.password?.message}
                                 </p>}
                             </div>
-
                             <div className={styles['form-group']}>
-                                <input {...register('passwordConfirm')} type={"password"} placeholder="••••••••" />
+                                <input
+                                    {...register('passwordConfirm')}
+                                    type="password"
+                                    autoComplete="one-time-code"
+                                    readOnly
+                                    placeholder="Confirmer le nouveau mot de passe"
+                                />
                                 {errors && <p className={styles['error-field']}>
                                     {errors.passwordConfirm?.message}
                                 </p>}
                             </div>
                             {/* Gestion messages de validation */}
-
                             {successMessage && <p className={styles['success-message']}>
                                 {successMessage}
                             </p>}
-
                             {errorMessage && <p className={styles['error-message']}>
                                 {errorMessage}
                             </p>}
-
                             {/* Bouton de soumission */}
                             <button
                                 type={'submit'}

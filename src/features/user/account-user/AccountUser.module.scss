@@ -40,7 +40,6 @@
   padding-top: 2rem;
   border-top: 1px solid #eee;
   text-align: center;
-
   &__title {
     font-size: 13px;
     font-weight: 600;
@@ -49,7 +48,6 @@
     letter-spacing: 1px;
     margin-bottom: 8px;
   }
-
   &__text {
     font-size: 12px;
     color: #bbb;
@@ -61,16 +59,16 @@
   background: transparent;
   border: 1px solid #e63946;
   color: #e63946;
-  padding: 8px 20px;
+  padding: 11px 20px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-
   &:hover {
     background: #e63946;
     color: #fff;
+    transform: translateY(-2px);
   }
 }
 
@@ -126,7 +124,11 @@
   border-radius: 6px;
   border: 1px solid #ddd;
   transition: 0.2s;
-  font-size: 14px;
+  font-size: 12px;
+}
+
+.form-group input[type='email'] {
+  background-color: #f1f2f6;
 }
 
 .form-group input:focus {
@@ -157,7 +159,7 @@
   border-radius: 6px;
   border: none;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .btn-primary {

@@ -1,10 +1,10 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {
-    axiosAdminStaffDelete,
-    axiosAdminStaffDetails,
+    axiosAdminStaffDelete, axiosAdminStaffDeleteImage, axiosAdminStaffDetails, axiosAdminStaffEdit,
     axiosAdminStaffList,
-    axiosAdminStaffNew, axiosAdminStaffToggle
+    axiosAdminStaffNew,
+    axiosAdminStaffToggle
 } from "@/shared/services/admin/staffAdmin.service";
 import {useStaffStore} from "@/store/staff.store";
 
@@ -35,11 +35,13 @@ export interface StaffAdminState {
     hasMore: boolean
 
     staffsList: () => Promise<void>
+    staffDetails: (id: string) => Promise<void>
     staffLazyLoad: () => Promise<void>
     staffSearch: (term: string) => Promise<void>
-    staffDetails: (id: string) => Promise<void>
     staffForm: (data: StaffFormData) => Promise<void>
+    staffEdit: (id: string, newFile: File) => Promise<void>
     staffDelete: (id: string) => Promise<void>
+    staffDeleteImage: (id: string) => Promise<void>
     staffToggle: (id: string) => Promise<void>
     resetSuccessMessage: () => void
     resetErrorMessage: () => void
@@ -62,6 +64,18 @@ export const useStaffAdminStore = create<StaffAdminState>()(
                 set({ staffs: [], isLoading: true, offset: 0, hasMore: true })
                 const data = await axiosAdminStaffList(get().offset, get().limit)
                 set({ staffs: data.staffs, isLoading: false, hasMore: data.staffs.length >= get().limit })
+            } catch (err: any) {
+                console.error(err)
+                set({ isLoading: false })
+                throw err
+            }
+        },
+
+        staffDetails: async (id: string) => {
+            try {
+                set({ currentStaff: null, isLoading: true })
+                const data = await axiosAdminStaffDetails(id)
+                set({ currentStaff: data, isLoading: false })
             } catch (err: any) {
                 console.error(err)
                 set({ isLoading: false })
@@ -105,18 +119,6 @@ export const useStaffAdminStore = create<StaffAdminState>()(
             }
         },
 
-        staffDetails: async (id: string) => {
-            try {
-                set({ currentStaff: null, isLoading: true })
-                const data = await axiosAdminStaffDetails(id)
-                set({ currentStaff: data, isLoading: false })
-            } catch (err: any) {
-                console.error(err)
-                set({ isLoading: false })
-                throw err
-            }
-        },
-
         staffForm: async (data: StaffFormData) => {
             try {
                 const formData = new FormData
@@ -134,12 +136,36 @@ export const useStaffAdminStore = create<StaffAdminState>()(
             }
         },
 
+        staffEdit: async (id: string, newFile: File) => {
+            try {
+                const formData = new FormData
+                if (newFile instanceof File) {
+                    formData.append('picture', newFile)
+                }
+                await axiosAdminStaffEdit(id, formData)
+                await get().staffDetails(id)
+            } catch (err: any) {
+                console.error(err)
+                throw err
+            }
+        },
+
         staffDelete: async (id: string) => {
             try {
                 await axiosAdminStaffDelete(id)
                 set((state) => ({
                     staffs: state.staffs.filter((s) => s.id !== id)
                 }))
+            } catch (err: any) {
+                console.error(err)
+                throw err
+            }
+        },
+
+        staffDeleteImage: async (id: string) => {
+            try {
+                await axiosAdminStaffDeleteImage(id)
+                await get().staffDetails(id)
             } catch (err: any) {
                 console.error(err)
                 throw err

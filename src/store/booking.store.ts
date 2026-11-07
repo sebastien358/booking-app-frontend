@@ -175,7 +175,6 @@ export const useBookingStore = create<BookingState>()(
                         const refundResponse = await axios.post('http://127.0.0.1:8000/api/user/payment/refund', {
                             payment_intent_id: paymentIntentId
                         })
-
                         set({ errorBooking: refundResponse.data?.message ?? null, successBooking: false })
                     } catch (refundErr: unknown) {
                         if (isAxiosError(refundErr)) {

@@ -46,6 +46,19 @@ export async function axiosAdminStaffNew(formData: FormData) {
     }
 }
 
+export async function axiosAdminStaffEdit(id: string, formData: FormData) {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/admin/staff/edit/${id}`, formData)
+        if (response.status >= 200 && response.status < 300) {
+            return response.data
+        }
+        throw new Error(`Erreur édition image salarié' : ${response.status}`)
+    } catch (err: any) {
+        console.error(err)
+        throw err
+    }
+}
+
 export async function axiosAdminStaffDelete(id: string) {
     try {
         const response = await axios.delete(`${BASE_URL}/api/admin/staff/delete/${id}`)
@@ -53,6 +66,19 @@ export async function axiosAdminStaffDelete(id: string) {
             return response.data
         }
         throw new Error(`Erreur de la suppression d'un salarié' : ${response.status}`)
+    } catch (err: any) {
+        console.error(err)
+        throw err
+    }
+}
+
+export async function axiosAdminStaffDeleteImage(id: string) {
+    try {
+        const response = await axios.delete(`${BASE_URL}/api/admin/staff/delete/${id}/image`)
+        if (response.status === 200 || response.status === 204) {
+            return response.data
+        }
+        throw new Error(`Erreur de la suppression de la photo d'un salarié' : ${response.status}`)
     } catch (err: any) {
         console.error(err)
         throw err

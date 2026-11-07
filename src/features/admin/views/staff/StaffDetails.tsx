@@ -1,24 +1,30 @@
 "use client"
 
 import styles from './StaffDetails.module.scss'
-
 import {StaffData} from "@/store/admin/staffAdmin.store";
 import NoUser from '@/assets/images/no.svg'
 import Image from "next/image";
 import ModalConfirm from "@/components/modal-confirmation/ModalConfirm";
-import {useState} from "react";
+import {ChangeEvent, useRef, useState} from "react";
 import {useRouter} from "next/navigation";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCamera } from '@fortawesome/free-solid-svg-icons'
 
 type StaffProps = {
     id: string
     staffDelete: (id: string) => Promise<void>
+    staffDeleteImage: (id: string) => Promise<void>
+    staffEdit: (id: string, newFile: File) => Promise<void>
     staffToggle: (id: string) => Promise<void>
     isLoading: boolean
     currentStaff: StaffData | null
 }
 
-export default function StaffDetails({ id, staffDelete, staffToggle, isLoading, currentStaff }: StaffProps) {
-    console.log(currentStaff)
+export default function StaffDetails({ id, staffDelete, staffDeleteImage, staffEdit, staffToggle, isLoading, currentStaff }: StaffProps) {
+
+    const router = useRouter()
+
+    {/* Gestion Modal */}
 
     const [activeModal, setActiveModal] = useState<boolean>(false)
 
@@ -26,13 +32,37 @@ export default function StaffDetails({ id, staffDelete, staffToggle, isLoading, 
         setActiveModal(false)
     }
 
-    const router = useRouter()
+    {/* Modifier la photo d'un salarié */}
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+    const onChangeEditFile = async (e: ChangeEvent<HTMLInputElement>) => {
+        try {
+            const newFile = e?.target?.files?.[0]
+            if (!newFile) return
+            if (newFile instanceof File) {
+                await staffDeleteImage(id)
+            }
+            await staffEdit(id, newFile)
+        } catch (err: any) {
+            console.error(err)
+            throw err
+        }
+    }
+
+    const openInputFile = () => {
+        fileInputRef.current?.click()
+    }
+
+    {/* Supprimer un Salarié */}
 
     const onClickDelete = async () => {
         await staffDelete(id)
         setActiveModal(false)
         router.push('/admin/staffs')
     }
+
+    {/* Gestion employé actif */}
 
     const toggleStaff = async () => {
         await staffToggle(id)
@@ -54,8 +84,24 @@ export default function StaffDetails({ id, staffDelete, staffToggle, isLoading, 
                             width={100}
                             height={230}
                         />
+
+                        <input
+                            onChange={(e) => onChangeEditFile(e)}
+                            ref={fileInputRef}
+                            type={"file"}
+                            accept={"image/aces"}
+                            hidden
+                        />
+
+                        <button
+                            onClick={() => openInputFile()}
+                            className={styles['staff-details__button--img']}
+                        >
+                          <FontAwesomeIcon icon={faCamera} />
+                        </button>
+                        {/* L'input caché */}
                     </div>
-                   <div className={styles['staff-details__info']}>
+                   <div className={styles['staff-details__infos']}>
                         <p>{currentStaff.firstname}</p>
                         <p>{currentStaff.lastname}</p>
                        <div className={styles['staff-details__buttons']}>

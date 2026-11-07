@@ -37,8 +37,13 @@ export default function StaffList() {
                                 className={styles['staff-admin__grid']}
                             >
                             <div className={styles['staff-admin__infos']}>
-                                <h3>{staff.firstname} - {staff.lastname}</h3>
-                                <p>Date : {formatedDate(staff.created_at)}</p>
+                                <div className={styles['staff-admin__text']}>
+                                    <h3>{staff.firstname} - {staff.lastname}</h3>
+                                    <p>Date : {formatedDate(staff.created_at)}</p>
+                                </div>
+                                <div className={styles['staff-admin__is--active']}>
+                                    {staff.is_active ? '✅' : '❌'}
+                                </div>
                             </div>
                             </Link>
                         ))}

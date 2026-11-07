@@ -8,7 +8,7 @@ import {useEffect} from "react";
 export default function Page() {
     const { id } = useParams<{id: string}>()
 
-    const { staffDetails, staffDelete, staffToggle, isLoading, currentStaff } = useStaffAdminStore()
+    const { staffDetails, staffDelete, staffDeleteImage, staffEdit, staffToggle, isLoading, currentStaff } = useStaffAdminStore()
 
     useEffect(() => {
         if (id) {
@@ -20,6 +20,8 @@ export default function Page() {
         <StaffDetails
             id={id}
             staffDelete={staffDelete}
+            staffDeleteImage={staffDeleteImage}
+            staffEdit={staffEdit}
             staffToggle={staffToggle}
             isLoading={isLoading}
             currentStaff={currentStaff}

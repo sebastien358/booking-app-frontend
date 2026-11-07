@@ -14,6 +14,9 @@ export interface AccountFormData {
 
 export interface UserData {
     email: string
+    firstname: string
+    lastname: string
+    phoneNumber: string
 }
 
 export interface AccountUserState {
@@ -38,6 +41,7 @@ export const useAccountUser = create<AccountUserState>()(
                 set({ isLoading: true })
                 const data = await axiosAccountUser()
                 set({ user: data, isLoading: false })
+                console.log(get().user)
             } catch (err: any) {
                 set({ isLoading: false })
                 throw err
